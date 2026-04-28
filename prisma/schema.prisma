@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Property {
+  id String @id @default(uuid())
+
+  // Core identification
+  county       String // "utah" | "salt_lake"
+  sale_year    Int
+  sale_date    String?
+  parcel_number String @unique
+  owner_name    String?
+  owner_mailing_address String?
+  property_address String?
+  legal_description String?
+
+  // Financials
+  total_amount_due Float?
+  assessed_value Float?
+  estimated_market_value Float?
+  estimated_repair_cost Float?
+  estimated_cleanup_cost Float?
+  estimated_closing_cost Float?
+
+  // Property details
+  property_type String @default("unknown") // "single_family" | "condo" | "multifamily" | "vacant_land" | "commercial" | "mobile_home" | "unknown"
+  occupancy_status String @default("unknown") // "owner_occupied" | "tenant" | "vacant" | "unknown"
+  zoning String?
+  lot_size_sqft Float?
+  building_sqft Float?
+  year_built Int?
+
+  // Auction info
+  auction_platform String?
+  deposit_required Float?
+  redemption_deadline String?
+
+  // Risk flags
+  access_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
+  title_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
+  legal_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
+  marketability_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
+
+  // Scoring
+  data_confidence Float?
+  notes String?
+  opportunity_score Float?
+  risk_score Float?
+  final_score Float?
+  recommendation String? // "bid" | "research_more" | "avoid"
+
+  // Enhanced scoring fields (new)
+  max_bid Float?           // Calculated max bid recommendation
+  absentee_owner Boolean?  // Owner mailing address differs from property
+  micro_parcel Boolean?    // Lot size < 2000 sqft and not condo
+  assemblage_opportunity Boolean? // Adjacent parcels available
+
+  // Status
+  status String @default("new") // "new" | "researching" | "ready" | "redeemed" | "removed" | "sold" | "passed" | "struck_off"
+  status_reason String?
+  status_last_verified_at DateTime?
+
+  // Source tracking
+  county_source_url String?
+  source_last_checked_at DateTime?
+
+  // Pre-sale volatility (affects risk score)
+  presale_volatility_risk Int @default(0) // 0-15 points added to risk
+  is_active_sale_candidate Boolean @default(true)
+
+  // Seed/demo data filtering
+  is_seed Boolean @default(false) // true for fake/demo properties
+
+  // Relations
+  sources Source[]
+  outcomes OutcomeEvent[]
+
+  // Timestamps
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // Relations
+  zoningProfile ZoningProfile?
+
+  @@index([county])
+  @@index([status])
+  @@index([parcel_number])
+}
+
+model ZoningProfile {
+  id String @id @default(uuid())
+  property_id String @unique
+  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  // Jurisdiction
+  jurisdiction String // "unincorporated_utah_county" | "provo" | "orem" | etc.
+  is_unincorporated Boolean @default(true)
+
+  // Zoning Information
+  zoning_code String? // e.g., "RA-5", "R-1-8", "C-1"
+  zoning_name String? // e.g., "Residential Agricultural"
+  land_use_designation String? // Primary land use designation
+
+  // Permitted Uses
+  permitted_uses String? // JSON array of permitted uses
+  conditional_uses String? // JSON array of conditional uses
+  prohibited_uses String? // JSON array of prohibited uses
+
+  // Building Rules
+  min_lot_size_sqft Float? // Minimum lot size in square feet
+  min_lot_size_acres Float? // Minimum lot size in acres
+  front_setback_ft Float? // Front setback in feet
+  side_setback_ft Float? // Side setback in feet
+  rear_setback_ft Float? // Rear setback in feet
+  max_height_ft Float? // Maximum building height in feet
+  max_height_stories Int? // Maximum building stories
+  max_lot_coverage_percent Float? // Maximum lot coverage percentage
+  frontage_required_ft Float? // Required frontage in feet
+
+  // Special Restrictions
+  has_slope_restrictions Boolean @default(false)
+  has_floodplain_restrictions Boolean @default(false)
+  has_wildfire_restrictions Boolean @default(false)
+  has_open_space_requirements Boolean @default(false)
+  overlays String? // JSON array of overlays (Hillside, Historic, etc.)
+
+  // Buildability Assessment
+  has_legal_access Boolean @default(false)
+  access_type String? // "paved_road", "dirt_road", "easement", "none"
+  utilities_status String @default("unknown") // "available", "nearby", "distant", "none", "unknown"
+  water_source String? // "culinary", "well", "hauled", "none"
+  sewer_type String? // "sewer", "septic", "none"
+
+  // Physical Constraints
+  slope_percent Float? // Average slope percentage
+  buildable_area_sqft Float? // Estimated buildable area
+  buildability_score Int @default(0) // 0-100 score
+  buildability_notes String? // Detailed notes on buildability
+
+  // Use Ideas & Strategy
+  best_use_ideas String? // JSON array of best use scenarios
+  use_difficulty String @default("unknown") // "easy", "moderate", "difficult", "prohibitive"
+  estimated_time_to_entitlement String? // e.g., "3-6 months", "1-2 years"
+  next_steps String? // Recommended next steps
+
+  // Data Sources
+  zoning_map_url String?
+  zoning_ordinance_url String?
+  data_last_verified DateTime?
+  notes String? // General notes
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Source {
+  id String @id @default(uuid())
+
+  property_id String
+  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  label String
+  url String?
+  source_type String @default("other") // "county_listing" | "assessor" | "gis" | "manual_note" | "auction_page" | "other"
+
+  created_at DateTime @default(now())
+}
+
+model OutcomeEvent {
+  id String @id @default(uuid())
+
+  property_id String
+  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  event_type String // "redeemed" | "removed" | "sold" | "passed" | "struck_off" | "note"
+  event_date String
+  details String?
+
+  created_at DateTime @default(now())
+}
+
+model UserSettings {
+  id             String   @id @default("default")
+  totalBudget    Float    @default(50000)  // total budget for this sale cycle
+  maxPerProperty Float    @default(25000)  // max spend per property
+  reserveBuffer  Float    @default(5000)   // amount of cash to keep uncommitted
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+}

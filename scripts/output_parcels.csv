@@ -1,0 +1,6 @@
+serial,situs_address,mailing_address,owner_name,owner_type_tag,acres,market_value,land_value,building_value,tax_area,subdivision_map,taxing_description,balance_due,payoff_to_value_ratio,is_micro_parcel,is_likely_condo,data_source
+55:555:0022,,,"JACKSON, MARCUS",INDIVIDUAL,,,,,,,,5125.01,,False,False,NOT_FOUND
+55:109:0006,,,"GAISFORD, KAREN COOK",INDIVIDUAL,,,,,,,,8985.08,,False,False,NOT_FOUND
+01:008:0006,,,BASES LOADED INVESTING LLC,LLC,,,,,,,,9539.04,,False,False,NOT_FOUND
+03:060:0016,,,"HARBOLD, KAREN F",INDIVIDUAL,,,,,,,,8673.39,,False,False,NOT_FOUND
+03:013:0086,,,"SAMPSON, DALE W",INDIVIDUAL,,,,,,,,413.06,,False,False,NOT_FOUND
