@@ -1,166 +1,141 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+import Link from 'next/link';
 import {
-  MapPin,
-  TrendingUp,
-  Shield,
-  Database,
-  CheckCircle,
+  ShieldCheck,
+  Layers,
+  FileCheck,
   ArrowRight,
-  BarChart3,
-  FileText,
-  Zap
-} from 'lucide-react'
+  Building2,
+} from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex flex-col min-h-screen">
+      {/* Navigation */}
+      <nav className="flex items-center justify-between px-6 lg:px-20 py-6 border-b border-slate-100 sticky top-0 bg-white/80 backdrop-blur-md z-50">
+        <div className="flex items-center gap-2">
+          <Building2 size={28} className="text-slate-900" />
+          <span className="text-2xl font-black tracking-tighter text-slate-900 uppercase">TaxProperty</span>
+        </div>
+        <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+          <a href="#features" className="hover:text-slate-900 transition-colors">Features</a>
+          <a href="#data" className="hover:text-slate-900 transition-colors">Data Coverage</a>
+          <a href="#pricing" className="hover:text-slate-900 transition-colors">Pricing</a>
+        </div>
+        <Link href="/dashboard" className="btn btn-primary px-6">
+          View Dashboard
+        </Link>
+      </nav>
+
       {/* Hero Section */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-20">
-        {/* Badge */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium">
-            <Database className="h-4 w-4" />
-            Powered by AGRC + Utah County GIS
-          </div>
+      <section className="px-6 lg:px-20 pt-20 pb-32 flex flex-col items-center text-center max-w-5xl mx-auto">
+        <div
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-bold uppercase tracking-widest mb-8"
+        >
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          Next Gen Tax Sale Intelligence
         </div>
 
-        {/* Main Headline */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4 tracking-tight">
-            TaxProperty Utah
-          </h1>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto">
-            Automated intelligence for Utah tax sale investing.
-            <span className="text-emerald-600 font-semibold"> Data-driven decisions in seconds.</span>
-          </p>
-        </div>
+        <h1
+          className="text-5xl lg:text-8xl font-black tracking-tighter text-slate-900 leading-[0.9] mb-8"
+        >
+          Tax Sale Intelligence for <span className="text-emerald-500 italic">Serious Investors</span>
+        </h1>
 
-        {/* CTA Button */}
-        <div className="flex justify-center mb-16">
-          <Link href="/dashboard">
-            <Button size="lg" className="text-lg px-8 py-6 h-auto gap-2 bg-emerald-600 hover:bg-emerald-700">
-              View Dashboard
-              <ArrowRight className="h-5 w-5" />
-            </Button>
+        <p
+          className="text-xl text-slate-500 max-w-2xl mb-12 leading-relaxed"
+        >
+          We analyze every property in the county tax sale, scoring risk and opportunity
+          so you can bid with confidence. Real-time zoning, market value, and payoff data.
+        </p>
+
+        <div
+          className="flex flex-col sm:flex-row gap-4"
+        >
+          <Link href="/dashboard" className="btn btn-primary text-lg px-8 py-4 gap-2">
+            View Live Dashboard <ArrowRight size={20} />
           </Link>
+          <button className="btn btn-secondary text-lg px-8 py-4">
+            Request Demo
+          </button>
         </div>
 
-        {/* Stats Bar */}
-        <div className="grid grid-cols-3 gap-8 max-w-3xl mx-auto mb-20">
-          <div className="text-center">
-            <div className="text-4xl font-bold text-gray-900 mb-1">127</div>
-            <div className="text-sm text-gray-500 uppercase tracking-wide">Properties Analyzed</div>
+        {/* Live Stats */}
+        <div
+          className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-4xl border-t border-slate-100 pt-12"
+        >
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-black text-slate-900 leading-tight">127</span>
+            <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Properties Analyzed</span>
           </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-gray-900 mb-1">90</div>
-            <div className="text-sm text-gray-500 uppercase tracking-wide">Max Score</div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-black text-slate-900 leading-tight tracking-tight">Utah County</span>
+            <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Active Auction</span>
           </div>
-          <div className="text-center">
-            <div className="text-4xl font-bold text-gray-900 mb-1">$5K</div>
-            <div className="text-sm text-gray-500 uppercase tracking-wide">Min Bid Range</div>
+          <div className="flex flex-col items-center">
+            <span className="text-3xl font-black text-slate-900 leading-tight tracking-tight">May 21, 2026</span>
+            <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Sale Date</span>
           </div>
         </div>
+      </section>
 
-        {/* Feature Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-20">
-          <Card className="bg-white border border-gray-200 shadow-sm">
-            <CardContent className="p-8">
-              <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-                <Database className="h-6 w-6 text-emerald-600" />
+      {/* Feature Highlights */}
+      <section id="features" className="bg-slate-50 py-32 px-6 lg:px-20">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            {/* Feature 1 */}
+            <div className="flex flex-col gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white shadow-xl shadow-slate-200 flex items-center justify-center text-emerald-500 mb-2">
+                <ShieldCheck size={28} />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Automated Scoring</h3>
-              <p className="text-gray-600">
-                Proprietary algorithm analyzes 127 Utah County tax sale properties across 15+ data points.
-                Opportunity and risk scores calculated instantly.
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Risk Scoring Engine</h3>
+              <p className="text-slate-500 leading-relaxed">
+                Automated assessment of liens, environmental factors, and title history.
+                Know exactly what you&apos;re buying before the hammer drops.
               </p>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="bg-white border border-gray-200 shadow-sm">
-            <CardContent className="p-8">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <MapPin className="h-6 w-6 text-blue-600" />
+            {/* Feature 2 */}
+            <div className="flex flex-col gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white shadow-xl shadow-slate-200 flex items-center justify-center text-blue-500 mb-2">
+                <Layers size={28} />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Zoning Intelligence</h3>
-              <p className="text-gray-600">
-                Auto-fill from AGRC parcel data + Utah County zoning identify.
-                Municipal zoning guidance for city properties. Buildability scores included.
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Zoning Intelligence</h3>
+              <p className="text-slate-500 leading-relaxed">
+                Instant access to building rules, lot coverage, and use cases.
+                Identify buildable lots and development potential in seconds.
               </p>
-            </CardContent>
-          </Card>
+            </div>
 
-          <Card className="bg-white border border-gray-200 shadow-sm">
-            <CardContent className="p-8">
-              <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 text-amber-600" />
+            {/* Feature 3 */}
+            <div className="flex flex-col gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white shadow-xl shadow-slate-200 flex items-center justify-center text-emerald-500 mb-2">
+                <FileCheck size={28} />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Redemption Risk Analysis</h3>
-              <p className="text-gray-600">
-                Automated Land Records scraping detects partial payments, fresh heirs,
-                absentee owners. Know redemption risk before you bid.
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight">Investor Reports</h3>
+              <p className="text-slate-500 leading-relaxed">
+                Generate professional multi-page memos for your investment committee or funds.
+                Fully printable with high-res property data.
               </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* How It Works */}
-        <div className="max-w-4xl mx-auto mb-20">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">How It Works</h2>
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-emerald-700">
-                1
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Import</h4>
-              <p className="text-sm text-gray-600">County tax sale data imported automatically</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-emerald-700">
-                2
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Analyze</h4>
-              <p className="text-sm text-gray-600">AGRC + zoning + Land Records scraped</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-emerald-700">
-                3
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Score</h4>
-              <p className="text-sm text-gray-600">Risk-adjusted opportunity scores generated</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold text-emerald-700">
-                4
-              </div>
-              <h4 className="font-semibold text-gray-900 mb-2">Bid</h4>
-              <p className="text-sm text-gray-600">Executive reports for investor decisions</p>
             </div>
           </div>
         </div>
+      </section>
 
-        {/* Demo CTA */}
-        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-12 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Live Demo: May 21, 2026</h2>
-          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-            Utah County Tax Sale happening now. See the tool in action with real auction data.
-            Filtered from 127 properties to the top 4 investment opportunities.
-          </p>
-          <Link href="/dashboard">
-            <Button size="lg" className="text-lg px-8 py-6 h-auto gap-2 bg-emerald-600 hover:bg-emerald-700">
-              <Zap className="h-5 w-5" />
-              See Live Dashboard
-            </Button>
-          </Link>
+      {/* Simple Footer */}
+      <footer className="mt-auto py-12 px-6 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-8">
+        <div className="flex items-center gap-2">
+          <Building2 size={24} className="text-slate-400" />
+          <span className="text-lg font-black tracking-tighter text-slate-400 uppercase">TaxProperty</span>
         </div>
-
-        {/* Footer */}
-        <div className="mt-20 pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
-          <p>Built for Utah real estate investors. Data sources: Utah County Treasurer, AGRC, Utah County GIS.</p>
-          <p className="mt-2">Not financial advice. Verify all data independently.</p>
+        <p className="text-slate-400 text-sm">© 2026 TaxProperty Intelligence. For institutional investors.</p>
+        <div className="flex gap-6 text-slate-400 text-sm font-bold uppercase tracking-widest">
+          <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
+          <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
         </div>
-      </div>
+      </footer>
     </div>
-  )
+  );
 }
