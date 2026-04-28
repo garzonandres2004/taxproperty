@@ -170,6 +170,8 @@ model Source {
   source_type String @default("other") // "county_listing" | "assessor" | "gis" | "manual_note" | "auction_page" | "other"
 
   created_at DateTime @default(now())
+
+  @@unique([property_id, label])
 }
 
 model OutcomeEvent {

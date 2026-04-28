@@ -20,6 +20,7 @@ interface ZoningProfile {
   rear_setback_ft: number | null
   max_height_ft: number | null
   max_lot_coverage_percent: number | null
+  frontage_required_ft: number | null
   has_slope_restrictions: boolean
   has_floodplain_restrictions: boolean
   has_wildfire_restrictions: boolean
@@ -248,9 +249,9 @@ function ReportContent() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Portfolio Overview</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-blue-50 p-4 rounded">
-              <div className="text-xs text-gray-600 uppercase tracking-wide">Total Analyzed</div>
+              <div className="text-xs text-gray-600 uppercase tracking-wide">Total Properties</div>
               <div className="text-2xl font-bold">{properties.length}</div>
-              <div className="text-xs text-gray-500">properties</div>
+              <div className="text-xs text-gray-500">in this report</div>
             </div>
             <div className="bg-green-50 p-4 rounded">
               <div className="text-xs text-gray-600 uppercase tracking-wide">BID Recommended</div>
@@ -282,14 +283,14 @@ function ReportContent() {
           </div>
 
           <div className="bg-gray-50 p-4 rounded mb-4">
-            <div className="grid grid-cols-3 gap-8 text-center">
+            <div className="grid grid-cols-4 gap-6 text-center">
               <div>
                 <div className="text-xs text-gray-600 uppercase tracking-wide mb-1">Average Payoff Ratio</div>
                 <div className="text-xl font-bold">
                   {(properties
-                    .filter(p => p.recommendation === 'bid' && p.estimated_market_value > 0 && p.total_amount_due)
-                    .reduce((sum, p) => sum + ((p.total_amount_due || 0) / p.estimated_market_value * 100), 0) /
-                    properties.filter(p => p.recommendation === 'bid' && p.estimated_market_value > 0).length || 1
+                    .filter(p => p.recommendation === 'bid' && (p.estimated_market_value || 0) > 0 && p.total_amount_due)
+                    .reduce((sum, p) => sum + ((p.total_amount_due || 0) / (p.estimated_market_value || 1) * 100), 0) /
+                    properties.filter(p => p.recommendation === 'bid' && (p.estimated_market_value || 0) > 0).length || 1
                   ).toFixed(1)}%
                 </div>
               </div>
@@ -304,8 +305,12 @@ function ReportContent() {
                 </div>
               </div>
               <div>
-                <div className="text-xs text-gray-600 uppercase tracking-wide mb-1">Event Date</div>
+                <div className="text-xs text-gray-600 uppercase tracking-wide mb-1">Auction Date</div>
                 <div className="text-xl font-bold">May 21, 2026</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-600 uppercase tracking-wide mb-1">Generated</div>
+                <div className="text-xl font-bold">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
               </div>
             </div>
           </div>
@@ -640,7 +645,7 @@ function ReportContent() {
                       <div className="font-bold text-red-800">Red Flags</div>
                       <ul className="text-sm text-red-700 mt-1 space-y-1">
                         {!zoning && <li>• Zoning analysis not completed</li>}
-                        {zoning?.buildability_score < 30 && <li>• Very low buildability score</li>}
+                        {(zoning?.buildability_score || 0) < 30 && <li>• Very low buildability score</li>}
                         {zoning && !zoning.has_legal_access && <li>• No confirmed legal access</li>}
                         {zoning?.use_difficulty === 'prohibitive' && <li>• Development appears prohibitive</li>}
                       </ul>

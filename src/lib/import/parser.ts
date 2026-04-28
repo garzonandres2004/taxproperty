@@ -211,7 +211,7 @@ function normalizeStatus(value: string): string {
 export function applyMappings(
   row: Record<string, string>,
   mappings: FieldMapping[],
-  defaults: Record<string, string | number | null>
+  defaults: Record<string, string | number | boolean | null>
 ): ImportRow {
   const result: Partial<ImportRow> = { ...defaults }
 

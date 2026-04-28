@@ -34,19 +34,21 @@
 - 11 BRMK Provo Canyon LLC parcels flagged as hillside
 - 04:016:0003 (DENSITY997 LLC) flagged as suspicious
 - Auto-fill run on all 127 properties
+- **V2 Demo Ready (April 2026):**
+  - Professional dark-themed landing page (navy/slate)
+  - Micro-parcel scoring penalty (40 points deducted, 40 parcels flagged)
+  - Portfolio Overview in reports (stats, payoff ratios, auction date)
+  - Generate Investor Report button with BID property count
 
 ## In Progress 🔄
-- V2 Demo polish (landing page, portfolio overview, investor report button)
+- V3 - Salt Lake County expansion
 
 ## Open GitHub Issues (Next to Build)
 Run: gh issue list
 
 ## Known Issues / Gaps
-- Micro-parcel penalty not implemented (small parcels score too high)
 - City zoning (102/127 properties) shows guidance only, not real zone codes
 - No authentication (single user only)
-- Landing page is default Next.js (needs professional design)
-- No "Generate Investor Report" one-click button
 
 ## Next County: Salt Lake County
 - Research needed: SLC parcel API endpoint, zoning service, CSV format

@@ -28,6 +28,7 @@ export type PropertyInput = {
   status_last_verified_at?: string | Date | null
   sale_date?: string | Date | null
   // NEW: Owner analysis fields
+  owner_name?: string | null
   owner_mailing_address?: string | null
   property_address?: string | null
   // NEW: Assemblage tracking
@@ -114,7 +115,7 @@ const RISK_WEIGHTS = {
 } as const
 
 export function calculateCapitalFit(
-  property: PropertyInput,
+  property: Partial<PropertyInput>,
   settings: UserSettingsInput = DEFAULT_SETTINGS
 ): CapitalFitDetails {
   const estimatedTotalCost = (property.total_amount_due || 0) +
@@ -209,11 +210,8 @@ export function calculateOpportunityScore(
   if (hasAddress) property_quality += 6
   if (isUsable) property_quality += 6
 
-  // Apply micro-parcel penalties (enhanced for demo quality)
-  if (isMicroParcel && !hasAssemblagePotential) {
-    // Severe penalty for unbuildable micro-parcels
-    property_quality = Math.max(0, property_quality - 40)
-  }
+  // Micro-parcel detection (penalty applied to total score below)
+  // isMicroParcel and isExtremeMicro are calculated above for use in total score
 
   // Entity-owned penalty
   if (isEntityOwned) {
@@ -237,13 +235,21 @@ export function calculateOpportunityScore(
   let data_confidence = property.data_confidence || 0
   data_confidence = Math.min(15, Math.max(0, data_confidence))
 
+  // Calculate total opportunity score
+  let total = equity_spread + property_quality + exit_ease + capital_fit + data_confidence
+
+  // Apply micro-parcel penalty to total opportunity score
+  if (isMicroParcel && !hasAssemblagePotential) {
+    total = Math.max(0, total - 40)
+  }
+
   return {
     equity_spread,
     property_quality,
     exit_ease,
     capital_fit,
     data_confidence,
-    total: equity_spread + property_quality + exit_ease + capital_fit + data_confidence,
+    total,
     capital_fit_details
   }
 }
@@ -414,7 +420,7 @@ export function calculateRecommendation(
 
   if (isMicroParcel && !hasAssemblagePotential) {
     result.microParcel = true
-    warnings.push(`Micro-parcel (${property.lot_size_sqft} sqft): Too small for standalone development`)
+    warnings.push('Micro-parcel: likely unbuildable as standalone')
   } else if (isMicroParcel && hasAssemblagePotential) {
     result.microParcel = true
     result.assemblageOpportunity = true

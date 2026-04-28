@@ -20,7 +20,7 @@ interface Property {
   capitalFit: {
     score: number
     budgetUsagePercent: number
-    totalRequired: number
+    estimatedTotalCost: number
   }
 }
 

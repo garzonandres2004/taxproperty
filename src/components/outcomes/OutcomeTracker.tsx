@@ -11,7 +11,7 @@ interface Outcome {
   event_type: string
   event_date: string
   details: string | null
-  created_at: string
+  created_at: string | Date
 }
 
 interface OutcomeTrackerProps {

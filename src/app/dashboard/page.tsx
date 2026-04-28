@@ -229,13 +229,13 @@ export default async function Dashboard() {
                     <td className="py-3">${prop.total_amount_due?.toLocaleString() || '-'}</td>
                     <td className="py-3">${prop.estimated_market_value?.toLocaleString() || '-'}</td>
                     <td className="py-3">
-                      <span className={prop.final_score >= 75 ? 'text-green-600 font-semibold' : ''}>
-                        {prop.final_score}
+                      <span className={(prop.final_score || 0) >= 75 ? 'text-green-600 font-semibold' : ''}>
+                        {prop.final_score || '-'}
                       </span>
                     </td>
                     <td className="py-3">
-                      <span className={prop.risk_score > 50 ? 'text-red-600' : prop.risk_score > 30 ? 'text-yellow-600' : 'text-green-600'}>
-                        {prop.risk_score}
+                      <span className={(prop.risk_score || 0) > 50 ? 'text-red-600' : (prop.risk_score || 0) > 30 ? 'text-yellow-600' : 'text-green-600'}>
+                        {prop.risk_score || '-'}
                       </span>
                     </td>
                     <td className="py-3">

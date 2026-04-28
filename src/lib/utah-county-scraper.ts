@@ -251,7 +251,6 @@ export function analyzeRisk(
 
     isAbsenteeOwner: false,
     ownerMailingAddress: details.mailingAddress,
-    propertyAddress: details.propertyAddress,
 
     redemptionRisk: 'low',
     recommendation: 'bid',

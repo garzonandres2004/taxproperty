@@ -14,6 +14,7 @@ export async function POST() {
       where: { is_seed: false },
       select: {
         id: true,
+        parcel_number: true,
         county: true,
         total_amount_due: true,
         estimated_market_value: true,
@@ -184,8 +185,8 @@ export async function GET() {
       success: true,
       top_bid_properties: topProperties.map(p => ({
         ...p,
-        payoff_ratio: p.estimated_market_value > 0
-          ? ((p.total_amount_due || 0) / p.estimated_market_value * 100).toFixed(1) + '%'
+        payoff_ratio: (p.estimated_market_value || 0) > 0
+          ? ((p.total_amount_due || 0) / (p.estimated_market_value || 1) * 100).toFixed(1) + '%'
           : 'N/A',
         lot_size_acres: p.lot_size_sqft
           ? (p.lot_size_sqft / 43560).toFixed(2) + ' acres'
