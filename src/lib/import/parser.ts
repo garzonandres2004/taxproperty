@@ -146,7 +146,7 @@ function normalizeCounty(value: string): string {
   return lower.replace(/\s+/g, '_')
 }
 
-// Normalize property type
+// Normalize property type from CSV value
 function normalizePropertyType(value: string): string {
   const lower = value.toLowerCase().trim()
 
@@ -168,6 +168,50 @@ function normalizePropertyType(value: string): string {
   }
   if (lower.includes('mobile') || lower.includes('manufactured')) {
     return 'mobile_home'
+  }
+
+  return 'unknown'
+}
+
+// Infer property type from multiple data points
+// Used when CSV doesn't have explicit property type
+export function inferPropertyType(
+  csvType: string,
+  propertyAddress: string | null,
+  buildingSqft: number | null,
+  yearBuilt: number | null,
+  zoning: string | null
+): string {
+  // If CSV has a valid type, use it
+  const normalizedFromCsv = normalizePropertyType(csvType)
+  if (normalizedFromCsv !== 'unknown') {
+    return normalizedFromCsv
+  }
+
+  // Detect condos from address
+  if (propertyAddress) {
+    const addr = propertyAddress.toUpperCase()
+    if (addr.includes('UNIT') || addr.includes('#') || addr.includes('APT')) {
+      return 'condo'
+    }
+  }
+
+  // Detect land: no building or year built
+  if ((!buildingSqft || buildingSqft === 0) && (!yearBuilt || yearBuilt === 0)) {
+    return 'vacant_land'
+  }
+
+  // Detect commercial from zoning
+  if (zoning) {
+    const zoneUpper = zoning.toUpperCase()
+    if (zoneUpper.startsWith('C-') || zoneUpper.startsWith('CC') || zoneUpper.startsWith('CO')) {
+      return 'commercial'
+    }
+  }
+
+  // Default to single family if has building data
+  if (buildingSqft && buildingSqft > 0) {
+    return 'single_family'
   }
 
   return 'unknown'

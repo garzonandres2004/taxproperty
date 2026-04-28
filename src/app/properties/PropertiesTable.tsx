@@ -85,6 +85,35 @@ export default function PropertiesTable({ properties }: PropertiesTableProps) {
     return 'Good'
   }
 
+  // Score color functions - consistent scale
+  // Opp Score: 0-40 red, 41-65 amber, 66-80 blue, 81-100 green
+  const getOppScoreColor = (score: number | null) => {
+    if (!score) return ''
+    if (score <= 40) return 'text-red-600 font-semibold'
+    if (score <= 65) return 'text-amber-600 font-semibold'
+    if (score <= 80) return 'text-blue-600 font-semibold'
+    return 'text-green-600 font-semibold'
+  }
+
+  // Risk Score: INVERSE - lower is better
+  // 0-30 green (low risk), 31-50 blue (moderate), 51-70 amber (elevated), 71-100 red (high)
+  const getRiskScoreColor = (score: number | null) => {
+    if (!score) return ''
+    if (score <= 30) return 'text-green-600 font-semibold'
+    if (score <= 50) return 'text-blue-600 font-semibold'
+    if (score <= 70) return 'text-amber-600 font-semibold'
+    return 'text-red-600 font-semibold'
+  }
+
+  // Final Score: same scale as Opp Score
+  const getFinalScoreColor = (score: number | null) => {
+    if (!score) return ''
+    if (score <= 40) return 'text-red-600 font-semibold'
+    if (score <= 65) return 'text-amber-600 font-semibold'
+    if (score <= 80) return 'text-blue-600 font-semibold'
+    return 'text-green-600 font-semibold'
+  }
+
   const selectedIds = Array.from(selected).join(',')
 
   return (
@@ -167,19 +196,20 @@ export default function PropertiesTable({ properties }: PropertiesTableProps) {
                 <td className="px-4 py-3">${prop.total_amount_due?.toLocaleString() || '-'}</td>
                 <td className="px-4 py-3">${prop.estimated_market_value?.toLocaleString() || '-'}</td>
                 <td className="px-4 py-3">
-                  <span className={prop.opportunity_score && prop.opportunity_score >= 75 ? 'text-green-600 font-semibold' : ''}>
+                  <span className={getOppScoreColor(prop.opportunity_score)}>
                     {prop.opportunity_score}
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className={
-                    prop.risk_score && prop.risk_score > 50 ? 'text-red-600' :
-                    prop.risk_score && prop.risk_score > 30 ? 'text-yellow-600' : 'text-green-600'
-                  }>
+                  <span className={getRiskScoreColor(prop.risk_score)}>
                     {prop.risk_score}
                   </span>
                 </td>
-                <td className="px-4 py-3 font-semibold">{prop.final_score}</td>
+                <td className="px-4 py-3">
+                  <span className={getFinalScoreColor(prop.final_score)}>
+                    {prop.final_score}
+                  </span>
+                </td>
                 <td className="px-4 py-3" title={`${prop.capitalFit.budgetUsagePercent.toFixed(0)}% of budget`}>
                   <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${getCapitalFitColor(prop.capitalFit.score, prop.capitalFit.budgetUsagePercent)}`}>
                     {getCapitalFitLabel(prop.capitalFit.score, prop.capitalFit.budgetUsagePercent)}
