@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { cleanHtmlEntities } from '@/lib/ui-utils'
 
 interface ZoningProfile {
   jurisdiction: string
@@ -63,6 +64,14 @@ interface Property {
   zoningProfile?: ZoningProfile | null
 }
 
+interface SavedReport {
+  id: string
+  name: string
+  propertyCount: number
+  createdAt: string
+  propertyIds: string[]
+}
+
 function ReportContent() {
   const searchParams = useSearchParams()
   const ids = searchParams.get('ids')
@@ -105,8 +114,45 @@ function ReportContent() {
     fetchProperties()
   }, [ids])
 
+  // Save to history when properties are loaded
+  useEffect(() => {
+    if (properties.length > 0 && ids) {
+      const saveToHistory = () => {
+        const idList = ids.split(',')
+        const reportName = `Investment Report - ${new Date().toLocaleDateString()}`
+        const stored = localStorage.getItem('taxproperty_saved_reports') || '[]'
+        const existing: SavedReport[] = JSON.parse(stored)
+
+        // Check if this exact report already exists
+        const exists = existing.some(r =>
+          r.propertyIds.length === idList.length &&
+          r.propertyIds.every((id, i) => id === idList[i])
+        )
+
+        if (!exists) {
+          const newReport: SavedReport = {
+            id: Date.now().toString(),
+            name: reportName,
+            propertyCount: properties.length,
+            createdAt: new Date().toISOString(),
+            propertyIds: idList
+          }
+          const updated = [newReport, ...existing].slice(0, 20) // Keep last 20
+          localStorage.setItem('taxproperty_saved_reports', JSON.stringify(updated))
+        }
+      }
+      saveToHistory()
+    }
+  }, [properties, ids])
+
   const handlePrint = () => {
     window.print()
+  }
+
+  // Convert parcel number format: 03:060:0016 → 30600016001 for Utah County Land Records
+  const parcelToSerial = (parcel: string) => {
+    const clean = parcel.replace(/:/g, '')
+    return clean.padStart(11, '0')
   }
 
   // Helper functions
@@ -222,7 +268,7 @@ function ReportContent() {
                   <tr key={p.id} className="border-b border-gray-300">
                     <td className="py-2 font-semibold">{idx + 1}</td>
                     <td className="py-2 font-mono text-xs">{p.parcel_number}</td>
-                    <td className="py-2 text-xs truncate max-w-[200px]">{p.property_address || 'N/A'}</td>
+                    <td className="py-2 text-xs truncate max-w-[200px]">{cleanHtmlEntities(p.property_address) || 'N/A'}</td>
                     <td className="py-2 text-right">{p.total_amount_due?.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) || 'N/A'}</td>
                     <td className="py-2 text-right">{p.estimated_market_value?.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }) || 'N/A'}</td>
                     <td className="py-2 text-center font-bold">{p.final_score?.toFixed(0) || 'N/A'}</td>
@@ -339,7 +385,7 @@ function ReportContent() {
                     <h2 className="text-2xl font-bold text-gray-900">Property #{idx + 1}</h2>
                     <span className="text-2xl font-mono font-bold text-blue-600">{property.parcel_number}</span>
                   </div>
-                  <p className="text-lg text-gray-700 mt-1">{property.property_address || 'Address not available'}</p>
+                  <p className="text-lg text-gray-700 mt-1">{cleanHtmlEntities(property.property_address) || 'Address not available'}</p>
                 </div>
                 <div className="text-right">
                   <div className="text-3xl font-bold text-blue-600">{property.final_score?.toFixed(0) || 'N/A'}</div>
@@ -654,11 +700,57 @@ function ReportContent() {
                 </div>
               )}
 
+              {/* SECTION 6: Due Diligence Links */}
+              <div className="mb-8 border-t border-gray-300 pt-6">
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-400 pb-2 mb-4">6. Due Diligence Links</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <a
+                    href={`https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded hover:bg-slate-100 transition-colors"
+                  >
+                    <span className="text-blue-600">↗</span>
+                    <span className="font-medium">Utah County Land Records</span>
+                  </a>
+                  <a
+                    href="https://www.utahcounty.gov/LandRecords/Index.asp"
+                    target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 rounded hover:bg-slate-100 transition-colors"
+                  >
+                    <span className="text-blue-600">↗</span>
+                    <span className="font-medium">Recorder / Documents</span>
+                  </a>
+                </div>
+
+                {/* Tax Sanity Check */}
+                {property.total_amount_due && property.estimated_market_value && (
+                  <div className="mt-4 p-4 bg-slate-50 rounded border border-slate-200">
+                    <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Payoff Ratio Analysis</div>
+                    <div className="flex items-center gap-4">
+                      <div>
+                        <span className="text-2xl font-bold text-gray-800">
+                          {((property.total_amount_due / property.estimated_market_value) * 100).toFixed(2)}%
+                        </span>
+                        <span className="text-sm text-gray-500 ml-2">of estimated value</span>
+                      </div>
+                      <div className="text-sm">
+                        {(() => {
+                          const ratio = (property.total_amount_due || 0) / (property.estimated_market_value || 1) * 100
+                          if (ratio < 1.5) return <span className="text-emerald-600 font-medium">Very low payoff relative to estimated value</span>
+                          if (ratio < 5) return <span className="text-blue-600 font-medium">Normal payoff ratio</span>
+                          return <span className="text-amber-600 font-medium">High payoff ratio - verify with county</span>
+                        })()}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Sources */}
               <div className="border-t border-gray-300 pt-4">
                 <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Data Sources</div>
                 <div className="flex flex-wrap gap-4 text-sm">
-                  <a href={`https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${property.parcel_number.replace(/:/g, '')}`}
+                  <a href={`https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`}
                      target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                     Utah County Land Records
                   </a>

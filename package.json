@@ -4,11 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "fetch-images": "tsx scripts/fetch-all-images.ts",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.11.2",
     "@prisma/client": "^5.22.0",
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
@@ -16,6 +19,7 @@
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.11.0",
     "next": "16.2.4",
+    "next-auth": "^4.24.14",
     "prisma": "^5.22.0",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
@@ -33,6 +37,7 @@
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.86.0"
   }
 }

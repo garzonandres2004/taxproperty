@@ -40,3 +40,18 @@ export const formatNumber = (value: number | null) => {
   if (!value) return 'N/A';
   return new Intl.NumberFormat('en-US').format(value);
 };
+
+// Clean HTML entities from strings (e.g., &nbsp; → space)
+export const cleanHtmlEntities = (str: string | null): string => {
+  if (!str) return '';
+  return str
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&#(\d+);/gi, (_, num) => String.fromCharCode(parseInt(num, 10)))
+    .replace(/\s+/g, ' ')  // Collapse multiple spaces
+    .trim();
+};

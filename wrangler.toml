@@ -1,0 +1,19 @@
+# Cloudflare Pages configuration for TaxProperty
+name = "taxproperty-utah"
+compatibility_date = "2024-01-01"
+
+# Build command
+[build]
+command = "npm run build"
+
+# Output directory (Next.js static export)
+output_dir = "dist"
+
+# Environment variables
+[vars]
+NODE_ENV = "production"
+NEXT_PUBLIC_API_MODE = "static"
+
+# Secrets (set these with: wrangler secret put NAME)
+# - GOOGLE_MAPS_API_KEY
+# - NEXTAUTH_SECRET (optional for demo)

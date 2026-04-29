@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { ExternalLink, FileSearch, Calculator } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,6 +11,12 @@ import { countyConfigs, propertyTypeLabels, occupancyLabels, statusLabels } from
 import { calculateCapitalFit, getDefaultSettings } from '@/lib/scoring'
 import OutcomeTracker from '@/components/outcomes/OutcomeTracker'
 import ZoningAutoFillButton from '@/components/ZoningAutoFillButton'
+import { MaxBidCalculator } from '@/components/MaxBidCalculator'
+import { DueDiligenceChecklist } from '@/components/DueDiligenceChecklist'
+import { PropertyAlert, ScoreBadge, RecommendationBadge, DataConfidenceIndicator, generatePropertyAlerts } from '@/components/DataTrustIndicators'
+import { PropertyImage } from '@/components/PropertyImage'
+import { SafeImageWithLink } from '@/components/SafeImage'
+import { cleanHtmlEntities } from '@/lib/ui-utils'
 
 export default async function PropertyDetailPage({
   params,
@@ -17,7 +24,7 @@ export default async function PropertyDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const [property, settings, zoningProfile] = await Promise.all([
+  const [property, settings, zoningProfile, adjacentParcels] = await Promise.all([
     prisma.property.findUnique({
       where: { id },
       include: {
@@ -28,8 +35,34 @@ export default async function PropertyDetailPage({
       }
     }),
     prisma.userSettings.findUnique({ where: { id: 'default' } }),
-    prisma.zoningProfile.findUnique({ where: { property_id: id } })
+    prisma.zoningProfile.findUnique({ where: { property_id: id } }),
+    prisma.adjacentParcel.findMany({
+      where: { property_id: id },
+      orderBy: { distance_meters: 'asc' }
+    })
   ])
+
+  // Fetch adjacent parcel details if in tax sale
+  const adjacentParcelNumbers = adjacentParcels.map(p => p.adjacent_parcel_number)
+  const adjacentInTaxSale = adjacentParcelNumbers.length > 0
+    ? await prisma.property.findMany({
+        where: {
+          parcel_number: { in: adjacentParcelNumbers },
+          is_seed: false
+        },
+        select: {
+          id: true,
+          parcel_number: true,
+          total_amount_due: true,
+          estimated_market_value: true,
+          recommendation: true,
+          final_score: true,
+          micro_parcel: true
+        }
+      })
+    : []
+
+  const taxSaleMap = new Map(adjacentInTaxSale.map(p => [p.parcel_number, p]))
 
   if (!property) {
     notFound()
@@ -86,6 +119,31 @@ export default async function PropertyDetailPage({
     ? (equitySpread / property.estimated_market_value) * 100
     : 0
 
+  // Tax Sanity Check: Payoff ratio
+  const payoffRatio = property.total_amount_due && property.estimated_market_value
+    ? (property.total_amount_due / property.estimated_market_value) * 100
+    : null
+
+  const getPayoffRatioLabel = (ratio: number) => {
+    if (ratio < 1.5) return { text: 'Very low payoff relative to estimated value', color: 'text-emerald-600', bg: 'bg-emerald-50' }
+    if (ratio < 5) return { text: 'Normal payoff ratio', color: 'text-blue-600', bg: 'bg-blue-50' }
+    return { text: 'High payoff ratio - verify with county', color: 'text-amber-600', bg: 'bg-amber-50' }
+  }
+
+  const payoffInfo = payoffRatio ? getPayoffRatioLabel(payoffRatio) : null
+
+  // Convert parcel number format: 03:060:0016 → 30600016001 for Utah County Land Records
+  const parcelToSerial = (parcel: string) => {
+    // Remove colons and pad with zeros to match Utah County's format
+    const clean = parcel.replace(/:/g, '')
+    // Pad to 11 characters as needed
+    return clean.padStart(11, '0')
+  }
+
+  // Utah County URLs for due diligence
+  const landRecordsUrl = `https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`
+  const recorderUrl = 'https://www.utahcounty.gov/LandRecords/Index.asp'
+
   // Calculate staleness for warning banner
   const getStalenessWarning = () => {
     if (!property.status_last_verified_at || !property.sale_date) return null
@@ -109,6 +167,7 @@ export default async function PropertyDetailPage({
   }
 
   const stalenessWarning = getStalenessWarning()
+  const propertyAlerts = generatePropertyAlerts(property)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -122,6 +181,20 @@ export default async function PropertyDetailPage({
             {stalenessWarning.message}
           </AlertDescription>
         </Alert>
+      )}
+
+      {/* Property Alerts */}
+      {propertyAlerts.length > 0 && (
+        <div className="space-y-3 mb-6">
+          {propertyAlerts.map((alert, index) => (
+            <PropertyAlert
+              key={index}
+              type={alert.type}
+              message={alert.message}
+              details={alert.details}
+            />
+          ))}
+        </div>
       )}
 
       {/* Header */}
@@ -150,39 +223,70 @@ export default async function PropertyDetailPage({
         </div>
       </div>
 
-      {/* Score Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card className={property.opportunity_score && property.opportunity_score >= 75 ? 'border-green-300 bg-green-50' : ''}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Opportunity Score</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold text-green-600">{property.opportunity_score}</div>
-            <p className="text-sm text-gray-500 mt-1">out of 100</p>
-          </CardContent>
-        </Card>
+      {/* Image Gallery */}
+      {(property.photo_url || property.aerial_url) && (
+        <div className="mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Property Images</CardTitle>
+              <CardDescription>Street View and aerial imagery</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {property.photo_url && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">Street View</h4>
+                    <SafeImageWithLink
+                      src={property.photo_url}
+                      alt={`Street view of ${property.parcel_number}`}
+                      href={property.photo_url.replace(/\?key=.*$/, '')}
+                    />
+                  </div>
+                )}
+                {property.aerial_url && (
+                  <div>
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">Aerial View</h4>
+                    <SafeImageWithLink
+                      src={property.aerial_url}
+                      alt={`Aerial view of ${property.parcel_number}`}
+                      href={property.aerial_url.replace(/\?key=.*$/, '')}
+                    />
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-        <Card className={property.risk_score && property.risk_score > 50 ? 'border-red-300 bg-red-50' : property.risk_score && property.risk_score > 30 ? 'border-yellow-300 bg-yellow-50' : ''}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Risk Score</CardTitle>
+      {/* Score Summary with Data Trust Indicators */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <RecommendationBadge
+          recommendation={property.recommendation}
+          showLabel={true}
+        />
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm font-medium text-gray-600">Score Breakdown</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className={`text-4xl font-bold ${property.risk_score && property.risk_score > 50 ? 'text-red-600' : property.risk_score && property.risk_score > 30 ? 'text-yellow-600' : 'text-green-600'}`}>
-              {property.risk_score}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Opportunity</span>
+                <ScoreBadge score={property.opportunity_score} type="opportunity" size="sm" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Risk</span>
+                <ScoreBadge score={property.risk_score} type="risk" size="sm" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-600">Final</span>
+                <ScoreBadge score={property.final_score} type="final" size="md" />
+              </div>
+              <div className="pt-2 border-t border-gray-100">
+                <DataConfidenceIndicator confidence={property.data_confidence} />
+              </div>
             </div>
-            <p className="text-sm text-gray-500 mt-1">lower is better</p>
-          </CardContent>
-        </Card>
-
-        <Card className={property.final_score && property.final_score >= 75 ? 'border-green-300 bg-green-50' : ''}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Final Score</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-4xl font-bold">{property.final_score}</div>
-            <p className="text-sm text-gray-500 mt-1">
-              {property.final_score && property.final_score >= 75 ? 'Strong candidate' : property.final_score && property.final_score >= 55 ? 'Moderate' : 'Weak'}
-            </p>
           </CardContent>
         </Card>
       </div>
@@ -239,6 +343,47 @@ export default async function PropertyDetailPage({
                   <span className="font-medium">${property.assessed_value?.toLocaleString() || '-'}</span>
                 </div>
               </div>
+
+              {/* Due Diligence Links */}
+              <Separator className="my-4" />
+              <div className="bg-slate-50 p-4 rounded-lg">
+                <h4 className="text-sm font-semibold text-gray-700 mb-3">Due Diligence Links</h4>
+                <div className="flex flex-wrap gap-3">
+                  <a
+                    href={landRecordsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                  >
+                    <ExternalLink size={14} />
+                    Utah County Land Records
+                  </a>
+                  <a
+                    href={recorderUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                  >
+                    <FileSearch size={14} />
+                    Recorder / Documents
+                  </a>
+                </div>
+
+                {/* Tax Sanity Check */}
+                {payoffInfo && (
+                  <div className={`mt-3 p-3 rounded ${payoffInfo.bg} border border-slate-200`}>
+                    <div className="flex items-center gap-2">
+                      <Calculator size={14} className={payoffInfo.color} />
+                      <span className="text-sm font-medium text-gray-700">
+                        Payoff Ratio: {payoffRatio?.toFixed(2)}%
+                      </span>
+                    </div>
+                    <p className={`text-xs mt-1 ${payoffInfo.color}`}>
+                      {payoffInfo.text}
+                    </p>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -280,7 +425,7 @@ export default async function PropertyDetailPage({
                   <Separator className="my-4" />
                   <div>
                     <span className="text-gray-600 text-sm">Property Address:</span>
-                    <p className="font-medium">{property.property_address}</p>
+                    <p className="font-medium">{cleanHtmlEntities(property.property_address)}</p>
                   </div>
                 </>
               )}
@@ -303,6 +448,14 @@ export default async function PropertyDetailPage({
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {/* City Zoning Warning */}
+              {zoningProfile?.jurisdiction && zoningProfile.jurisdiction !== 'Unincorporated Utah County' && (
+                <PropertyAlert
+                  type="city-zoning"
+                  message="This property is within city limits. Zoning rules are set by the city planning department, not Utah County."
+                  details="Always verify directly with the city planning department before purchasing. Auto-fill data is for reference only."
+                />
+              )}
               {zoningProfile ? (
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
@@ -398,20 +551,108 @@ export default async function PropertyDetailPage({
                 </div>
               </div>
 
-              <div className="mt-4">
-                <span className="text-gray-600 text-sm">Data Confidence:</span>
-                <div className="flex items-center gap-2 mt-1">
-                  <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-500"
-                      style={{ width: `${property.data_confidence || 0}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-medium">{property.data_confidence}%</span>
-                </div>
-              </div>
             </CardContent>
           </Card>
+
+          {/* Adjacent Parcels - Assemblage Section */}
+          {(adjacentParcels.length > 0 || property.micro_parcel) && (
+            <Card className={property.assemblage_opportunity ? 'border-purple-300' : ''}>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  Adjacent Parcels
+                  {property.assemblage_opportunity && (
+                    <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
+                      Assemblage Opportunity
+                    </span>
+                  )}
+                </CardTitle>
+                <CardDescription>
+                  {property.micro_parcel
+                    ? `This micro-parcel (${property.lot_size_sqft?.toLocaleString()} sq ft) may benefit from assemblage`
+                    : 'Neighboring parcels that could enable larger development'}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {adjacentParcels.length === 0 ? (
+                  <div className="text-center py-4 text-gray-500">
+                    <p>No adjacent parcels found.</p>
+                    <p className="text-sm mt-1">Run assemblage detection to search for neighboring properties.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="text-sm text-gray-600 mb-2">
+                      Found {adjacentParcels.length} adjacent parcel{adjacentParcels.length > 1 ? 's' : ''}
+                      {adjacentInTaxSale.length > 0 && (
+                        <span className="text-purple-600 font-medium">
+                          {' '}— {adjacentInTaxSale.length} in tax sale
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      {adjacentParcels.map((adjacent) => {
+                        const taxSaleProperty = taxSaleMap.get(adjacent.adjacent_parcel_number)
+                        return (
+                          <div
+                            key={adjacent.id}
+                            className={`p-3 rounded-lg border ${
+                              adjacent.is_in_tax_sale
+                                ? 'bg-purple-50 border-purple-200'
+                                : 'bg-gray-50 border-gray-200'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-sm">
+                                  {adjacent.adjacent_parcel_number}
+                                </span>
+                                {adjacent.is_in_tax_sale && (
+                                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                                    In Tax Sale
+                                  </span>
+                                )}
+                              </div>
+                              {taxSaleProperty ? (
+                                <Link
+                                  href={`/properties/${taxSaleProperty.id}`}
+                                  className="text-xs text-blue-600 hover:underline"
+                                >
+                                  View →
+                                </Link>
+                              ) : (
+                                <span className="text-xs text-gray-400">
+                                  Not in database
+                                </span>
+                              )}
+                            </div>
+                            {taxSaleProperty && (
+                              <div className="mt-2 text-xs text-gray-600 grid grid-cols-2 gap-2">
+                                <span>
+                                  Due: ${taxSaleProperty.total_amount_due?.toLocaleString() || 'N/A'}
+                                </span>
+                                <span>
+                                  Score: {taxSaleProperty.final_score?.toFixed(0) || 'N/A'}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        )
+                      })}
+                    </div>
+                    {property.micro_parcel && adjacentInTaxSale.length > 0 && (
+                      <div className="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                        <p className="text-sm text-purple-800 font-medium">
+                          Combined Opportunity
+                        </p>
+                        <p className="text-xs text-purple-700 mt-1">
+                          Combined lot size could support development that this micro-parcel alone cannot.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Capital Fit */}
           <Card>
@@ -493,6 +734,22 @@ export default async function PropertyDetailPage({
               </CardContent>
             </Card>
           )}
+
+          {/* Due Diligence Checklist - Dustin Hahn Workflow */}
+          <DueDiligenceChecklist
+            propertyId={id}
+            parcelNumber={property.parcel_number}
+            address={cleanHtmlEntities(property.property_address)}
+            amountDue={property.total_amount_due}
+            marketValue={property.estimated_market_value}
+          />
+
+          {/* Max Bid Calculator - Dustin Hahn Formula */}
+          <MaxBidCalculator
+            propertyId={id}
+            arv={property.estimated_market_value}
+            amountDue={property.total_amount_due}
+          />
         </div>
 
         {/* Right Column - Owner & Sources */}
@@ -511,7 +768,7 @@ export default async function PropertyDetailPage({
                 {property.owner_mailing_address && (
                   <div>
                     <span className="text-gray-600">Mailing Address:</span>
-                    <p className="font-medium">{property.owner_mailing_address}</p>
+                    <p className="font-medium">{cleanHtmlEntities(property.owner_mailing_address)}</p>
                   </div>
                 )}
               </div>

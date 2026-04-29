@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Standard config for Vercel deployment
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default nextConfig;
