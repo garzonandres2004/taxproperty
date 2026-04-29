@@ -40,19 +40,45 @@
   - Portfolio Overview in reports (stats, payoff ratios, auction date)
   - Generate Investor Report button with BID property count
 
-## In Progress 🔄
-- V3 - Salt Lake County expansion
+## Completed V2.1 ✅ (April 2026)
+- Deployed to Vercel with password protection
+- 127 Utah County properties with Street View (119/127)
+- Due diligence links (Land Records, Recorder)
+- Tax Sanity Check section
+- Data confidence indicators
+- App Store presentation created
+- Dustin Hahn research analyzed (16 videos, 46k words)
 
-## Open GitHub Issues (Next to Build)
+## V3 Features - Based on Expert Research 📋
+See: /docs/PRODUCT_IDEAS_FROM_RESEARCH.md
+
+### Priority 1 (Quick Wins)
+- #9 Max Bid Calculator (ARV × 0.80 - liens - costs)
+- #10 Tax Sanity Checker (flag suspicious payoffs)
+- #11 Title Research Checklist (9 steps)
+- #12 County Recorder Auto-Links
+- #13 Regrid Map Embed
+
+### Priority 2 (Scoring Intelligence)
+- #14 Redemption Risk Score Enhancement
+- #15 "Too Good To Be True" Detector
+
+### Priority 3 (Data Enrichment)
+- Municipal Lien Detection
+- Document Timeline
+- Red Flag Analyzer
+
+### Priority 4 (Expansion Foundation)
+- Interactive US Map (sale types by state)
+- Auction Calendar
+- State Guide Pages
+
+## Open GitHub Issues
 Run: gh issue list
 
-## Known Issues / Gaps
-- City zoning (102/127 properties) shows guidance only, not real zone codes
-- No authentication (single user only)
-
-## Next County: Salt Lake County
-- Research needed: SLC parcel API endpoint, zoning service, CSV format
-- Requires county adapter pattern implementation first
+## Next Phase: Perfect Utah County
+NOT expanding to other counties until Utah is perfect.
+Research shows Dustin Hahn's methodology - implement these features first.
 
 ## Long-term Vision
 National expansion to all US counties with SaaS subscription model.
