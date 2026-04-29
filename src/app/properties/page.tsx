@@ -13,6 +13,7 @@ import {
   Building2,
 } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
+import { PropertyImage, ParcelMapImage } from '@/components/PropertyImage'
 import { cn, formatCurrency, getScoreColor, getRiskColor, getRecommendationStyle } from '@/lib/ui-utils'
 
 interface Property {
@@ -230,6 +231,9 @@ export default function PropertiesPage() {
                         filteredProperties.length > 0 && <Check size={12} className="text-white" />}
                     </button>
                   </th>
+                  <th className="px-6 py-4 w-20">
+                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest text-center">Photo</div>
+                  </th>
                   <th className="px-6 py-4">
                     <div className="flex items-center gap-2 text-xs font-black text-slate-400 uppercase tracking-widest cursor-pointer hover:text-slate-900">
                       Parcel & Address <ArrowUpDown size={12} />
@@ -281,6 +285,20 @@ export default function PropertiesPage() {
                           <Check size={12} className="text-white" />
                         )}
                       </button>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <PropertyImage
+                          address={property.property_address}
+                          parcelNumber={property.parcel_number}
+                          propertyType={property.property_type}
+                          size="sm"
+                        />
+                        <ParcelMapImage
+                          parcelNumber={property.parcel_number}
+                          size="sm"
+                        />
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <Link href={`/properties/${property.id}`} className="flex flex-col">
