@@ -10,6 +10,10 @@ datasource db {
 model Property {
   id String @id @default(uuid())
 
+  // Ownership
+  user_id String?
+  user    User?  @relation(fields: [user_id], references: [id], onDelete: SetNull)
+
   // Core identification
   county       String // "utah" | "salt_lake"
   sale_year    Int
@@ -85,6 +89,7 @@ model Property {
   // Relations
   sources Source[]
   outcomes OutcomeEvent[]
+  adjacent_parcels AdjacentParcel[]
 
   // Timestamps
   created_at DateTime @default(now())
@@ -96,6 +101,21 @@ model Property {
   @@index([county])
   @@index([status])
   @@index([parcel_number])
+  @@index([user_id])
+}
+
+model AdjacentParcel {
+  id              String   @id @default(uuid())
+  property_id     String
+  property        Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  adjacent_parcel_number String
+  is_in_tax_sale  Boolean  @default(false)
+  distance_meters Float?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@index([property_id])
+  @@index([adjacent_parcel_number])
 }
 
 model ZoningProfile {
@@ -194,9 +214,59 @@ model OutcomeEvent {
 
 model UserSettings {
   id             String   @id @default("default")
+  user_id        String?  @unique  // Link to actual User model when available
   totalBudget    Float    @default(50000)  // total budget for this sale cycle
   maxPerProperty Float    @default(25000)  // max spend per property
   reserveBuffer  Float    @default(5000)   // amount of cash to keep uncommitted
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
+}
+
+// NextAuth.js required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  properties    Property[]
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

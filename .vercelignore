@@ -1,0 +1,12 @@
+# Exclude large files from Vercel upload
+node_modules
+npm-debug.log
+yarn-error.log
+.next
+.DS_Store
+*.log
+.vscode
+.idea
+*.swp
+*.swo
+*~

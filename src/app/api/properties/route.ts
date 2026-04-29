@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/db'
 import { scoreProperty, calculateDataConfidence, getDefaultSettings } from '@/lib/scoring'
 
@@ -19,6 +20,11 @@ async function getOrCreateSettings() {
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession()
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const data = await request.json()
 
     // Get user settings for capital fit calculation
@@ -64,9 +70,10 @@ export async function POST(request: Request) {
       sale_date: data.sale_date
     }, settings)
 
-    // Create property with calculated scores
+    // Create property with calculated scores and user ownership
     const property = await prisma.property.create({
       data: {
+        user_id: session.user.id,
         county: data.county,
         sale_year: parseInt(data.sale_year),
         sale_date: data.sale_date || null,
@@ -118,8 +125,17 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
+    // TEMP: Auth disabled for V2 demo - return all properties
+    // const session = await getServerSession()
+    // if (!session?.user?.id) {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // }
+
     const properties = await prisma.property.findMany({
-      where: { is_seed: false },
+      where: {
+        // user_id: session.user.id, // TEMP: disabled
+        is_seed: false
+      },
       orderBy: [{ final_score: 'desc' }],
       include: { sources: true }
     })

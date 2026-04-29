@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Camera, Home, TreePine, Building2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Camera, Home, TreePine, Building2, ImageOff } from 'lucide-react'
 import { cn } from '@/lib/ui-utils'
 
 interface PropertyImageProps {
@@ -10,6 +10,7 @@ interface PropertyImageProps {
   propertyType?: string | null
   size?: 'sm' | 'md' | 'lg'
   className?: string
+  photoUrl?: string | null
 }
 
 export function PropertyImage({
@@ -18,8 +19,15 @@ export function PropertyImage({
   propertyType = 'unknown',
   size = 'md',
   className,
+  photoUrl,
 }: PropertyImageProps) {
   const [error, setError] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Only render image on client to avoid SSR issues with onError
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const sizeClasses = {
     sm: 'w-12 h-12',
@@ -27,41 +35,23 @@ export function PropertyImage({
     lg: 'w-24 h-24',
   }
 
-  // Generate Google Street View URL
-  // Using Google's Street View Static API (no API key needed for demo/development)
-  const getStreetViewUrl = (addr: string) => {
-    if (!addr) return null
-    // Clean address for URL
-    const cleanAddr = addr.replace(/\s+/g, ' ').trim()
-    const encodedAddr = encodeURIComponent(`${cleanAddr}, Utah`)
-    // Using Google Street View Static API with default key (works for low volume)
-    return `https://maps.googleapis.com/maps/api/streetview?size=400x300&location=${encodedAddr}&fov=80&pitch=0&key=YOUR_API_KEY`
-  }
+  const imageUrl = photoUrl || null
 
-  // For now, use a placeholder service that works without API keys
-  // We can use Mapbox or other services, or just show icons
-  const imageUrl = address
-    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/${encodeURIComponent(address)},Utah/400x300@2x?access_token=pk.placeholder`
-    : null
-
-  // Get icon based on property type
   const getIcon = () => {
     switch (propertyType?.toLowerCase()) {
       case 'single_family':
       case 'condo':
-        return <Home className={cn('text-slate-400', size === 'sm' ? 'w-5 h-5' : size === 'md' ? 'w-6 h-6' : 'w-8 h-8')} />
+        return <Home className={cn('text-slate-400', size === 'sm' ? 'w-4 h-4' : size === 'md' ? 'w-5 h-5' : 'w-6 h-6')} />
       case 'vacant_land':
-        return <TreePine className={cn('text-emerald-400', size === 'sm' ? 'w-5 h-5' : size === 'md' ? 'w-6 h-6' : 'w-8 h-8')} />
+        return <TreePine className={cn('text-emerald-400', size === 'sm' ? 'w-4 h-4' : size === 'md' ? 'w-5 h-5' : 'w-6 h-6')} />
       case 'commercial':
       case 'multifamily':
-        return <Building2 className={cn('text-blue-400', size === 'sm' ? 'w-5 h-5' : size === 'md' ? 'w-6 h-6' : 'w-8 h-8')} />
+        return <Building2 className={cn('text-blue-400', size === 'sm' ? 'w-4 h-4' : size === 'md' ? 'w-5 h-5' : 'w-6 h-6')} />
       default:
-        return <Camera className={cn('text-slate-400', size === 'sm' ? 'w-5 h-5' : size === 'md' ? 'w-6 h-6' : 'w-8 h-8')} />
+        return <Camera className={cn('text-slate-400', size === 'sm' ? 'w-4 h-4' : size === 'md' ? 'w-5 h-5' : 'w-6 h-6')} />
     }
   }
 
-  // For demo, we'll use a colored background with icon
-  // In production, replace with actual image service
   const getBgColor = () => {
     switch (propertyType?.toLowerCase()) {
       case 'single_family':
@@ -79,22 +69,28 @@ export function PropertyImage({
     }
   }
 
-  if (error || !imageUrl) {
+  // Show fallback during SSR or if no image/error
+  if (!mounted || error || !imageUrl) {
     return (
       <div
         className={cn(
           sizeClasses[size],
-          'rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden',
-          getBgColor(),
+          'rounded-lg border border-slate-200 flex flex-col items-center justify-center overflow-hidden bg-slate-50',
           className
         )}
-        title={`${propertyType?.replace('_', ' ') || 'Property'} - ${parcelNumber}`}
+        title={`${propertyType?.replace('_', ' ') || 'Property'} - ${parcelNumber} - No image available`}
       >
-        {getIcon()}
+        <ImageOff className={cn('text-slate-300 mb-1', size === 'sm' ? 'w-4 h-4' : size === 'md' ? 'w-5 h-5' : 'w-6 h-6')} />
+        {size !== 'sm' && (
+          <span className="text-[8px] text-slate-400 text-center leading-tight px-1">
+            No image
+          </span>
+        )}
       </div>
     )
   }
 
+  // Only render img on client side
   return (
     <div
       className={cn(
@@ -130,7 +126,6 @@ export function ParcelMapImage({
     lg: 'w-24 h-24',
   }
 
-  // Utah County Parcel Map URL
   const parcelMapUrl = `https://maps.utahcounty.gov/ParcelMap/ParcelMap?parcel=${parcelNumber}`
 
   return (

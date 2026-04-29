@@ -2,6 +2,7 @@
 // Transparent, rule-based scoring per Perplexity spec
 
 import { getPresaleVolatilityScore } from '@/lib/counties/config'
+import { prisma } from '@/lib/db'
 
 export type PropertyInput = {
   county?: string // 'utah' | 'salt_lake'
@@ -605,3 +606,32 @@ export function getDefaultSettings(): UserSettingsInput {
 
 // Re-export types for convenience
 export { DEFAULT_SETTINGS }
+
+/**
+ * Load adjacent parcel numbers for a property from database
+ */
+export async function getAdjacentParcelNumbers(propertyId: string): Promise<string[]> {
+  const adjacentParcels = await prisma.adjacentParcel.findMany({
+    where: { property_id: propertyId },
+    select: { adjacent_parcel_number: true }
+  })
+  return adjacentParcels.map(p => p.adjacent_parcel_number)
+}
+
+/**
+ * Score a property with adjacent parcel data loaded from database
+ */
+export async function scorePropertyWithAdjacentData(
+  propertyId: string,
+  propertyData: PropertyInput,
+  settings?: UserSettingsInput
+): Promise<ScoringResult> {
+  const adjacentParcelNumbers = await getAdjacentParcelNumbers(propertyId)
+
+  const enrichedPropertyData: PropertyInput = {
+    ...propertyData,
+    adjacentParcelIds: adjacentParcelNumbers
+  }
+
+  return scoreProperty(enrichedPropertyData, settings)
+}

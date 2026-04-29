@@ -1,0 +1,21 @@
+import { withAuth } from 'next-auth/middleware'
+
+export default withAuth({
+  pages: {
+    signIn: '/login',
+  },
+})
+
+export const config = {
+  matcher: [
+    '/dashboard/:path*',
+    '/properties/:path*',
+    '/reports/:path*',
+    '/settings/:path*',
+    '/api/properties/:path*',
+    '/api/reports/:path*',
+    '/api/import/:path*',
+    // Exclude auth API routes and public pages
+    // '/((?!login|api/auth|_next|favicon.ico|.*\\.).*)',
+  ],
+}

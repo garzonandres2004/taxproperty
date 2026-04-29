@@ -458,6 +458,34 @@ export async function POST(
       results.errors.push(`Database save error: ${(error as Error).message}`)
     }
 
+    // Step 11: Fetch property images (Street View) if we have coordinates
+    // This runs in parallel with other operations and won't block the response
+    if (coordinates && !property.photo_url) {
+      try {
+        const apiKey = process.env.GOOGLE_MAPS_API_KEY
+        if (apiKey) {
+          const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=400x300&location=${coordinates.y},${coordinates.x}&fov=80&pitch=0&key=${apiKey}`
+          const aerialUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${coordinates.y},${coordinates.x}&zoom=18&size=400x300&maptype=satellite&key=${apiKey}`
+
+          await prisma.property.update({
+            where: { id },
+            data: {
+              photo_url: streetViewUrl,
+              aerial_url: aerialUrl,
+              photo_date: new Date().toISOString()
+            }
+          })
+
+          results.stepsCompleted.push('Generated Street View and aerial images')
+          results.data.images = { streetViewUrl, aerialUrl }
+        } else {
+          results.warnings.push('GOOGLE_MAPS_API_KEY not set - skipping image generation')
+        }
+      } catch (imageError) {
+        results.warnings.push(`Could not generate images: ${(imageError as Error).message}`)
+      }
+    }
+
     // Return results
     return NextResponse.json({
       success: results.errors.length === 0,

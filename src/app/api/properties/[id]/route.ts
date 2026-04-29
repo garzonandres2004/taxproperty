@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/db'
 import { scoreProperty, calculateDataConfidence } from '@/lib/scoring'
 
@@ -7,9 +8,18 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // TEMP: Auth disabled for V2 demo
+    // const session = await getServerSession()
+    // if (!session?.user?.id) {
+    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    // }
+
     const { id } = await params
-    const property = await prisma.property.findUnique({
-      where: { id },
+    const property = await prisma.property.findFirst({
+      where: {
+        id
+        // user_id: session.user.id // TEMP: disabled
+      },
       include: {
         sources: true,
         outcomes: {
@@ -34,7 +44,21 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getServerSession()
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { id } = await params
+
+    // Verify ownership
+    const existing = await prisma.property.findFirst({
+      where: { id, user_id: session.user.id }
+    })
+    if (!existing) {
+      return NextResponse.json({ error: 'Property not found' }, { status: 404 })
+    }
+
     const data = await request.json()
 
     // Calculate data confidence and scores
@@ -123,7 +147,21 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getServerSession()
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const { id } = await params
+
+    // Verify ownership before deleting
+    const existing = await prisma.property.findFirst({
+      where: { id, user_id: session.user.id }
+    })
+    if (!existing) {
+      return NextResponse.json({ error: 'Property not found' }, { status: 404 })
+    }
+
     await prisma.property.delete({
       where: { id }
     })
