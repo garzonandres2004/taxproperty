@@ -74,6 +74,11 @@ model Property {
   presale_volatility_risk Int @default(0) // 0-15 points added to risk
   is_active_sale_candidate Boolean @default(true)
 
+  // Property photos
+  photo_url    String?
+  photo_date   String?
+  aerial_url   String?
+
   // Seed/demo data filtering
   is_seed Boolean @default(false) // true for fake/demo properties
 

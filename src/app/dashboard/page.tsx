@@ -1,260 +1,330 @@
 import { prisma } from '@/lib/db'
-import { countyConfigs } from '@/lib/counties/config'
 import Link from 'next/link'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import {
+  Building2,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle2,
+  Filter,
+  ChevronRight,
+  Clock,
+} from 'lucide-react'
+import { AppLayout } from '@/components/AppLayout'
+import { cn, formatCurrency, getScoreColor } from '@/lib/ui-utils'
 
-export default async function Dashboard() {
-  // Get statistics
-  const [
-    totalProperties,
-    readyProperties,
-    researchingProperties,
-    redeemedCount,
-    removedCount,
-    passedCount,
-    bidProperties,
-    topProperties
-  ] = await Promise.all([
-    prisma.property.count(),
-    prisma.property.count({ where: { status: 'ready' } }),
-    prisma.property.count({ where: { status: 'researching' } }),
-    prisma.property.count({ where: { status: 'redeemed' } }),
-    prisma.property.count({ where: { status: 'removed' } }),
-    prisma.property.count({ where: { status: 'passed' } }),
-    prisma.property.count({ where: { recommendation: 'bid' } }),
-    prisma.property.findMany({
-      where: { status: { notIn: ['redeemed', 'removed', 'passed'] } },
-      orderBy: [{ final_score: 'desc' }],
-      take: 10,
-      include: { sources: true }
-    })
-  ])
+const StatCard = ({
+  label,
+  value,
+  subtext,
+  icon,
+  trend,
+  isPositive,
+}: {
+  label: string
+  value: string
+  subtext: string
+  icon: React.ReactNode
+  trend?: string
+  isPositive?: boolean
+}) => (
+  <div className="card p-6 flex flex-col gap-4">
+    <div className="flex items-center justify-between">
+      <div className="p-2 rounded-lg bg-slate-50 text-slate-600 border border-slate-100">
+        {icon}
+      </div>
+      {trend && (
+        <span
+          className={cn(
+            'text-xs font-bold px-2 py-0.5 rounded-full',
+            isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+          )}
+        >
+          {trend}
+        </span>
+      )}
+    </div>
+    <div>
+      <h3 className="text-slate-500 text-sm font-semibold uppercase tracking-wider">
+        {label}
+      </h3>
+      <p className="text-3xl font-black text-slate-900 mt-1">{value}</p>
+      <p className="text-xs text-slate-400 mt-1">{subtext}</p>
+    </div>
+  </div>
+)
 
-  const capitalNeeded = await prisma.property.aggregate({
-    where: { status: { in: ['ready', 'researching'] } },
-    _sum: { total_amount_due: true, deposit_required: true }
+export default async function DashboardPage() {
+  // Aggregate stats from database
+  const totalProperties = await prisma.property.count({ where: { is_seed: false } })
+  const highScoring = await prisma.property.count({
+    where: { is_seed: false, final_score: { gte: 80 } },
   })
 
-  const totalCapital = (capitalNeeded._sum.total_amount_due || 0) +
-                       (capitalNeeded._sum.deposit_required || 0)
+  const marketValueAgg = await prisma.property.aggregate({
+    where: { is_seed: false },
+    _sum: { estimated_market_value: true },
+  })
+  const totalMarketValue = marketValueAgg._sum.estimated_market_value || 0
 
-  const redFlags = await prisma.property.count({
-    where: {
-      OR: [
-        { risk_score: { gte: 60 } },
-        { access_risk: 'high' },
-        { title_risk: 'high' },
-        { legal_risk: 'high' }
-      ]
-    }
+  const payoffAgg = await prisma.property.aggregate({
+    where: { is_seed: false },
+    _sum: { total_amount_due: true },
+  })
+  const totalPayoff = payoffAgg._sum.total_amount_due || 0
+
+  // Score distribution
+  const scoreRanges = [
+    { range: '0-40', min: 0, max: 40, color: '#ef4444' },
+    { range: '41-65', min: 41, max: 65, color: '#f59e0b' },
+    { range: '66-80', min: 66, max: 80, color: '#3b82f6' },
+    { range: '81-100', min: 81, max: 100, color: '#10b981' },
+  ]
+
+  const distributionData = await Promise.all(
+    scoreRanges.map(async (r) => ({
+      ...r,
+      count: await prisma.property.count({
+        where: {
+          is_seed: false,
+          final_score: { gte: r.min, lte: r.max },
+        },
+      }),
+    }))
+  )
+
+  // Top properties
+  const topProperties = await prisma.property.findMany({
+    where: { is_seed: false },
+    orderBy: { final_score: 'desc' },
+    take: 5,
   })
 
-  const getRecommendationColor = (rec: string) => {
-    switch (rec) {
-      case 'bid': return 'bg-green-100 text-green-800 border-green-200'
-      case 'research_more': return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'avoid': return 'bg-red-100 text-red-800 border-red-200'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
+  // Research queue (RESEARCH_MORE recommendation)
+  const researchQueue = await prisma.property.findMany({
+    where: { is_seed: false, recommendation: 'research_more' },
+    orderBy: { final_score: 'desc' },
+    take: 3,
+  })
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ready': return 'bg-green-100 text-green-800'
-      case 'researching': return 'bg-blue-100 text-blue-800'
-      case 'new': return 'bg-gray-100 text-gray-800'
-      case 'redeemed': return 'bg-gray-100 text-gray-600'
-      case 'removed': return 'bg-red-100 text-red-800'
-      case 'passed': return 'bg-gray-100 text-gray-600'
-      default: return 'bg-gray-100 text-gray-800'
-    }
-  }
+  // BID count
+  const bidCount = await prisma.property.count({
+    where: { is_seed: false, recommendation: 'bid' },
+  })
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
-        <p className="text-gray-600 mt-1">Tax sale property analyzer for Utah County & Salt Lake County</p>
-      </div>
+    <AppLayout>
+      <div className="flex flex-col gap-10">
+        {/* Page Title & Actions */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
+              Market Overview
+            </span>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+              Investment Dashboard
+            </h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn btn-secondary gap-2">
+              <Filter size={18} /> Filters
+            </button>
+            <Link href="/import" className="btn btn-primary gap-2">
+              Import County List
+            </Link>
+          </div>
+        </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Total Properties</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{totalProperties}</div>
-            <p className="text-sm text-gray-500 mt-1">{bidProperties} recommended to bid</p>
-          </CardContent>
-        </Card>
+        {/* Primary Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            label="Total Properties"
+            value={totalProperties.toString()}
+            subtext="In Utah County 2026 Sale"
+            icon={<Building2 size={20} />}
+          />
+          <StatCard
+            label="Total Market Value"
+            value={formatCurrency(totalMarketValue)}
+            subtext="Aggregate value of auction"
+            icon={<TrendingUp size={20} />}
+            trend="+12%"
+            isPositive={true}
+          />
+          <StatCard
+            label="Auction Payoff"
+            value={formatCurrency(totalPayoff)}
+            subtext="Opening bid aggregate"
+            icon={<AlertTriangle size={20} />}
+          />
+          <StatCard
+            label="Top Opportunities"
+            value={highScoring.toString()}
+            subtext="Scored above 80/100"
+            icon={<CheckCircle2 size={20} />}
+          />
+        </div>
 
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Ready to Bid</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-green-600">{readyProperties}</div>
-            <p className="text-sm text-gray-500 mt-1">{researchingProperties} still researching</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Capital Needed</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">${totalCapital.toLocaleString()}</div>
-            <p className="text-sm text-gray-500 mt-1">Taxes + deposits</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-gray-600">Red Flags</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold text-red-600">{redFlags}</div>
-            <p className="text-sm text-gray-500 mt-1">High risk properties</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Sale Dates */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span>Utah County</span>
-              <Badge variant="outline">May 21, 2026</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm">
-              Redemption allowed until bidding starts. High pre-sale volatility - list changes frequently.
-            </p>
-            <div className="flex gap-2 text-sm">
-              <a href={countyConfigs.utah.urls.propertyList} target="_blank" rel="noopener" className="text-blue-600 hover:underline">
-                Property List →
-              </a>
-              <a href={countyConfigs.utah.urls.policies} target="_blank" rel="noopener" className="text-blue-600 hover:underline">
-                Policies →
-              </a>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Score Distribution Chart */}
+          <div className="lg:col-span-2 card p-8">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-xl font-bold text-slate-900">Score Distribution</h3>
+                <p className="text-sm text-slate-500">
+                  Distribution of property investment scores
+                </p>
+              </div>
+              <div className="hidden sm:flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    Optimal
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    High Risk
+                  </span>
+                </div>
+              </div>
             </div>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <span>Salt Lake County</span>
-              <Badge variant="outline">May 27, 2026</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <p className="text-sm">
-              Redemption allowed until sale date. Medium pre-sale volatility - verify current list.
-            </p>
-            <div className="text-sm text-gray-600">
-              Deposit Required: <span className="font-semibold">${countyConfigs.salt_lake.depositRequired?.amount}</span>
-              {!countyConfigs.salt_lake.depositRequired?.verified && (
-                <span className="text-xs text-yellow-600 ml-2">(unverified)</span>
+            {/* Simple bar chart */}
+            <div className="h-[300px] w-full flex items-end gap-8 px-4">
+              {distributionData.map((item) => (
+                <div key={item.range} className="flex-1 flex flex-col items-center gap-2">
+                  <div
+                    className="w-full rounded-t-lg transition-all"
+                    style={{
+                      backgroundColor: item.color,
+                      height: `${Math.max(
+                        (item.count / Math.max(...distributionData.map((d) => d.count))) * 250,
+                        20
+                      )}px`,
+                    }}
+                  />
+                  <div className="text-center">
+                    <div className="text-lg font-black text-slate-900">{item.count}</div>
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                      {item.range}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Top Properties List */}
+          <div className="card flex flex-col h-full">
+            <div className="p-6 border-b border-slate-100">
+              <h3 className="text-lg font-bold text-slate-900">Top Rated Bid-Targets</h3>
+              <p className="text-sm text-slate-500">Highest scores for next auction</p>
+            </div>
+            <div className="flex-grow overflow-auto">
+              {topProperties.map((property) => (
+                <Link
+                  key={property.id}
+                  href={`/properties/${property.id}`}
+                  className="flex items-center gap-4 p-4 hover:bg-slate-50 border-b border-slate-50 transition-colors"
+                >
+                  <div
+                    className={cn(
+                      'w-12 h-12 rounded-lg flex flex-col items-center justify-center font-bold',
+                      (property.final_score || 0) >= 80
+                        ? 'bg-emerald-50 text-emerald-600'
+                        : 'bg-blue-50 text-blue-600'
+                    )}
+                  >
+                    <span className="text-[10px] uppercase opacity-60 leading-none mb-0.5">
+                      Scr
+                    </span>
+                    <span className="text-lg leading-none">
+                      {Math.round(property.final_score || 0)}
+                    </span>
+                  </div>
+                  <div className="flex-grow flex flex-col overflow-hidden">
+                    <span className="text-sm font-bold text-slate-900 truncate">
+                      {property.property_address || property.parcel_number}
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">
+                      {property.parcel_number}
+                    </span>
+                  </div>
+                  <ChevronRight size={16} className="text-slate-300" />
+                </Link>
+              ))}
+            </div>
+            <Link
+              href="/properties"
+              className="p-4 text-sm font-bold text-slate-500 hover:text-slate-900 text-center uppercase tracking-widest border-t border-slate-100 transition-colors"
+            >
+              View All Properties
+            </Link>
+          </div>
+        </div>
+
+        {/* Market Activity / Recent Data */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Research Queue */}
+          <div className="card p-6 flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">Research Queue</h3>
+              <span className="badge bg-amber-50 text-amber-600">Action Required</span>
+            </div>
+            <div className="flex flex-col gap-4">
+              {researchQueue.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100"
+                >
+                  <div className="flex justify-between items-start">
+                    <span className="text-sm font-bold text-slate-900">
+                      {p.property_address || p.parcel_number}
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-bold tracking-wider uppercase bg-amber-500 text-white">
+                      RESEARCH
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
+                    <span className="flex items-center gap-1">
+                      <Clock size={12} /> Score: {Math.round(p.final_score || 0)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Building2 size={12} /> {p.property_type}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {researchQueue.length === 0 && (
+                <p className="text-sm text-slate-500 text-center py-4">
+                  No properties in research queue
+                </p>
               )}
             </div>
-            <div className="flex gap-2 text-sm">
-              <a href={countyConfigs.salt_lake.urls.main} target="_blank" rel="noopener" className="text-blue-600 hover:underline">
-                Sale Info →
-              </a>
-              <a href={countyConfigs.salt_lake.urls.policies} target="_blank" rel="noopener" className="text-blue-600 hover:underline">
-                Rules →
-              </a>
+          </div>
+
+          {/* Portfolio Generator CTA */}
+          <div className="card p-6 bg-slate-900 text-white flex flex-col justify-center gap-6 relative overflow-hidden">
+            <div className="z-10">
+              <h3 className="text-xl font-bold mb-2">Portfolio Generator</h3>
+              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                Create a custom investment fund report based on your selected properties.
+                Formatted for institutional investors.
+              </p>
+              <Link
+                href="/reports"
+                className="btn bg-emerald-500 hover:bg-emerald-600 text-white border-none w-fit px-8 py-3 font-black uppercase tracking-widest text-sm"
+              >
+                Generate Portfolio Report
+              </Link>
             </div>
-          </CardContent>
-        </Card>
+            <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none">
+              <TrendingUp size={180} />
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Outcomes Summary */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Outcome Tracking</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-gray-400"></div>
-              <span className="text-sm">Redeemed: {redeemedCount}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-400"></div>
-              <span className="text-sm">Removed: {removedCount}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-gray-400"></div>
-              <span className="text-sm">Passed: {passedCount}</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Top Properties */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Top Opportunities</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="border-b">
-                <tr className="text-left">
-                  <th className="pb-3 font-medium">Parcel</th>
-                  <th className="pb-3 font-medium">County</th>
-                  <th className="pb-3 font-medium">Amount Due</th>
-                  <th className="pb-3 font-medium">Est. Value</th>
-                  <th className="pb-3 font-medium">Score</th>
-                  <th className="pb-3 font-medium">Risk</th>
-                  <th className="pb-3 font-medium">Recommendation</th>
-                  <th className="pb-3 font-medium">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {topProperties.map((prop) => (
-                  <tr key={prop.id} className="hover:bg-gray-50">
-                    <td className="py-3">
-                      <Link href={`/properties/${prop.id}`} className="text-blue-600 hover:underline font-medium">
-                        {prop.parcel_number}
-                      </Link>
-                    </td>
-                    <td className="py-3 capitalize">{prop.county.replace('_', ' ')}</td>
-                    <td className="py-3">${prop.total_amount_due?.toLocaleString() || '-'}</td>
-                    <td className="py-3">${prop.estimated_market_value?.toLocaleString() || '-'}</td>
-                    <td className="py-3">
-                      <span className={(prop.final_score || 0) >= 75 ? 'text-green-600 font-semibold' : ''}>
-                        {prop.final_score || '-'}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <span className={(prop.risk_score || 0) > 50 ? 'text-red-600' : (prop.risk_score || 0) > 30 ? 'text-yellow-600' : 'text-green-600'}>
-                        {prop.risk_score || '-'}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${getRecommendationColor(prop.recommendation || '')}`}>
-                        {(prop.recommendation || '').replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="py-3">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(prop.status)}`}>
-                        {prop.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+    </AppLayout>
   )
 }
