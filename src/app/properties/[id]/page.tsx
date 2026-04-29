@@ -10,6 +10,8 @@ import { countyConfigs, propertyTypeLabels, occupancyLabels, statusLabels } from
 import { calculateCapitalFit, getDefaultSettings } from '@/lib/scoring'
 import OutcomeTracker from '@/components/outcomes/OutcomeTracker'
 import ZoningAutoFillButton from '@/components/ZoningAutoFillButton'
+import { MaxBidCalculator } from '@/components/MaxBidCalculator'
+import { DueDiligenceChecklist } from '@/components/DueDiligenceChecklist'
 
 export default async function PropertyDetailPage({
   params,
@@ -493,6 +495,22 @@ export default async function PropertyDetailPage({
               </CardContent>
             </Card>
           )}
+
+          {/* Due Diligence Checklist - Dustin Hahn Workflow */}
+          <DueDiligenceChecklist
+            propertyId={id}
+            parcelNumber={property.parcel_number}
+            address={property.property_address}
+            amountDue={property.total_amount_due}
+            marketValue={property.estimated_market_value}
+          />
+
+          {/* Max Bid Calculator - Dustin Hahn Formula */}
+          <MaxBidCalculator
+            propertyId={id}
+            arv={property.estimated_market_value}
+            amountDue={property.total_amount_due}
+          />
         </div>
 
         {/* Right Column - Owner & Sources */}
