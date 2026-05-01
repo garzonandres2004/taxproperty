@@ -62,6 +62,16 @@ interface Property {
   status: string
   sources: { label: string; url: string | null }[]
   zoningProfile?: ZoningProfile | null
+  titleAnalysis?: {
+    score: number
+    recommendation: string
+    mortgageStatus?: string
+    yearsSameOwner?: number | null
+    documentCount?: number
+    redFlags?: Array<{ severity: string; type: string; description: string }>
+    estimatedQuietTitleCost?: number
+    recommendedActions?: string[]
+  } | null
 }
 
 interface SavedReport {
@@ -99,6 +109,15 @@ function ReportContent() {
             const zoningRes = await fetch(`/api/properties/${id}/zoning`)
             if (zoningRes.ok) {
               property.zoningProfile = await zoningRes.json()
+            }
+
+            // Fetch title analysis if exists
+            const titleRes = await fetch(`/api/properties/${id}/title-analysis`)
+            if (titleRes.ok) {
+              const titleData = await titleRes.json()
+              if (titleData.success) {
+                property.titleAnalysis = titleData.analysis
+              }
             }
             return property
           })
@@ -700,9 +719,114 @@ function ReportContent() {
                 </div>
               )}
 
-              {/* SECTION 6: Due Diligence Links */}
+              {/* SECTION 6: Title Analysis */}
+              <div className="mb-8">
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-400 pb-2 mb-4">6. Title Analysis</h3>
+                {!property.titleAnalysis ? (
+                  <div className="text-gray-500 italic">
+                    <p>Title analysis not yet run.</p>
+                    <a
+                      href={`/properties/${property.id}`}
+                      className="text-blue-600 hover:underline text-sm mt-2 inline-block"
+                    >
+                      Run title analysis on property detail page →
+                    </a>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-6">
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Title Score</div>
+                        <div className={`font-bold text-2xl ${
+                          property.titleAnalysis.score >= 80 ? 'text-emerald-600' :
+                          property.titleAnalysis.score >= 60 ? 'text-yellow-600' :
+                          property.titleAnalysis.score >= 40 ? 'text-orange-600' :
+                          'text-red-600'
+                        }`}>
+                          {property.titleAnalysis.score}/100
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Recommendation</div>
+                        <div className={`font-bold text-lg uppercase ${
+                          property.titleAnalysis.recommendation === 'clean' ? 'text-emerald-600' :
+                          property.titleAnalysis.recommendation === 'caution' ? 'text-yellow-600' :
+                          property.titleAnalysis.recommendation === 'danger' ? 'text-orange-600' :
+                          'text-red-600'
+                        }`}>
+                          {property.titleAnalysis.recommendation}
+                        </div>
+                      </div>
+                    </div>
+
+                    {property.titleAnalysis.mortgageStatus && (
+                      <div className="flex gap-4">
+                        <div>
+                          <div className="text-xs text-gray-500 uppercase tracking-wide">Mortgage Status</div>
+                          <div className="font-semibold capitalize">{property.titleAnalysis.mortgageStatus.replace('_', ' ')}</div>
+                        </div>
+                        {property.titleAnalysis.yearsSameOwner && (
+                          <div>
+                            <div className="text-xs text-gray-500 uppercase tracking-wide">Years Same Owner</div>
+                            <div className="font-semibold">{property.titleAnalysis.yearsSameOwner}</div>
+                          </div>
+                        )}
+                        <div>
+                          <div className="text-xs text-gray-500 uppercase tracking-wide">Document Count</div>
+                          <div className="font-semibold">{property.titleAnalysis.documentCount}</div>
+                        </div>
+                      </div>
+                    )}
+
+                    {property.titleAnalysis.redFlags && property.titleAnalysis.redFlags.length > 0 && (
+                      <div className="bg-red-50 border border-red-200 p-4 rounded">
+                        <div className="text-xs text-red-700 uppercase tracking-wide mb-2">Red Flags ({property.titleAnalysis.redFlags.length})</div>
+                        <ul className="space-y-1">
+                          {property.titleAnalysis.redFlags.slice(0, 5).map((flag: any, i: number) => (
+                            <li key={i} className="text-sm text-red-800">
+                              • [{flag.severity.toUpperCase()}] {flag.type}: {flag.description}
+                            </li>
+                          ))}
+                          {property.titleAnalysis.redFlags.length > 5 && (
+                            <li className="text-sm text-red-600 italic">...and {property.titleAnalysis.redFlags.length - 5} more</li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                    {property.titleAnalysis.estimatedQuietTitleCost && (
+                      <div className="flex items-center gap-2">
+                        <div className="text-xs text-gray-500 uppercase tracking-wide">Est. Quiet Title Cost:</div>
+                        <div className="font-semibold">${property.titleAnalysis.estimatedQuietTitleCost.toLocaleString()}</div>
+                      </div>
+                    )}
+
+                    {property.titleAnalysis.recommendedActions && property.titleAnalysis.recommendedActions.length > 0 && (
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase tracking-wide mb-2">Recommended Actions</div>
+                        <ol className="list-decimal list-inside space-y-1 text-sm">
+                          {property.titleAnalysis.recommendedActions.slice(0, 5).map((action: string, i: number) => (
+                            <li key={i}>{action}</li>
+                          ))}
+                        </ol>
+                      </div>
+                    )}
+
+                    <a
+                      href={`https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-blue-600 hover:underline text-sm mt-2"
+                    >
+                      View Full Document History →
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION 7: Due Diligence Links */}
               <div className="mb-8 border-t border-gray-300 pt-6">
-                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-400 pb-2 mb-4">6. Due Diligence Links</h3>
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-400 pb-2 mb-4">7. Due Diligence Links</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <a
                     href={`https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`}

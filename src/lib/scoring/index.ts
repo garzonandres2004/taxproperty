@@ -3,6 +3,20 @@
 
 import { getPresaleVolatilityScore } from '@/lib/counties/config'
 import { prisma } from '@/lib/db'
+import {
+  calculateRedemptionRisk,
+  detectOwnerType,
+  detectAbsenteeOwner,
+  quickRedemptionAssessment,
+  RedemptionRiskInput,
+  RedemptionRiskResult
+} from './redemption-risk'
+import {
+  detectTooGoodToBeTrue,
+  quickTGTTBCheck,
+  TooGoodToBeTrueInput,
+  TooGoodResult
+} from './too-good-detector'
 
 export type PropertyInput = {
   county?: string // 'utah' | 'salt_lake'
@@ -24,16 +38,23 @@ export type PropertyInput = {
   title_risk: string
   legal_risk: string
   marketability_risk: string
-  presale_volatility_risk?: number // Override value
+  presale_volatility_risk?: number
   is_active_sale_candidate?: boolean
   status_last_verified_at?: string | Date | null
   sale_date?: string | Date | null
-  // NEW: Owner analysis fields
   owner_name?: string | null
   owner_mailing_address?: string | null
   property_address?: string | null
-  // NEW: Assemblage tracking
   adjacentParcelIds?: string[]
+  years_delinquent?: number
+  has_partial_payments?: boolean
+  city?: string | null
+  is_unincorporated?: boolean
+  opening_bid?: number | null
+  outcomes?: Array<{ event_type: string; event_date: string; details?: string | null }>
+  has_zoning_profile?: boolean
+  buildability_score?: number | null
+  is_otc?: boolean
 }
 
 export type CapitalFitDetails = {
@@ -49,6 +70,9 @@ export type OpportunityBreakdown = {
   exit_ease: number
   capital_fit: number
   data_confidence: number
+  redemption_risk_adjustment: number
+  too_good_adjustment: number
+  otc_adjustment: number
   total: number
   capital_fit_details: CapitalFitDetails
 }
@@ -68,6 +92,53 @@ export type UserSettingsInput = {
   reserveBuffer: number
 }
 
+export type RedFlagResult = {
+  flag_type: string
+  message: string
+  severity: 'warning' | 'critical' | 'info'
+  details?: string
+  calculation?: {
+    tax_amount: number
+    market_value: number
+    ratio_percent: number
+    threshold_percent: number
+  }
+}
+
+const TAX_SANITY_THRESHOLD = 0.3
+
+export function calculateTaxSanityCheck(
+  total_amount_due: number | null,
+  estimated_market_value: number | null
+): RedFlagResult | null {
+  if (total_amount_due == null || estimated_market_value == null) {
+    return null
+  }
+
+  if (estimated_market_value <= 0) {
+    return null
+  }
+
+  const ratioPercent = (total_amount_due / estimated_market_value) * 100
+
+  if (ratioPercent < TAX_SANITY_THRESHOLD) {
+    return {
+      flag_type: 'suspicious_tax_amount',
+      message: 'Tax amount seems too low for property value - investigate occupancy, liens, or title issues',
+      severity: 'warning',
+      details: `Tax is only ${ratioPercent.toFixed(2)}% of value (expected >${TAX_SANITY_THRESHOLD}%)`,
+      calculation: {
+        tax_amount: total_amount_due,
+        market_value: estimated_market_value,
+        ratio_percent: ratioPercent,
+        threshold_percent: TAX_SANITY_THRESHOLD
+      }
+    }
+  }
+
+  return null
+}
+
 export type ScoringResult = {
   opportunity_score: number
   risk_score: number
@@ -82,38 +153,24 @@ export type ScoringResult = {
     adjustedScore: number
     stalenessPenalty: number
   }
+  redemption_risk: RedemptionRiskResult | null
+  too_good_to_be_true: TooGoodResult | null
   reasons: string[]
   warnings: string[]
-  // NEW: Strategic analysis fields
+  red_flags: RedFlagResult[]
   maxBid?: number
   absenteeOwner?: boolean
   microParcel?: boolean
   assemblageOpportunity?: boolean
+  title_score?: number
+  title_recommendation?: string
 }
 
-// Default settings for backward compatibility
 const DEFAULT_SETTINGS: UserSettingsInput = {
   totalBudget: 50000,
   maxPerProperty: 25000,
   reserveBuffer: 5000
 }
-
-// Constants
-const OPPORTUNITY_WEIGHTS = {
-  equity_spread: 30,
-  property_quality: 20,
-  exit_ease: 20,
-  capital_fit: 15,
-  data_confidence: 15
-} as const
-
-const RISK_WEIGHTS = {
-  legal_process: 25,  // Reduced from 30 to make room for volatility
-  property: 20,       // Reduced from 25
-  execution: 20,      // Reduced from 25
-  market: 15,         // Reduced from 20
-  presale_volatility: 20 // NEW: Pre-sale instability risk
-} as const
 
 export function calculateCapitalFit(
   property: Partial<PropertyInput>,
@@ -132,7 +189,6 @@ export function calculateCapitalFit(
   const notes: string[] = []
   let score = 0
 
-  // Check hard limits first
   if (estimatedTotalCost > settings.maxPerProperty) {
     notes.push(`Exceeds max per property limit ($${settings.maxPerProperty.toLocaleString()})`)
     score = 0
@@ -150,7 +206,6 @@ export function calculateCapitalFit(
     score = 15
   }
 
-  // Additional note for budget usage
   if (budgetUsagePercent <= 25) {
     notes.push(`Uses ${budgetUsagePercent.toFixed(0)}% of total budget - very conservative`)
   } else if (budgetUsagePercent <= 50) {
@@ -169,93 +224,6 @@ export function calculateCapitalFit(
   }
 }
 
-export function calculateOpportunityScore(
-  property: PropertyInput,
-  settings: UserSettingsInput = DEFAULT_SETTINGS
-): OpportunityBreakdown {
-  // 1. Equity Spread (30 points)
-  let equity_spread = 0
-  if (property.total_amount_due != null && property.estimated_market_value != null) {
-    const totalCost = (property.total_amount_due || 0) +
-                      (property.estimated_repair_cost || 0) +
-                      (property.estimated_cleanup_cost || 0) +
-                      (property.estimated_closing_cost || 0)
-    const spread = (property.estimated_market_value || 0) - totalCost
-    const spreadPercent = property.estimated_market_value > 0
-      ? spread / property.estimated_market_value
-      : 0
-
-    if (spreadPercent >= 0.3) equity_spread = 30
-    else if (spreadPercent >= 0.15) equity_spread = 20
-    else if (spreadPercent >= 0.05) equity_spread = 10
-    else if (spreadPercent > 0) equity_spread = 5
-    else equity_spread = 0
-  }
-
-  // 2. Property Quality (20 points)
-  let property_quality = 0
-  const isStandardType = ['single_family', 'condo'].includes(property.property_type)
-  const hasAddress = property.zoning != null
-  const isUsable = property.property_type !== 'vacant_land' || (property.lot_size_sqft && property.lot_size_sqft > 5000)
-
-  // ENHANCED MICRO-PARCEL FILTER for Demo Quality
-  const isMicroParcel = property.lot_size_sqft && property.lot_size_sqft < 2000 && property.property_type !== 'condo'
-  const isExtremeMicro = property.lot_size_sqft && property.lot_size_sqft < 500 && property.property_type !== 'condo'
-  const hasAssemblagePotential = property.adjacentParcelIds && property.adjacentParcelIds.length > 0
-
-  // ENTITY-OWNED PENALTY: LLCs, Cities, HOAs are harder to acquire
-  const ownerName = (property as any).owner_name || ''
-  const isEntityOwned = /LLC|CITY|HOA|ASSOC|CORP|INC|TRUST/i.test(ownerName)
-
-  if (isStandardType) property_quality += 8
-  if (hasAddress) property_quality += 6
-  if (isUsable) property_quality += 6
-
-  // Micro-parcel detection (penalty applied to total score below)
-  // isMicroParcel and isExtremeMicro are calculated above for use in total score
-
-  // Entity-owned penalty
-  if (isEntityOwned) {
-    property_quality = Math.max(0, property_quality - 15)
-  }
-
-  // 3. Exit Ease (20 points)
-  let exit_ease = 0
-  const isResidential = ['single_family', 'condo', 'multifamily'].includes(property.property_type)
-  const isOccupied = property.occupancy_status === 'owner_occupied' || property.occupancy_status === 'tenant'
-
-  if (isResidential) exit_ease += 10
-  if (isOccupied) exit_ease += 5
-  if (property.building_sqft && property.building_sqft > 800) exit_ease += 5
-
-  // 4. Capital Fit (15 points) - Now uses user settings
-  const capital_fit_details = calculateCapitalFit(property, settings)
-  const capital_fit = capital_fit_details.score
-
-  // 5. Data Confidence (15 points)
-  let data_confidence = property.data_confidence || 0
-  data_confidence = Math.min(15, Math.max(0, data_confidence))
-
-  // Calculate total opportunity score
-  let total = equity_spread + property_quality + exit_ease + capital_fit + data_confidence
-
-  // Apply micro-parcel penalty to total opportunity score
-  if (isMicroParcel && !hasAssemblagePotential) {
-    total = Math.max(0, total - 40)
-  }
-
-  return {
-    equity_spread,
-    property_quality,
-    exit_ease,
-    capital_fit,
-    data_confidence,
-    total,
-    capital_fit_details
-  }
-}
-
-// Calculate pre-sale volatility risk (0-20 points)
 function calculatePresaleVolatility(property: PropertyInput): {
   score: number
   details: {
@@ -266,36 +234,30 @@ function calculatePresaleVolatility(property: PropertyInput): {
     stalenessPenalty: number
   }
 } {
-  // Base score from county config (0-15 based on preSaleInstability)
   const baseScore = property.presale_volatility_risk ?? getPresaleVolatilityScore(property.county || '')
 
-  // County-specific factors
   let countyFactor = 'Standard county behavior'
   let adjustedScore = baseScore
   let stalenessPenalty = 0
 
   if (property.county === 'utah') {
     countyFactor = 'Utah County: High pre-sale instability. Properties can be redeemed until bidding starts. List changes in real-time.'
-    // Utah County gets max volatility due to redemption-until-bidding + live list behavior
     adjustedScore = Math.max(baseScore, 10)
   } else if (property.county === 'salt_lake') {
     countyFactor = 'Salt Lake County: Medium-high instability. Redemption possible until sale.'
     adjustedScore = Math.max(baseScore, 8)
   }
 
-  // Boost if not an active sale candidate
   if (property.is_active_sale_candidate === false) {
     adjustedScore += 5
     countyFactor += ' Property marked as inactive/pulled from sale.'
   }
 
-  // Boost if data confidence is low (means we don't know current status)
   if (!property.data_confidence || property.data_confidence < 40) {
     adjustedScore += 3
     countyFactor += ' Low data confidence increases uncertainty.'
   }
 
-  // Staleness-based penalties: add volatility when data is old and sale is near
   if (property.status_last_verified_at && property.sale_date) {
     const now = Date.now()
     const verifiedTime = new Date(property.status_last_verified_at).getTime()
@@ -316,8 +278,6 @@ function calculatePresaleVolatility(property: PropertyInput): {
   }
 
   adjustedScore += stalenessPenalty
-
-  // Cap at 20 points
   adjustedScore = Math.min(20, adjustedScore)
 
   return {
@@ -332,15 +292,119 @@ function calculatePresaleVolatility(property: PropertyInput): {
   }
 }
 
+export function calculateOpportunityScore(
+  property: PropertyInput,
+  settings: UserSettingsInput = DEFAULT_SETTINGS,
+  redemptionRisk: RedemptionRiskResult | null = null,
+  tooGoodResult: TooGoodResult | null = null
+): OpportunityBreakdown {
+  let equity_spread = 0
+  if (property.total_amount_due != null && property.estimated_market_value != null) {
+    const totalCost = (property.total_amount_due || 0) +
+                      (property.estimated_repair_cost || 0) +
+                      (property.estimated_cleanup_cost || 0) +
+                      (property.estimated_closing_cost || 0)
+    const spread = (property.estimated_market_value || 0) - totalCost
+    const spreadPercent = property.estimated_market_value > 0
+      ? spread / property.estimated_market_value
+      : 0
+
+    if (spreadPercent >= 0.3) equity_spread = 30
+    else if (spreadPercent >= 0.15) equity_spread = 20
+    else if (spreadPercent >= 0.05) equity_spread = 10
+    else if (spreadPercent > 0) equity_spread = 5
+    else equity_spread = 0
+  }
+
+  let property_quality = 0
+  const isStandardType = ['single_family', 'condo'].includes(property.property_type)
+  const hasAddress = property.zoning != null
+  const isUsable = property.property_type !== 'vacant_land' || (property.lot_size_sqft && property.lot_size_sqft > 5000)
+
+  const isMicroParcel = property.lot_size_sqft && property.lot_size_sqft < 2000 && property.property_type !== 'condo'
+  const hasAssemblagePotential = property.adjacentParcelIds && property.adjacentParcelIds.length > 0
+
+  const ownerName = (property as any).owner_name || ''
+  const isEntityOwned = /LLC|CITY|HOA|ASSOC|CORP|INC|TRUST/i.test(ownerName)
+
+  if (isStandardType) property_quality += 8
+  if (hasAddress) property_quality += 6
+  if (isUsable) property_quality += 6
+
+  if (isEntityOwned) {
+    property_quality = Math.max(0, property_quality - 15)
+  }
+
+  let exit_ease = 0
+  const isResidential = ['single_family', 'condo', 'multifamily'].includes(property.property_type)
+  const isOccupied = property.occupancy_status === 'owner_occupied' || property.occupancy_status === 'tenant'
+
+  if (isResidential) exit_ease += 10
+  if (isOccupied) exit_ease += 5
+  if (property.building_sqft && property.building_sqft > 800) exit_ease += 5
+
+  const capital_fit_details = calculateCapitalFit(property, settings)
+  const capital_fit = capital_fit_details.score
+
+  let data_confidence = property.data_confidence || 0
+  data_confidence = Math.min(15, Math.max(0, data_confidence))
+
+  let total = equity_spread + property_quality + exit_ease + capital_fit + data_confidence
+
+  if (isMicroParcel && !hasAssemblagePotential) {
+    total = Math.max(0, total - 40)
+  }
+
+  let redemption_risk_adjustment = 0
+  if (redemptionRisk) {
+    if (redemptionRisk.level === 'LOW') {
+      redemption_risk_adjustment = 5
+    } else if (redemptionRisk.level === 'HIGH') {
+      redemption_risk_adjustment = -10
+    }
+    total = Math.max(0, total + redemption_risk_adjustment)
+  }
+
+  let too_good_adjustment = 0
+  if (tooGoodResult?.triggered) {
+    const criticalCount = tooGoodResult.triggers.filter(t => t.severity === 'critical').length
+    if (criticalCount > 0) {
+      too_good_adjustment = -15 * criticalCount
+    } else {
+      too_good_adjustment = -5
+    }
+    total = Math.max(0, total + too_good_adjustment)
+  }
+
+  // OTC (Over The Counter) bonus: +10 points
+  // OTC properties are unsold from previous auctions and may have less competition
+  let otc_adjustment = 0
+  if (property.is_otc) {
+    otc_adjustment = 10
+    total = Math.min(100, total + otc_adjustment)
+  }
+
+  return {
+    equity_spread,
+    property_quality,
+    exit_ease,
+    capital_fit,
+    data_confidence,
+    redemption_risk_adjustment,
+    too_good_adjustment,
+    otc_adjustment,
+    total,
+    capital_fit_details
+  }
+}
+
 export function calculateRiskScore(property: PropertyInput): RiskBreakdown {
-  // 1. Legal/Process Risk (25 points)
   let legal_process = 0
   if (property.legal_risk === 'high') legal_process = 25
   else if (property.legal_risk === 'medium') legal_process = 12
   else if (property.legal_risk === 'unknown') legal_process = 17
   else legal_process = 5
 
-  // 2. Property Risk (20 points)
   let property_risk = 0
   if (property.access_risk === 'high') property_risk += 12
   else if (property.access_risk === 'medium') property_risk += 6
@@ -350,21 +414,18 @@ export function calculateRiskScore(property: PropertyInput): RiskBreakdown {
   else if (property.title_risk === 'medium') property_risk += 4
   else if (property.title_risk === 'unknown') property_risk += 6
 
-  // 3. Execution Risk (20 points)
   let execution = 0
   if (property.deposit_required && property.deposit_required > 1000) execution += 12
   else if (property.deposit_required && property.deposit_required > 500) execution += 6
 
   if (!property.data_confidence || property.data_confidence < 30) execution += 8
 
-  // 4. Market Risk (15 points)
   let market = 0
   if (property.marketability_risk === 'high') market = 15
   else if (property.marketability_risk === 'medium') market = 8
   else if (property.marketability_risk === 'unknown') market = 10
   else market = 4
 
-  // 5. Pre-sale Volatility Risk (20 points) - NEW
   const volatility = calculatePresaleVolatility(property)
 
   return {
@@ -391,6 +452,8 @@ export function calculateRecommendation(
   opportunity: number,
   risk: number,
   property: PropertyInput,
+  redemptionRisk: RedemptionRiskResult | null,
+  tooGoodResult: TooGoodResult | null,
   volatilityDetails?: { countyFactor: string },
   capitalFitDetails?: CapitalFitDetails
 ): RecommendationResult {
@@ -402,12 +465,10 @@ export function calculateRecommendation(
     warnings: []
   }
 
-  // ENHANCED MICRO-PARCEL FILTER for Demo
   const isMicroParcel = property.lot_size_sqft && property.lot_size_sqft < 2000 && property.property_type !== 'condo'
   const isExtremeMicro = property.lot_size_sqft && property.lot_size_sqft < 500 && property.property_type !== 'condo'
   const hasAssemblagePotential = property.adjacentParcelIds && property.adjacentParcelIds.length > 0
 
-  // ENTITY-OWNED DETECTION
   const ownerName = (property as any).owner_name || ''
   const isEntityOwned = /LLC|CITY|HOA|ASSOC|CORP|INC|TRUST/i.test(ownerName)
 
@@ -428,24 +489,43 @@ export function calculateRecommendation(
     reasons.push('Assemblage opportunity with adjacent parcels')
   }
 
-  // Entity-owned penalty flag
   if (isEntityOwned) {
     warnings.push(`Entity-owned (${ownerName.substring(0, 30)}...): May have complex title or legal protections`)
   }
 
-  // OWNER MAILING ADDRESS ANALYSIS: Absentee owner detection
   if (property.owner_mailing_address && property.property_address) {
     const ownerMailing = property.owner_mailing_address.toUpperCase().replace(/\s+/g, ' ')
     const propAddress = property.property_address.toUpperCase().replace(/\s+/g, ' ')
 
-    // Check if mailing address is different (absentee owner)
     if (!ownerMailing.includes(propAddress.split(',')[0]) && !propAddress.includes(ownerMailing.split(',')[0])) {
       result.absenteeOwner = true
       reasons.push('Absentee owner - lower redemption risk')
     }
   }
 
-  // Hard stops
+  if (redemptionRisk) {
+    if (redemptionRisk.level === 'HIGH') {
+      warnings.push(`High redemption risk (${redemptionRisk.percentage}%): ${redemptionRisk.factors[0]}`)
+      if (opportunity < 60) {
+        reasons.push('Owner likely to redeem - limited opportunity window')
+      }
+    } else if (redemptionRisk.level === 'LOW') {
+      reasons.push(`Low redemption risk (${redemptionRisk.percentage}%) - owner unlikely to act`)
+    } else {
+      warnings.push(`Moderate redemption risk (${redemptionRisk.percentage}%) - monitor for redemption activity`)
+    }
+  }
+
+  if (tooGoodResult?.triggered) {
+    const criticalCount = tooGoodResult.triggers.filter(t => t.severity === 'critical').length
+    if (criticalCount > 0) {
+      warnings.push(`CRITICAL: ${tooGoodResult.summary}`)
+      warnings.push(...tooGoodResult.checklist.slice(0, 3))
+    } else {
+      warnings.push(`Warning: ${tooGoodResult.summary}`)
+    }
+  }
+
   if (opportunity < 30) {
     result.recommendation = 'avoid'
     result.reasons = ['Opportunity score too low']
@@ -456,7 +536,6 @@ export function calculateRecommendation(
     return result
   }
 
-  // Hard stops from property data
   if (!property.total_amount_due) {
     result.recommendation = 'avoid'
     result.reasons = ['Missing tax amount due']
@@ -471,7 +550,13 @@ export function calculateRecommendation(
     return result
   }
 
-  // Capital fit warning
+  if (tooGoodResult?.severity === 'high_suspicion' && opportunity < 50) {
+    result.recommendation = 'avoid'
+    result.reasons.push('Multiple suspicious indicators - likely hidden issues')
+    result.warnings.push('Complete full investigation checklist before reconsidering')
+    return result
+  }
+
   if (capitalFitDetails) {
     if (capitalFitDetails.score === 0) {
       warnings.push(`Capital constraint: ${capitalFitDetails.notes[0]}`)
@@ -480,34 +565,43 @@ export function calculateRecommendation(
     }
   }
 
-  // Pre-sale volatility warning
   if (property.county === 'utah' || property.county === 'salt_lake') {
     warnings.push(`Pre-sale volatility: ${volatilityDetails?.countyFactor || 'Property may be redeemed or removed before sale'}`)
   }
 
-  // MAX BID CALCULATION: (Market Value * 0.70) - Repairs - Delinquent Debt
   if (property.estimated_market_value && property.total_amount_due) {
     const repairCost = (property.estimated_repair_cost || 0) + (property.estimated_cleanup_cost || 0)
     const maxBid = Math.round((property.estimated_market_value * 0.70) - repairCost - property.total_amount_due)
-    const minBid = Math.round(property.total_amount_due * 1.1) // 10% premium over payoff
+    const minBid = Math.round(property.total_amount_due * 1.1)
 
     result.maxBid = Math.max(minBid, Math.min(maxBid, property.estimated_market_value * 0.5))
 
-    // Add bidding strategy note
     if (result.maxBid > property.total_amount_due * 2) {
       reasons.push(`High equity potential: Max bid $${result.maxBid.toLocaleString()} vs $${Math.round(property.total_amount_due).toLocaleString()} payoff`)
     }
   }
 
-  // Recommendation logic (adjusted thresholds for demo - strict filtering)
-  if (opportunity >= 70 && risk <= 40 && !result.microParcel) {
+  let opportunityThreshold = 70
+  let riskThreshold = 40
+
+  if (redemptionRisk?.level === 'LOW') {
+    opportunityThreshold = 65
+  } else if (redemptionRisk?.level === 'HIGH') {
+    opportunityThreshold = 75
+    riskThreshold = 35
+  }
+
+  if (tooGoodResult?.severity === 'high_suspicion') {
+    opportunityThreshold += 10
+  }
+
+  if (opportunity >= opportunityThreshold && risk <= riskThreshold && !result.microParcel) {
     result.recommendation = 'bid'
     reasons.push('Strong opportunity with manageable risk')
     if (opportunity >= 85) reasons.push('Excellent equity spread')
     if (risk <= 25) reasons.push('Low risk profile')
     if (result.absenteeOwner) reasons.push('Absentee owner reduces redemption risk')
 
-    // Special note for pre-sale unstable counties
     if (property.county === 'utah' || property.county === 'salt_lake') {
       warnings.push('Monitor county list closely - property status may change before sale')
     }
@@ -518,6 +612,14 @@ export function calculateRecommendation(
     if (result.microParcel && !result.assemblageOpportunity) reasons.push('Micro-parcel requires assemblage verification')
     if (!property.estimated_market_value) warnings.push('Missing market value estimate')
     if (property.data_confidence && property.data_confidence < 50) warnings.push('Low data confidence')
+
+    if (redemptionRisk?.level === 'HIGH') {
+      reasons.push('Research redemption activity - owner showing signs of intent')
+    }
+
+    if (tooGoodResult?.triggered && tooGoodResult.severity !== 'high_suspicion') {
+      reasons.push('Investigate warning signs before proceeding')
+    }
   } else {
     result.recommendation = 'avoid'
     reasons.push('Low opportunity or high risk')
@@ -532,25 +634,84 @@ export function scoreProperty(
   property: PropertyInput,
   settings: UserSettingsInput = DEFAULT_SETTINGS
 ): ScoringResult {
-  const opportunity = calculateOpportunityScore(property, settings)
+  const redemptionRiskInput: RedemptionRiskInput = {
+    yearsDelinquent: property.years_delinquent || 1,
+    ownerName: property.owner_name || null,
+    ownerMailingAddress: property.owner_mailing_address || null,
+    propertyAddress: property.property_address || null,
+    paymentPattern: property.has_partial_payments ? 'partial' : 'unknown',
+    hasPartialPayments: property.has_partial_payments || false,
+    propertyUse: property.occupancy_status === 'owner_occupied' ? 'owner_occupied' :
+                 property.occupancy_status === 'tenant' ? 'rental' :
+                 property.occupancy_status === 'vacant' ? 'vacant' : 'unknown',
+    occupancyStatus: property.occupancy_status,
+    totalAmountDue: property.total_amount_due,
+    estimatedMarketValue: property.estimated_market_value,
+    previousAuctionPasses: property.outcomes?.filter(o => o.event_type === 'passed').length || 0
+  }
+
+  const redemptionRisk = calculateRedemptionRisk(redemptionRiskInput)
+
+  const tooGoodInput: TooGoodToBeTrueInput = {
+    openingBid: property.opening_bid ?? property.total_amount_due,
+    estimatedMarketValue: property.estimated_market_value,
+    assessedValue: property.assessed_value,
+    totalAmountDue: property.total_amount_due,
+    propertyType: property.property_type,
+    lotSizeSqft: property.lot_size_sqft,
+    buildingSqft: property.building_sqft,
+    yearBuilt: property.year_built,
+    city: property.city ?? property.property_address?.split(',')[1]?.trim() ?? null,
+    zoning: property.zoning,
+    isUnincorporated: property.is_unincorporated || false,
+    opportunityScore: null,
+    riskScore: null,
+    finalScore: null,
+    outcomes: property.outcomes?.map(o => ({
+      event_type: o.event_type,
+      event_date: o.event_date,
+      details: o.details ?? null
+    })) || [],
+    accessRisk: property.access_risk,
+    titleRisk: property.title_risk,
+    legalRisk: property.legal_risk,
+    marketabilityRisk: property.marketability_risk,
+    dataConfidence: property.data_confidence,
+    hasZoningProfile: property.has_zoning_profile || false,
+    buildabilityScore: property.buildability_score ?? null
+  }
+
+  const baseOpportunity = calculateOpportunityScore(property, settings, null, null)
+  tooGoodInput.opportunityScore = baseOpportunity.total
+
   const risk = calculateRiskScore(property)
+  tooGoodInput.riskScore = risk.total
+
+  tooGoodInput.finalScore = Math.max(0, baseOpportunity.total - (risk.total * 0.5))
+
+  const tooGoodResult = detectTooGoodToBeTrue(tooGoodInput)
+
+  const opportunity = calculateOpportunityScore(property, settings, redemptionRisk, tooGoodResult)
 
   const opportunity_score = opportunity.total
   const risk_score = risk.total
 
-  // Calculate volatility details separately for reporting
   const volatility = calculatePresaleVolatility(property)
 
-  // Final score calculation
   const final_score = Math.max(0, opportunity_score - (risk_score * 0.5))
 
   const recResult = calculateRecommendation(
     opportunity_score,
     risk_score,
     property,
+    redemptionRisk,
+    tooGoodResult,
     volatility.details,
     opportunity.capital_fit_details
   )
+
+  const taxFlag = calculateTaxSanityCheck(property.total_amount_due, property.estimated_market_value)
+  const red_flags: RedFlagResult[] = taxFlag ? [taxFlag] : []
 
   return {
     opportunity_score,
@@ -560,9 +721,11 @@ export function scoreProperty(
     opportunity_breakdown: opportunity,
     risk_breakdown: risk,
     presale_volatility_details: volatility.details,
+    redemption_risk: redemptionRisk,
+    too_good_to_be_true: tooGoodResult,
     reasons: recResult.reasons,
     warnings: recResult.warnings,
-    // NEW: Strategic fields
+    red_flags,
     maxBid: recResult.maxBid,
     absenteeOwner: recResult.absenteeOwner,
     microParcel: recResult.microParcel,
@@ -570,7 +733,6 @@ export function scoreProperty(
   }
 }
 
-// Helper to calculate data confidence score
 export function calculateDataConfidence(property: Partial<PropertyInput>): number {
   let confidence = 0
   const fields = [
@@ -599,17 +761,15 @@ export function calculateDataConfidence(property: Partial<PropertyInput>): numbe
   return Math.min(100, confidence)
 }
 
-// Helper to get default settings (for backward compatibility)
 export function getDefaultSettings(): UserSettingsInput {
   return { ...DEFAULT_SETTINGS }
 }
 
-// Re-export types for convenience
 export { DEFAULT_SETTINGS }
 
-/**
- * Load adjacent parcel numbers for a property from database
- */
+export * from './redemption-risk'
+export * from './too-good-detector'
+
 export async function getAdjacentParcelNumbers(propertyId: string): Promise<string[]> {
   const adjacentParcels = await prisma.adjacentParcel.findMany({
     where: { property_id: propertyId },
@@ -618,9 +778,6 @@ export async function getAdjacentParcelNumbers(propertyId: string): Promise<stri
   return adjacentParcels.map(p => p.adjacent_parcel_number)
 }
 
-/**
- * Score a property with adjacent parcel data loaded from database
- */
 export async function scorePropertyWithAdjacentData(
   propertyId: string,
   propertyData: PropertyInput,
@@ -628,10 +785,93 @@ export async function scorePropertyWithAdjacentData(
 ): Promise<ScoringResult> {
   const adjacentParcelNumbers = await getAdjacentParcelNumbers(propertyId)
 
+  const outcomes = await prisma.outcomeEvent.findMany({
+    where: { property_id: propertyId },
+    select: { event_type: true, event_date: true, details: true }
+  })
+
+  const zoningProfile = await prisma.zoningProfile.findUnique({
+    where: { property_id: propertyId },
+    select: { id: true, buildability_score: true }
+  })
+
   const enrichedPropertyData: PropertyInput = {
     ...propertyData,
-    adjacentParcelIds: adjacentParcelNumbers
+    adjacentParcelIds: adjacentParcelNumbers,
+    outcomes,
+    has_zoning_profile: !!zoningProfile,
+    buildability_score: zoningProfile?.buildability_score ?? null
   }
 
-  return scoreProperty(enrichedPropertyData, settings)
+  const result = scoreProperty(enrichedPropertyData, settings)
+
+  // Check for title analysis and adjust scores
+  const titleAnalysis = await prisma.titleAnalysis.findUnique({
+    where: { property_id: propertyId }
+  })
+
+  if (titleAnalysis) {
+    if (titleAnalysis.score < 40) {
+      result.recommendation = 'avoid'
+      result.warnings.push(`Title analysis: AVOID - critical title issues (score: ${titleAnalysis.score})`)
+      result.final_score = Math.max(0, result.final_score - 50)
+    } else if (titleAnalysis.score < 60) {
+      result.opportunity_score = Math.max(0, result.opportunity_score - 25)
+      result.final_score = Math.max(0, result.final_score - 25)
+      result.warnings.push(`Title analysis: DANGER - significant title issues (score: ${titleAnalysis.score})`)
+    } else if (titleAnalysis.score < 80) {
+      result.opportunity_score = Math.max(0, result.opportunity_score - 10)
+      result.final_score = Math.max(0, result.final_score - 10)
+      result.warnings.push(`Title analysis: CAUTION - review title before bidding (score: ${titleAnalysis.score})`)
+    }
+    // Add title score to result
+    ;(result as any).title_score = titleAnalysis.score
+    ;(result as any).title_recommendation = titleAnalysis.recommendation
+  }
+
+  return result
+}
+
+export function quickScoreForList(property: Partial<PropertyInput>): {
+  opportunity: number
+  risk: number
+  final: number
+  redemptionLevel: 'LOW' | 'MEDIUM' | 'HIGH' | null
+  tooGoodTriggered: boolean
+  tooGoodSeverity: 'none' | 'warning' | 'critical'
+} {
+  let opportunity = 0
+  if (property.estimated_market_value && property.total_amount_due) {
+    const ratio = property.total_amount_due / property.estimated_market_value
+    if (ratio < 0.05) opportunity = 70
+    else if (ratio < 0.1) opportunity = 50
+    else if (ratio < 0.2) opportunity = 35
+    else opportunity = 20
+  }
+
+  let risk = 30
+  if (property.access_risk === 'high') risk += 15
+  if (property.title_risk === 'high') risk += 15
+  if (property.legal_risk === 'high') risk += 15
+
+  const ownerType = detectOwnerType(property.owner_name || null)
+  let redemptionLevel: 'LOW' | 'MEDIUM' | 'HIGH' | null = null
+  if (ownerType === 'bank') redemptionLevel = 'HIGH'
+  else if (property.occupancy_status === 'vacant') redemptionLevel = 'LOW'
+  else if (property.occupancy_status === 'owner_occupied') redemptionLevel = 'MEDIUM'
+
+  const tgttb = quickTGTTBCheck(
+    property.opening_bid ?? property.total_amount_due ?? 0,
+    property.estimated_market_value ?? null,
+    0
+  )
+
+  return {
+    opportunity,
+    risk,
+    final: Math.max(0, opportunity - (risk * 0.5)),
+    redemptionLevel,
+    tooGoodTriggered: tgttb.triggered,
+    tooGoodSeverity: tgttb.severity
+  }
 }

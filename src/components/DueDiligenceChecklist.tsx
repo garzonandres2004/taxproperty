@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   CheckCircle2,
   Circle,
@@ -16,13 +16,17 @@ import {
   Save
 } from 'lucide-react'
 import { cn } from '@/lib/ui-utils'
+import { getCodeEnforcementLink, getUtilityLienLinks } from '@/lib/municipal-liens'
 
-interface ChecklistItem {
+interface ChecklistItemBase {
   id: string
   title: string
   description: string
   icon: React.ReactNode
   required: boolean
+}
+
+interface ChecklistItem extends ChecklistItemBase {
   link?: string
   linkText?: string
 }
@@ -33,16 +37,42 @@ interface DueDiligenceChecklistProps {
   address?: string | null
   amountDue?: number | null
   marketValue?: number | null
+  municipalLienStatus?: string | null
+  codeViolationsFound?: boolean | null
+  codeViolationsBalance?: number | null
+  utilityLienNotes?: string | null
 }
 
-const checklistItems: ChecklistItem[] = [
+function generateMunicipalLienLinks(address: string | null | undefined, parcelNumber: string) {
+  const codeInfo = getCodeEnforcementLink(address)
+  const utilityLinks = getUtilityLienLinks(parcelNumber)
+  
+  if (codeInfo.type === 'api') {
+    return {
+      primary: codeInfo.url,
+      primaryText: codeInfo.name,
+      secondary: utilityLinks.ownerSearch,
+      secondaryText: 'Search Utility Liens',
+      note: codeInfo.notes + ' Utility liens: ' + utilityLinks.notes
+    }
+  } else {
+    return {
+      primary: codeInfo.url,
+      primaryText: codeInfo.name,
+      secondary: utilityLinks.ownerSearch,
+      secondaryText: 'Search Utility Liens' + (codeInfo.phone ? ` | ${codeInfo.phone}` : ''),
+      note: codeInfo.notes + (codeInfo.phone ? ` Phone: ${codeInfo.phone}` : '')
+    }
+  }
+}
+
+const staticChecklistItems: ChecklistItemBase[] = [
   {
     id: 'drive_by',
     title: 'Drive-by Inspection',
     description: 'Physically visit the property. Assess condition, check neighborhood, verify accessibility. Take photos of any damage.',
     icon: <Car className="w-5 h-5" />,
     required: true,
-    linkText: 'Open in Google Maps',
   },
   {
     id: 'property_value',
@@ -50,8 +80,6 @@ const checklistItems: ChecklistItem[] = [
     description: 'Verify After Repair Value using Zillow, county assessor, and comparable sales. Get at least 3 comps.',
     icon: <DollarSign className="w-5 h-5" />,
     required: true,
-    link: 'https://www.zillow.com',
-    linkText: 'Open Zillow',
   },
   {
     id: 'tax_sanity',
@@ -65,13 +93,6 @@ const checklistItems: ChecklistItem[] = [
     title: 'Parcel ID Verification',
     description: 'Cross-reference address with county GIS. Never trust the address alone - always verify with parcel ID.',
     icon: <MapPin className="w-5 h-5" />,
-    required: true,
-  },
-  {
-    id: 'municipal_liens',
-    title: 'Municipal Lien Check (UT)',
-    description: 'In Utah, municipal liens survive the tax deed sale. Check county/city claims. Subtract from max bid.',
-    icon: <Scale className="w-5 h-5" />,
     required: true,
   },
   {
@@ -103,6 +124,10 @@ export function DueDiligenceChecklist({
   address,
   amountDue,
   marketValue,
+  municipalLienStatus,
+  codeViolationsFound,
+  codeViolationsBalance,
+  utilityLienNotes,
 }: DueDiligenceChecklistProps) {
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
   const [notes, setNotes] = useState<Record<string, string>>({})
@@ -115,13 +140,47 @@ export function DueDiligenceChecklist({
     : null
   const taxSanityWarning = taxSanityRatio !== null && taxSanityRatio < 0.1
 
-  // Generate Google Maps link
+  // Generate dynamic links
   const googleMapsLink = address
     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ', Utah')}`
     : null
 
-  // Generate Parcel Map link
   const parcelMapLink = `https://maps.utahcounty.gov/ParcelMap/ParcelMap?parcel=${parcelNumber}`
+
+  const municipalLienLinks = useMemo(() => 
+    generateMunicipalLienLinks(address, parcelNumber),
+    [address, parcelNumber]
+  )
+
+  // Build checklist items with dynamic links
+  const checklistItems: ChecklistItem[] = useMemo(() => {
+    const items: ChecklistItem[] = staticChecklistItems.map(item => ({
+      ...item,
+      link: item.id === 'property_value' ? 'https://www.zillow.com' : undefined,
+      linkText: item.id === 'property_value' ? 'Open Zillow' : undefined,
+    }))
+
+    // Add municipal liens item with dynamic links
+    const municipalLienDescription = municipalLienStatus === 'high'
+      ? `CRITICAL: Municipal liens detected with $${codeViolationsBalance?.toLocaleString() || 'unknown'} balance. These SURVIVE foreclosure. Verify and subtract from max bid.`
+      : municipalLienStatus === 'medium'
+      ? 'WARNING: Code violations found. May become liens. Verify status before bidding.'
+      : municipalLienStatus === 'low'
+      ? 'No municipal liens detected. Still verify utility liens via county recorder.'
+      : 'In Utah, municipal liens survive the tax deed sale. Check county/city claims. Subtract from max bid.'
+
+    items.splice(4, 0, {
+      id: 'municipal_liens',
+      title: 'Municipal Lien Check (UT)',
+      description: municipalLienDescription,
+      icon: <Scale className="w-5 h-5" />,
+      required: true,
+      link: municipalLienLinks.primary,
+      linkText: municipalLienLinks.primaryText,
+    })
+
+    return items
+  }, [municipalLienLinks, municipalLienStatus, codeViolationsBalance])
 
   const toggleItem = (id: string) => {
     setCheckedItems((prev) => {
@@ -142,11 +201,6 @@ export function DueDiligenceChecklist({
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      // In a real implementation, save to database
-      // await fetch(`/api/properties/${propertyId}/checklist`, {
-      //   method: 'PATCH',
-      //   body: JSON.stringify({ checkedItems: Array.from(checkedItems), notes }),
-      // })
       setTimeout(() => {
         setLastSaved(new Date())
         setIsSaving(false)
@@ -171,7 +225,7 @@ export function DueDiligenceChecklist({
       case 'parcel_verify':
         return parcelMapLink
       case 'municipal_liens':
-        return `https://www.utahcounty.gov/auditor/recordssearch/index.cfm`
+        return item.link
       case 'chain_title':
         return `https://www.utahcounty.gov/auditor/recordssearch/index.cfm`
       default:
@@ -220,6 +274,55 @@ export function DueDiligenceChecklist({
               Tax amount is only {taxSanityRatio?.toFixed(2)}% of market value.
               This may indicate special circumstances or hidden problems. Investigate further.
             </p>
+          </div>
+        </div>
+      )}
+
+      {/* Municipal Lien Alert */}
+      {(municipalLienStatus === 'high' || municipalLienStatus === 'medium') && (
+        <div className={`rounded-lg p-4 mb-6 flex items-start gap-3 ${
+          municipalLienStatus === 'high' 
+            ? 'bg-rose-50 border border-rose-200' 
+            : 'bg-amber-50 border border-amber-200'
+        }`}>
+          <AlertTriangle className={`w-5 h-5 shrink-0 mt-0.5 ${
+            municipalLienStatus === 'high' ? 'text-rose-600' : 'text-amber-600'
+          }`} />
+          <div>
+            <p className={`font-bold ${
+              municipalLienStatus === 'high' ? 'text-rose-800' : 'text-amber-800'
+            }`}>
+              {municipalLienStatus === 'high' ? 'Municipal Lien Detected' : 'Code Violations Found'}
+            </p>
+            <p className={`text-sm mt-1 ${
+              municipalLienStatus === 'high' ? 'text-rose-700' : 'text-amber-700'
+            }`}>
+              {municipalLienLinks.note}
+              {codeViolationsBalance && codeViolationsBalance > 0 && (
+                <> Balance due: <strong>${codeViolationsBalance.toLocaleString()}</strong></>
+              )}
+              {utilityLienNotes && (
+                <><br /><br />Utility notes: {utilityLienNotes}</>
+              )}
+            </p>
+            <div className="flex flex-wrap gap-2 mt-3">
+              <a
+                href={municipalLienLinks.primary}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs bg-white px-3 py-1.5 rounded border hover:bg-slate-50 font-medium"
+              >
+                {municipalLienLinks.primaryText} <ExternalLink size={12} />
+              </a>
+              <a
+                href={municipalLienLinks.secondary}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs bg-white px-3 py-1.5 rounded border hover:bg-slate-50 font-medium"
+              >
+                {municipalLienLinks.secondaryText} <ExternalLink size={12} />
+              </a>
+            </div>
           </div>
         </div>
       )}
@@ -297,7 +400,6 @@ export function DueDiligenceChecklist({
                     </a>
                   )}
 
-                  {/* Notes field */}
                   <div className="mt-3">
                     <textarea
                       value={notes[item.id] || ''}
@@ -321,11 +423,11 @@ export function DueDiligenceChecklist({
           <li>• {completedCount} of {checklistItems.length} items completed</li>
           <li>• {requiredCompleted} of {requiredCount} required items done</li>
           {taxSanityWarning && <li>• Tax sanity check flagged</li>}
+          {municipalLienStatus === 'high' && <li>• Municipal liens detected - must verify</li>}
           {progressPercent === 100 && <li>• All due diligence complete!</li>}
         </ul>
       </div>
 
-      {/* Save Button */}
       <button
         onClick={handleSave}
         disabled={isSaving}
@@ -349,7 +451,6 @@ export function DueDiligenceChecklist({
         )}
       </button>
 
-      {/* Legend */}
       <div className="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-500">
         <p className="font-medium mb-1">Based on Dustin Hahn's Workflow:</p>
         <p>

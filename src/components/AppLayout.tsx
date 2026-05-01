@@ -14,7 +14,9 @@ import {
   Bell,
   Menu,
   X,
-  ChevronDown
+  ChevronDown,
+  Calendar,
+  Map
 } from 'lucide-react';
 import { cn } from '@/lib/ui-utils';
 
@@ -50,6 +52,8 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
     { href: '/dashboard', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { href: '/properties', icon: <Building2 size={20} />, label: 'Properties' },
     { href: '/reports/history', icon: <FileText size={20} />, label: 'Investor Reports' },
+    { href: '/calendar', icon: <Calendar size={20} />, label: 'Calendar' },
+    { href: '/states', icon: <Map size={20} />, label: 'States' },
     { href: '/settings', icon: <BarChart3 size={20} />, label: 'Settings' },
   ];
 

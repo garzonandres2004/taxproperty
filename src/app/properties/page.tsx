@@ -15,6 +15,7 @@ import {
   Play,
   AlertTriangle,
   Clock,
+  FileSearch,
 } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { PropertyImage, ParcelMapImage } from '@/components/PropertyImage'
@@ -26,6 +27,7 @@ interface Property {
   county: string
   property_type: string
   property_address: string | null
+  owner_name: string | null
   total_amount_due: number | null
   estimated_market_value: number | null
   opportunity_score: number | null
@@ -36,12 +38,24 @@ interface Property {
   source_last_checked_at: string | null
   sale_date: string | null
   photo_url: string | null
+  is_otc: boolean
+  notes: string | null
+  titleAnalysis?: {
+    score: number
+    recommendation: string
+  } | null
 }
 
 interface SyncStatus {
   lastCheckedAt: string | null
   staleCount: number
   daysUntilSale: number
+}
+
+interface UserSettings {
+  totalBudget: number
+  maxPerProperty: number
+  reserveBuffer: number
 }
 
 export default function PropertiesPage() {
@@ -52,18 +66,36 @@ export default function PropertiesPage() {
   const [filterType, setFilterType] = useState('All')
   const [filterCounty, setFilterCounty] = useState('All')
   const [filterStatus, setFilterStatus] = useState('All')
+  const [filterOTC, setFilterOTC] = useState('All')
+  const [filterRecommendation, setFilterRecommendation] = useState('All')
   const [bidCount, setBidCount] = useState(0)
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null)
   const [isSyncing, setIsSyncing] = useState(false)
   const [isBulkActionRunning, setIsBulkActionRunning] = useState(false)
   const [bulkActionProgress, setBulkActionProgress] = useState({ current: 0, total: 0 })
+  const [isAnalyzingTitles, setIsAnalyzingTitles] = useState(false)
+  const [titleAnalysisProgress, setTitleAnalysisProgress] = useState({ current: 0, total: 0 })
+  const [titleAnalysisSummary, setTitleAnalysisSummary] = useState<{clean: number, caution: number, danger: number, avoid: number} | null>(null)
   const [syncResult, setSyncResult] = useState<{ redeemed: number; amountChanged: number } | null>(null)
+  const [sortMode, setSortMode] = useState<'bestOverall' | 'bestForMyBudget' | 'lowestAmount' | 'highestScore'>('bestOverall')
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null)
 
   useEffect(() => {
     fetchProperties()
     fetchBidCount()
     fetchSyncStatus()
+    fetchUserSettings()
   }, [])
+
+  const fetchUserSettings = async () => {
+    try {
+      const res = await fetch('/api/settings')
+      const data = await res.json()
+      setUserSettings(data)
+    } catch (error) {
+      console.error('Failed to fetch user settings:', error)
+    }
+  }
 
   const fetchProperties = async () => {
     try {
@@ -179,15 +211,138 @@ export default function PropertiesPage() {
     }
   }
 
+  const handleAnalyzeAllTitles = async () => {
+    if (!confirm('Run title analysis on all properties? This scrapes Utah County records for each property. ~3-4 minutes.')) return
+
+    setIsAnalyzingTitles(true)
+    setTitleAnalysisProgress({ current: 0, total: properties.length })
+    setTitleAnalysisSummary(null)
+
+    const summary = { clean: 0, caution: 0, danger: 0, avoid: 0 }
+
+    try {
+      for (let i = 0; i < properties.length; i++) {
+        const property = properties[i]
+        setTitleAnalysisProgress({ current: i + 1, total: properties.length })
+
+        // Only analyze Utah County properties for now
+        if (property.county === 'utah') {
+          try {
+            const res = await fetch(`/api/properties/${property.id}/title-analysis`, {
+              method: 'POST'
+            })
+            const data = await res.json()
+            if (data.success) {
+              const rec = data.analysis.recommendation
+              if (rec === 'clean') summary.clean++
+              else if (rec === 'caution') summary.caution++
+              else if (rec === 'danger') summary.danger++
+              else if (rec === 'avoid') summary.avoid++
+            }
+          } catch (err) {
+            console.error(`Failed to analyze ${property.parcel_number}:`, err)
+          }
+
+          // Rate limit: 500ms between requests
+          await new Promise(resolve => setTimeout(resolve, 500))
+        }
+      }
+
+      setTitleAnalysisSummary(summary)
+      await fetchProperties()
+    } catch (error) {
+      console.error('Title analysis failed:', error)
+    } finally {
+      setIsAnalyzingTitles(false)
+    }
+  }
+
   const filteredProperties = properties.filter((p) => {
+    const searchLower = searchTerm.toLowerCase()
     const matchesSearch =
-      cleanHtmlEntities(p.property_address).toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.parcel_number.toLowerCase().includes(searchTerm.toLowerCase())
+      !searchTerm ||
+      cleanHtmlEntities(p.property_address || '').toLowerCase().includes(searchLower) ||
+      p.parcel_number.toLowerCase().includes(searchLower) ||
+      (p.owner_name && p.owner_name.toLowerCase().includes(searchLower))
     const matchesType = filterType === 'All' || p.property_type === filterType
     const matchesCounty = filterCounty === 'All' || p.county === filterCounty
     const matchesStatus = filterStatus === 'All' || p.status === filterStatus
-    return matchesSearch && matchesType && matchesCounty && matchesStatus
+    const matchesOTC = filterOTC === 'All' ||
+      (filterOTC === 'OTC' && p.is_otc) ||
+      (filterOTC === 'Regular' && !p.is_otc)
+    const matchesRecommendation = filterRecommendation === 'All' || p.recommendation === filterRecommendation
+    return matchesSearch && matchesType && matchesCounty && matchesStatus && matchesOTC && matchesRecommendation
+  }).sort((a, b) => {
+    // Sort logic based on sortMode
+    if (sortMode === 'bestOverall') {
+      // Default: by finalScore DESC, then amountDue ASC
+      const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
+      if (scoreDiff !== 0) return scoreDiff
+      return (a.total_amount_due || 0) - (b.total_amount_due || 0)
+    }
+
+    if (sortMode === 'bestForMyBudget') {
+      if (!userSettings) {
+        // Fallback to bestOverall if no settings
+        const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
+        if (scoreDiff !== 0) return scoreDiff
+        return (a.total_amount_due || 0) - (b.total_amount_due || 0)
+      }
+
+      const availableToBid = userSettings.totalBudget - userSettings.reserveBuffer
+
+      const aFitsMax = (a.total_amount_due || 0) <= userSettings.maxPerProperty
+      const aFitsCash = (a.total_amount_due || 0) <= availableToBid
+      const aAffordable = aFitsMax && aFitsCash
+
+      const bFitsMax = (b.total_amount_due || 0) <= userSettings.maxPerProperty
+      const bFitsCash = (b.total_amount_due || 0) <= availableToBid
+      const bAffordable = bFitsMax && bFitsCash
+
+      // Affordable properties first
+      if (aAffordable && !bAffordable) return -1
+      if (!aAffordable && bAffordable) return 1
+
+      // Within affordable group, sort by finalScore DESC, then amountDue ASC
+      const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
+      if (scoreDiff !== 0) return scoreDiff
+      return (a.total_amount_due || 0) - (b.total_amount_due || 0)
+    }
+
+    if (sortMode === 'lowestAmount') {
+      return (a.total_amount_due || 0) - (b.total_amount_due || 0)
+    }
+
+    if (sortMode === 'highestScore') {
+      return (b.final_score || 0) - (a.final_score || 0)
+    }
+
+    return 0
   })
+
+  const clearFilters = () => {
+    setSearchTerm('')
+    setFilterType('All')
+    setFilterCounty('All')
+    setFilterStatus('All')
+    setFilterOTC('All')
+    setFilterRecommendation('All')
+  }
+
+  const hasActiveFilters = searchTerm || filterType !== 'All' || filterCounty !== 'All' ||
+    filterStatus !== 'All' || filterOTC !== 'All' || filterRecommendation !== 'All'
+
+  const getBudgetFit = (amountDue: number | null) => {
+    if (!userSettings || !amountDue) return null
+    const availableToBid = userSettings.totalBudget - userSettings.reserveBuffer
+    const fitsMax = amountDue <= userSettings.maxPerProperty
+    const fitsCash = amountDue <= availableToBid
+    return {
+      fitsMax,
+      fitsCash,
+      affordable: fitsMax && fitsCash
+    }
+  }
 
   const toggleSelection = (id: string) => {
     setSelectedProperties((prev) =>
@@ -351,7 +506,7 @@ export default function PropertiesPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input
               type="text"
-              placeholder="Search address or parcel..."
+              placeholder="Search address, parcel or owner..."
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-200 focus:outline-none text-sm font-medium"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -392,11 +547,73 @@ export default function PropertiesPage() {
               <option value="ready">Ready</option>
               <option value="redeemed">Redeemed</option>
             </select>
-            <button className="btn btn-secondary px-3">
+            <select
+              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-200 min-w-[140px]"
+              value={filterRecommendation}
+              onChange={(e) => setFilterRecommendation(e.target.value)}
+            >
+              <option value="All">All Recommendations</option>
+              <option value="bid">Bid</option>
+              <option value="research_more">Research</option>
+              <option value="avoid">Avoid</option>
+            </select>
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="btn btn-secondary px-3 text-xs whitespace-nowrap"
+              >
+                Clear
+              </button>
+            )}
+            <select
+              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-200 min-w-[160px]"
+              value={sortMode}
+              onChange={(e) => setSortMode(e.target.value as any)}
+            >
+              <option value="bestOverall">Best Overall</option>
+              <option value="bestForMyBudget">Best for My Budget</option>
+              <option value="lowestAmount">Lowest Amount Due</option>
+              <option value="highestScore">Highest Final Score</option>
+            </select>
+            <button className="btn btn-secondary px-3" title="Advanced filters coming soon">
               <Filter size={18} />
+            </button>
+            <button
+              onClick={handleAnalyzeAllTitles}
+              disabled={isAnalyzingTitles}
+              className="btn btn-secondary gap-2 text-sm"
+              title="Analyze titles for all Utah County properties"
+            >
+              <FileSearch size={16} className={cn(isAnalyzingTitles && 'animate-spin')} />
+              {isAnalyzingTitles ? `Analyzing ${titleAnalysisProgress.current}/${titleAnalysisProgress.total}` : 'Analyze All Titles'}
             </button>
           </div>
         </div>
+
+        {/* Title Analysis Summary */}
+        {titleAnalysisSummary && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+            <h4 className="text-sm font-semibold text-blue-800 mb-2">Title Analysis Complete</h4>
+            <div className="grid grid-cols-4 gap-4 text-center">
+              <div className="bg-emerald-100 rounded p-2">
+                <div className="text-2xl font-bold text-emerald-700">{titleAnalysisSummary.clean}</div>
+                <div className="text-xs text-emerald-600">CLEAN (80-100)</div>
+              </div>
+              <div className="bg-yellow-100 rounded p-2">
+                <div className="text-2xl font-bold text-yellow-700">{titleAnalysisSummary.caution}</div>
+                <div className="text-xs text-yellow-600">CAUTION (60-79)</div>
+              </div>
+              <div className="bg-orange-100 rounded p-2">
+                <div className="text-2xl font-bold text-orange-700">{titleAnalysisSummary.danger}</div>
+                <div className="text-xs text-orange-600">DANGER (40-59)</div>
+              </div>
+              <div className="bg-red-100 rounded p-2">
+                <div className="text-2xl font-bold text-red-700">{titleAnalysisSummary.avoid}</div>
+                <div className="text-xs text-red-600">AVOID (&lt;40)</div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Selection Actions */}
         {selectedProperties.length > 0 && (
@@ -500,6 +717,9 @@ export default function PropertiesPage() {
                     <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Final Score</div>
                   </th>
                   <th className="px-6 py-4">
+                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Title</div>
+                  </th>
+                  <th className="px-6 py-4">
                     <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Recommendation</div>
                   </th>
                   <th className="px-6 py-4"></th>
@@ -566,12 +786,19 @@ export default function PropertiesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={cn(
-                        'px-2 py-1 rounded text-[10px] font-black uppercase tracking-tight',
-                        getStatusColor(property.status)
-                      )}>
-                        {formatStatus(property.status)}
-                      </span>
+                      <div className="flex flex-col gap-1.5">
+                        <span className={cn(
+                          'px-2 py-1 rounded text-[10px] font-black uppercase tracking-tight',
+                          getStatusColor(property.status)
+                        )}>
+                          {formatStatus(property.status)}
+                        </span>
+                        {property.is_otc && (
+                          <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded text-[10px] font-black uppercase tracking-tight">
+                            OTC
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
@@ -581,6 +808,31 @@ export default function PropertiesPage() {
                         <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">
                           Est. Mkt: {formatCurrency(property.estimated_market_value)}
                         </span>
+                        {(() => {
+                          const budgetFit = getBudgetFit(property.total_amount_due)
+                          if (budgetFit?.affordable) {
+                            return (
+                              <span className="text-[10px] text-emerald-600 font-bold uppercase tracking-tight mt-0.5">
+                                Fits My Budget
+                              </span>
+                            )
+                          }
+                          if (budgetFit && !budgetFit.fitsMax) {
+                            return (
+                              <span className="text-[10px] text-amber-600 font-bold uppercase tracking-tight mt-0.5">
+                                Above Max Per Property
+                              </span>
+                            )
+                          }
+                          if (budgetFit && !budgetFit.fitsCash) {
+                            return (
+                              <span className="text-[10px] text-amber-600 font-bold uppercase tracking-tight mt-0.5">
+                                Above Available Cash
+                              </span>
+                            )
+                          }
+                          return null
+                        })()}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -627,6 +879,31 @@ export default function PropertiesPage() {
                       >
                         {Math.round(property.final_score || 0)}
                       </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {property.titleAnalysis ? (
+                        <Link href={`/properties/${property.id}`}>
+                          <div
+                            className={cn(
+                              'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border text-xs cursor-pointer',
+                              property.titleAnalysis.score >= 80 ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                              property.titleAnalysis.score >= 60 ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
+                              property.titleAnalysis.score >= 40 ? 'bg-orange-100 text-orange-800 border-orange-300' :
+                              'bg-red-100 text-red-800 border-red-300'
+                            )}
+                            title={`Title: ${property.titleAnalysis.recommendation.toUpperCase()}`}
+                          >
+                            {property.titleAnalysis.score}
+                          </div>
+                        </Link>
+                      ) : (
+                        <Link
+                          href={`/properties/${property.id}`}
+                          className="text-xs text-slate-400 hover:text-blue-600 underline"
+                        >
+                          Analyze
+                        </Link>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <span

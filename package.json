@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "fetch-images": "tsx scripts/fetch-all-images.ts",
+    "check-municipal-liens": "tsx scripts/check-municipal-liens.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "lucide-react": "^1.11.0",
     "next": "16.2.4",
     "next-auth": "^4.24.14",
+    "pdf-parse": "^2.4.5",
     "prisma": "^5.22.0",
     "radix-ui": "^1.4.3",
     "react": "19.2.4",
@@ -31,6 +33,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pdf-parse": "^1.1.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

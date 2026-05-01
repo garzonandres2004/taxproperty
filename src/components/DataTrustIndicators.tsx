@@ -2,7 +2,7 @@ import { AlertTriangle, Info, CheckCircle2, MapPin, Home, Building2, TreePine } 
 import { cn } from '@/lib/ui-utils'
 
 interface PropertyAlertProps {
-  type: 'micro-parcel' | 'entity-owned' | 'city-zoning' | 'tax-sanity' | 'absentee-owner' | 'assemblage' | 'high-risk'
+  type: 'micro-parcel' | 'entity-owned' | 'city-zoning' | 'tax-sanity' | 'absentee-owner' | 'assemblage' | 'high-risk' | 'suspicious_tax_amount'
   message: string
   details?: string
   className?: string
@@ -65,6 +65,14 @@ export function PropertyAlert({ type, message, details, className }: PropertyAle
       text: 'text-red-800',
       iconColor: 'text-red-600',
       title: 'High Risk Factors'
+    },
+    'suspicious_tax_amount': {
+      icon: AlertTriangle,
+      bg: 'bg-amber-50',
+      border: 'border-amber-200',
+      text: 'text-amber-800',
+      iconColor: 'text-amber-600',
+      title: 'Suspicious Tax Amount'
     }
   }
 
@@ -301,14 +309,14 @@ export function generatePropertyAlerts(property: any) {
     })
   }
 
-  // Tax sanity check
+  // Tax sanity check (0.3% threshold per Dustin Hahn requirement)
   if (property.total_amount_due && property.estimated_market_value) {
     const taxRatio = (property.total_amount_due / property.estimated_market_value) * 100
-    if (taxRatio < 0.5) {
+    if (taxRatio < 0.3) {
       alerts.push({
-        type: 'tax-sanity',
-        message: `Tax amount (${taxRatio.toFixed(2)}% of market value) seems unusually low`,
-        details: 'This may indicate special exemptions, partial payments, or data errors. Verify with county.'
+        type: 'suspicious_tax_amount',
+        message: `Tax $${property.total_amount_due.toLocaleString()} is only ${taxRatio.toFixed(2)}% of $${property.estimated_market_value.toLocaleString()} value (expected >0.3%)`,
+        details: 'This may indicate occupied property, additional liens, or complex title. Verify occupancy and lien status with county.'
       })
     }
   }

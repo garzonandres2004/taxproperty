@@ -17,6 +17,13 @@ import { PropertyAlert, ScoreBadge, RecommendationBadge, DataConfidenceIndicator
 import { PropertyImage } from '@/components/PropertyImage'
 import { SafeImageWithLink } from '@/components/SafeImage'
 import { cleanHtmlEntities } from '@/lib/ui-utils'
+import { CountyLinksPanel } from '@/components/property/CountyLinksPanel'
+import { TitleAnalysisCard } from '@/components/title/TitleAnalysisCard'
+import { TitleResearchChecklist } from '@/components/property/TitleResearchChecklist'
+import { RiskIndicators } from '@/components/property/RiskIndicators'
+import { ZillowStyleImageHero } from '@/components/property/ZillowStyleImageHero'
+import { MarketSignalsCard } from '@/components/property/MarketSignalsCard'
+import { scoreProperty } from '@/lib/scoring'
 
 export default async function PropertyDetailPage({
   params,
@@ -24,7 +31,7 @@ export default async function PropertyDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
-  const [property, settings, zoningProfile, adjacentParcels] = await Promise.all([
+  const [property, settings, zoningProfile, adjacentParcels, redFlags, thirdPartyEnrichment] = await Promise.all([
     prisma.property.findUnique({
       where: { id },
       include: {
@@ -39,6 +46,13 @@ export default async function PropertyDetailPage({
     prisma.adjacentParcel.findMany({
       where: { property_id: id },
       orderBy: { distance_meters: 'asc' }
+    }),
+    prisma.redFlag.findMany({
+      where: { property_id: id, is_resolved: false },
+      orderBy: { created_at: 'desc' }
+    }),
+    prisma.thirdPartyEnrichment.findUnique({
+      where: { property_id: id }
     })
   ])
 
@@ -76,6 +90,37 @@ export default async function PropertyDetailPage({
     estimated_cleanup_cost: property.estimated_cleanup_cost,
     estimated_closing_cost: property.estimated_closing_cost,
     deposit_required: property.deposit_required
+  }, userSettings)
+
+  // Calculate enhanced scoring with redemption risk and too-good-to-be-true detection
+  const scoringResult = scoreProperty({
+    county: property.county,
+    total_amount_due: property.total_amount_due,
+    estimated_market_value: property.estimated_market_value,
+    estimated_repair_cost: property.estimated_repair_cost,
+    estimated_cleanup_cost: property.estimated_cleanup_cost,
+    estimated_closing_cost: property.estimated_closing_cost,
+    property_type: property.property_type,
+    occupancy_status: property.occupancy_status,
+    zoning: property.zoning,
+    lot_size_sqft: property.lot_size_sqft,
+    building_sqft: property.building_sqft,
+    year_built: property.year_built,
+    assessed_value: property.assessed_value,
+    deposit_required: property.deposit_required,
+    data_confidence: property.data_confidence,
+    access_risk: property.access_risk,
+    title_risk: property.title_risk,
+    legal_risk: property.legal_risk,
+    marketability_risk: property.marketability_risk,
+    owner_name: property.owner_name,
+    owner_mailing_address: property.owner_mailing_address,
+    property_address: property.property_address,
+    years_delinquent: property.sale_year ? Math.max(1, new Date().getFullYear() - property.sale_year) : 1,
+    outcomes: property.outcomes,
+    is_unincorporated: !zoningProfile || zoningProfile?.jurisdiction === 'Unincorporated Utah County',
+    has_zoning_profile: !!zoningProfile,
+    buildability_score: zoningProfile?.buildability_score ?? null
   }, userSettings)
 
   const getRecommendationColor = (rec: string) => {
@@ -197,6 +242,20 @@ export default async function PropertyDetailPage({
         </div>
       )}
 
+      {/* Red Flags from Database */}
+      {redFlags.length > 0 && (
+        <div className="space-y-3 mb-6">
+          {redFlags.map((flag) => (
+            <PropertyAlert
+              key={flag.id}
+              type={flag.flag_type as any}
+              message={flag.message}
+              details={flag.details || undefined}
+            />
+          ))}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -222,42 +281,6 @@ export default async function PropertyDetailPage({
           </Link>
         </div>
       </div>
-
-      {/* Image Gallery */}
-      {(property.photo_url || property.aerial_url) && (
-        <div className="mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Property Images</CardTitle>
-              <CardDescription>Street View and aerial imagery</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {property.photo_url && (
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">Street View</h4>
-                    <SafeImageWithLink
-                      src={property.photo_url}
-                      alt={`Street view of ${property.parcel_number}`}
-                      href={property.photo_url.replace(/\?key=.*$/, '')}
-                    />
-                  </div>
-                )}
-                {property.aerial_url && (
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-600 mb-2">Aerial View</h4>
-                    <SafeImageWithLink
-                      src={property.aerial_url}
-                      alt={`Aerial view of ${property.parcel_number}`}
-                      href={property.aerial_url.replace(/\?key=.*$/, '')}
-                    />
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
 
       {/* Score Summary with Data Trust Indicators */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -289,6 +312,26 @@ export default async function PropertyDetailPage({
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Risk Analysis - Redemption Risk & Too Good To Be True */}
+      <div className="mb-8">
+        <RiskIndicators
+          redemptionRisk={scoringResult.redemption_risk}
+          tooGoodToBeTrue={scoringResult.too_good_to_be_true}
+        />
+      </div>
+
+      {/* Property Visual Hero - Zillow Style High Quality Street View */}
+      <div className="mb-8">
+        <ZillowStyleImageHero
+          address={property.property_address}
+          parcelNumber={property.parcel_number}
+          photoUrl={property.photo_url}
+          zillowUrl={thirdPartyEnrichment?.zillow_url}
+          latitude={property.latitude}
+          longitude={property.longitude}
+        />
       </div>
 
       {/* Main Content */}
@@ -526,6 +569,9 @@ export default async function PropertyDetailPage({
             </CardContent>
           </Card>
 
+          {/* Title Analysis - Automated Document Analysis */}
+          <TitleAnalysisCard propertyId={property.id} parcelNumber={property.parcel_number} />
+
           {/* Risk Assessment */}
           <Card>
             <CardHeader>
@@ -735,6 +781,23 @@ export default async function PropertyDetailPage({
             </Card>
           )}
 
+          {/* Title Research Checklist - Dustin Hahn 9-Step Process */}
+          <TitleResearchChecklist
+            propertyId={id}
+            parcelNumber={property.parcel_number}
+            ownerName={property.owner_name}
+            address={cleanHtmlEntities(property.property_address)}
+            hasStreetView={!!property.photo_url}
+            hasAerial={!!property.aerial_url}
+            estimatedMarketValue={property.estimated_market_value}
+          />
+
+          {/* Automated Title Analysis - Document Scraper & Analyzer */}
+          <TitleAnalysisCard
+            propertyId={id}
+            parcelNumber={property.parcel_number}
+          />
+
           {/* Due Diligence Checklist - Dustin Hahn Workflow */}
           <DueDiligenceChecklist
             propertyId={id}
@@ -749,6 +812,9 @@ export default async function PropertyDetailPage({
             propertyId={id}
             arv={property.estimated_market_value}
             amountDue={property.total_amount_due}
+            savedRepairEstimate={property.repair_estimate}
+            savedDesiredProfit={property.desired_profit}
+            savedMaxBidCalculated={property.max_bid_calculated}
           />
         </div>
 
@@ -813,6 +879,19 @@ export default async function PropertyDetailPage({
               />
             </CardContent>
           </Card>
+
+          {/* County Links Panel - Direct access to research tools */}
+          <CountyLinksPanel
+            ownerName={property.owner_name}
+            parcelNumber={property.parcel_number}
+          />
+
+          {/* Market Signals - Third Party Enrichment (Zillow) */}
+          <MarketSignalsCard
+            propertyId={property.id}
+            countyValue={property.estimated_market_value}
+            enrichment={thirdPartyEnrichment}
+          />
 
           {/* County Info */}
           <Card>

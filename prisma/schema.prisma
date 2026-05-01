@@ -12,84 +12,102 @@ model Property {
 
   // Ownership
   user_id String?
-  user    User?  @relation(fields: [user_id], references: [id], onDelete: SetNull)
+  user    User?   @relation(fields: [user_id], references: [id], onDelete: SetNull)
 
   // Core identification
-  county       String // "utah" | "salt_lake"
-  sale_year    Int
-  sale_date    String?
-  parcel_number String @unique
-  owner_name    String?
+  county                String // "utah" | "salt_lake"
+  sale_year             Int
+  sale_date             String?
+  parcel_number         String  @unique
+  owner_name            String?
   owner_mailing_address String?
-  property_address String?
-  legal_description String?
+  property_address      String?
+  legal_description     String?
 
   // Financials
-  total_amount_due Float?
-  assessed_value Float?
+  total_amount_due       Float?
+  assessed_value         Float?
   estimated_market_value Float?
-  estimated_repair_cost Float?
+  estimated_repair_cost  Float?
   estimated_cleanup_cost Float?
   estimated_closing_cost Float?
 
   // Property details
-  property_type String @default("unknown") // "single_family" | "condo" | "multifamily" | "vacant_land" | "commercial" | "mobile_home" | "unknown"
-  occupancy_status String @default("unknown") // "owner_occupied" | "tenant" | "vacant" | "unknown"
-  zoning String?
-  lot_size_sqft Float?
-  building_sqft Float?
-  year_built Int?
+  property_type    String  @default("unknown") // "single_family" | "condo" | "multifamily" | "vacant_land" | "commercial" | "mobile_home" | "unknown"
+  occupancy_status String  @default("unknown") // "owner_occupied" | "tenant" | "vacant" | "unknown"
+  zoning           String?
+  lot_size_sqft    Float?
+  building_sqft    Float?
+  year_built       Int?
 
   // Auction info
-  auction_platform String?
-  deposit_required Float?
+  auction_platform    String?
+  deposit_required    Float?
   redemption_deadline String?
 
   // Risk flags
-  access_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
-  title_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
-  legal_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
+  access_risk        String @default("unknown") // "low" | "medium" | "high" | "unknown"
+  title_risk         String @default("unknown") // "low" | "medium" | "high" | "unknown"
+  legal_risk         String @default("unknown") // "low" | "medium" | "high" | "unknown"
   marketability_risk String @default("unknown") // "low" | "medium" | "high" | "unknown"
 
   // Scoring
-  data_confidence Float?
-  notes String?
+  data_confidence   Float?
+  notes             String?
   opportunity_score Float?
-  risk_score Float?
-  final_score Float?
-  recommendation String? // "bid" | "research_more" | "avoid"
+  risk_score        Float?
+  final_score       Float?
+  recommendation    String? // "bid" | "research_more" | "avoid"
 
   // Enhanced scoring fields (new)
-  max_bid Float?           // Calculated max bid recommendation
-  absentee_owner Boolean?  // Owner mailing address differs from property
-  micro_parcel Boolean?    // Lot size < 2000 sqft and not condo
+  max_bid                Float? // Calculated max bid recommendation
+  max_bid_calculated     Float? // Auto-calculated max bid (Dustin Hahn formula)
+  repair_estimate        Float? // Repair estimate from max bid calculator
+  desired_profit         Float? // Desired profit from max bid calculator
+  absentee_owner         Boolean? // Owner mailing address differs from property
+  micro_parcel           Boolean? // Lot size < 2000 sqft and not condo
   assemblage_opportunity Boolean? // Adjacent parcels available
 
+  // OTC (Over The Counter) fields
+  is_otc Boolean @default(false) // Unsold from previous auction, available for direct purchase
+
+
+  // Municipal Lien Detection (Workstream 9)
+  municipal_lien_risk          String?   @default("unknown") // "low" | "medium" | "high" | "unknown"
+  code_violations_found        Boolean?
+  code_violations_balance_due Float?
+  utility_lien_notes           String?
+  municipal_lien_checked_at    DateTime?
   // Status
-  status String @default("new") // "new" | "researching" | "ready" | "redeemed" | "removed" | "sold" | "passed" | "struck_off"
-  status_reason String?
+  status                  String    @default("new") // "new" | "researching" | "ready" | "redeemed" | "removed" | "sold" | "passed" | "struck_off"
+  status_reason           String?
   status_last_verified_at DateTime?
 
   // Source tracking
-  county_source_url String?
+  county_source_url      String?
   source_last_checked_at DateTime?
 
   // Pre-sale volatility (affects risk score)
-  presale_volatility_risk Int @default(0) // 0-15 points added to risk
+  presale_volatility_risk  Int     @default(0) // 0-15 points added to risk
   is_active_sale_candidate Boolean @default(true)
 
   // Property photos
-  photo_url    String?
-  photo_date   String?
-  aerial_url   String?
+  photo_url  String?
+  photo_date String?
+  aerial_url String?
+
+  // Coordinates for mapping and Street View
+  latitude  Float?
+  longitude Float?
 
   // Seed/demo data filtering
   is_seed Boolean @default(false) // true for fake/demo properties
 
   // Relations
-  sources Source[]
-  outcomes OutcomeEvent[]
+  sources          Source[]
+  outcomes         OutcomeEvent[]
   adjacent_parcels AdjacentParcel[]
+  red_flags        RedFlag[]
 
   // Timestamps
   created_at DateTime @default(now())
@@ -97,6 +115,9 @@ model Property {
 
   // Relations
   zoningProfile ZoningProfile?
+  titleResearch TitleResearchChecklist?
+  thirdPartyEnrichment ThirdPartyEnrichment?
+  titleAnalysis TitleAnalysis?
 
   @@index([county])
   @@index([status])
@@ -105,80 +126,80 @@ model Property {
 }
 
 model AdjacentParcel {
-  id              String   @id @default(uuid())
-  property_id     String
-  property        Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  id                     String   @id @default(uuid())
+  property_id            String
+  property               Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
   adjacent_parcel_number String
-  is_in_tax_sale  Boolean  @default(false)
-  distance_meters Float?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  is_in_tax_sale         Boolean  @default(false)
+  distance_meters        Float?
+  created_at             DateTime @default(now())
+  updated_at             DateTime @updatedAt
 
   @@index([property_id])
   @@index([adjacent_parcel_number])
 }
 
 model ZoningProfile {
-  id String @id @default(uuid())
-  property_id String @unique
-  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  id          String   @id @default(uuid())
+  property_id String   @unique
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
 
   // Jurisdiction
-  jurisdiction String // "unincorporated_utah_county" | "provo" | "orem" | etc.
+  jurisdiction      String // "unincorporated_utah_county" | "provo" | "orem" | etc.
   is_unincorporated Boolean @default(true)
 
   // Zoning Information
-  zoning_code String? // e.g., "RA-5", "R-1-8", "C-1"
-  zoning_name String? // e.g., "Residential Agricultural"
+  zoning_code          String? // e.g., "RA-5", "R-1-8", "C-1"
+  zoning_name          String? // e.g., "Residential Agricultural"
   land_use_designation String? // Primary land use designation
 
   // Permitted Uses
-  permitted_uses String? // JSON array of permitted uses
+  permitted_uses   String? // JSON array of permitted uses
   conditional_uses String? // JSON array of conditional uses
-  prohibited_uses String? // JSON array of prohibited uses
+  prohibited_uses  String? // JSON array of prohibited uses
 
   // Building Rules
-  min_lot_size_sqft Float? // Minimum lot size in square feet
-  min_lot_size_acres Float? // Minimum lot size in acres
-  front_setback_ft Float? // Front setback in feet
-  side_setback_ft Float? // Side setback in feet
-  rear_setback_ft Float? // Rear setback in feet
-  max_height_ft Float? // Maximum building height in feet
-  max_height_stories Int? // Maximum building stories
+  min_lot_size_sqft        Float? // Minimum lot size in square feet
+  min_lot_size_acres       Float? // Minimum lot size in acres
+  front_setback_ft         Float? // Front setback in feet
+  side_setback_ft          Float? // Side setback in feet
+  rear_setback_ft          Float? // Rear setback in feet
+  max_height_ft            Float? // Maximum building height in feet
+  max_height_stories       Int? // Maximum building stories
   max_lot_coverage_percent Float? // Maximum lot coverage percentage
-  frontage_required_ft Float? // Required frontage in feet
+  frontage_required_ft     Float? // Required frontage in feet
 
   // Special Restrictions
-  has_slope_restrictions Boolean @default(false)
+  has_slope_restrictions      Boolean @default(false)
   has_floodplain_restrictions Boolean @default(false)
-  has_wildfire_restrictions Boolean @default(false)
+  has_wildfire_restrictions   Boolean @default(false)
   has_open_space_requirements Boolean @default(false)
-  overlays String? // JSON array of overlays (Hillside, Historic, etc.)
+  overlays                    String? // JSON array of overlays (Hillside, Historic, etc.)
 
   // Buildability Assessment
   has_legal_access Boolean @default(false)
-  access_type String? // "paved_road", "dirt_road", "easement", "none"
-  utilities_status String @default("unknown") // "available", "nearby", "distant", "none", "unknown"
-  water_source String? // "culinary", "well", "hauled", "none"
-  sewer_type String? // "sewer", "septic", "none"
+  access_type      String? // "paved_road", "dirt_road", "easement", "none"
+  utilities_status String  @default("unknown") // "available", "nearby", "distant", "none", "unknown"
+  water_source     String? // "culinary", "well", "hauled", "none"
+  sewer_type       String? // "sewer", "septic", "none"
 
   // Physical Constraints
-  slope_percent Float? // Average slope percentage
+  slope_percent       Float? // Average slope percentage
   buildable_area_sqft Float? // Estimated buildable area
-  buildability_score Int @default(0) // 0-100 score
-  buildability_notes String? // Detailed notes on buildability
+  buildability_score  Int     @default(0) // 0-100 score
+  buildability_notes  String? // Detailed notes on buildability
 
   // Use Ideas & Strategy
-  best_use_ideas String? // JSON array of best use scenarios
-  use_difficulty String @default("unknown") // "easy", "moderate", "difficult", "prohibitive"
+  best_use_ideas                String? // JSON array of best use scenarios
+  use_difficulty                String  @default("unknown") // "easy", "moderate", "difficult", "prohibitive"
   estimated_time_to_entitlement String? // e.g., "3-6 months", "1-2 years"
-  next_steps String? // Recommended next steps
+  next_steps                    String? // Recommended next steps
 
   // Data Sources
-  zoning_map_url String?
+  zoning_map_url       String?
   zoning_ordinance_url String?
-  data_last_verified DateTime?
-  notes String? // General notes
+  data_last_verified   DateTime?
+  notes                String? // General notes
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -188,11 +209,11 @@ model Source {
   id String @id @default(uuid())
 
   property_id String
-  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
 
-  label String
-  url String?
-  source_type String @default("other") // "county_listing" | "assessor" | "gis" | "manual_note" | "auction_page" | "other"
+  label       String
+  url         String?
+  source_type String  @default("other") // "county_listing" | "assessor" | "gis" | "manual_note" | "auction_page" | "other"
 
   created_at DateTime @default(now())
 
@@ -203,21 +224,21 @@ model OutcomeEvent {
   id String @id @default(uuid())
 
   property_id String
-  property Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
 
   event_type String // "redeemed" | "removed" | "sold" | "passed" | "struck_off" | "note"
   event_date String
-  details String?
+  details    String?
 
   created_at DateTime @default(now())
 }
 
 model UserSettings {
   id             String   @id @default("default")
-  user_id        String?  @unique  // Link to actual User model when available
-  totalBudget    Float    @default(50000)  // total budget for this sale cycle
-  maxPerProperty Float    @default(25000)  // max spend per property
-  reserveBuffer  Float    @default(5000)   // amount of cash to keep uncommitted
+  user_id        String?  @unique // Link to actual User model when available
+  totalBudget    Float    @default(50000) // total budget for this sale cycle
+  maxPerProperty Float    @default(25000) // max spend per property
+  reserveBuffer  Float    @default(5000) // amount of cash to keep uncommitted
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 }
@@ -251,16 +272,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String    @unique
+  email         String     @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   properties    Property[]
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
+  created_at    DateTime   @default(now())
+  updated_at    DateTime   @updatedAt
 }
 
 model VerificationToken {
@@ -269,4 +290,190 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+// Title Research Checklist - Dustin Hahn 9-Step Process
+model TitleResearchChecklist {
+  id          String   @id @default(uuid())
+  property_id String   @unique
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  // Step 1: Drive-by/Street View verified
+  drive_by_status        String    @default("pending") // "pending" | "clear" | "flagged"
+  drive_by_notes         String?
+  drive_by_completed_at  DateTime?
+  drive_by_auto_verified Boolean   @default(false) // Auto-checked if lat/lng exists
+
+  // Step 2: County recorder deed search done
+  deed_search_status       String    @default("pending")
+  deed_search_notes        String?
+  deed_search_completed_at DateTime?
+
+  // Step 3: Grantor/Grantee chain reviewed
+  grantor_grantee_status       String    @default("pending")
+  grantor_grantee_notes        String?
+  grantor_grantee_completed_at DateTime?
+
+  // Step 4: Municipal liens checked
+  municipal_liens_status       String    @default("pending")
+  municipal_liens_notes        String?
+  municipal_liens_completed_at DateTime?
+
+  // Step 5: Owner name lien search done
+  owner_lien_search_status       String    @default("pending")
+  owner_lien_search_notes        String?
+  owner_lien_search_completed_at DateTime?
+
+  // Step 6: HOA status checked
+  hoa_status       String    @default("pending")
+  hoa_notes        String?
+  hoa_completed_at DateTime?
+
+  // Step 7: ARV verified with market value
+  arv_verified_status       String    @default("pending")
+  arv_verified_notes        String?
+  arv_verified_completed_at DateTime?
+
+  // Step 8: GIS/parcel boundary verified
+  gis_verified_status       String    @default("pending")
+  gis_verified_notes        String?
+  gis_verified_completed_at DateTime?
+  gis_auto_verified         Boolean   @default(false) // Auto-checked if geometry exists
+
+  // Step 9: Lawsuit search done
+  lawsuit_search_status       String    @default("pending")
+  lawsuit_search_notes        String?
+  lawsuit_search_completed_at DateTime?
+
+  // Summary
+  total_completed Int      @default(0)
+  last_updated_at DateTime @updatedAt
+  created_at      DateTime @default(now())
+
+  @@index([property_id])
+}
+
+model RedFlag {
+  id String @id @default(uuid())
+
+  property_id String
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  flag_type String // "suspicious_tax_amount" | "high_risk" | "data_error" | etc.
+  message   String
+  severity  String  @default("warning") // "warning" | "critical" | "info"
+  details   String? // JSON string with additional data
+
+  is_resolved Boolean   @default(false)
+  resolved_at DateTime?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([property_id])
+  @@index([flag_type])
+  @@index([is_resolved])
+}
+
+// Third-Party Enrichment - Market signals (Zillow, etc.)
+// Manual entry only - no automated scraping
+// Always displayed as "market reference", never overrides county data
+model ThirdPartyEnrichment {
+  id                    String   @id @default(uuid())
+  property_id           String   @unique
+  property              Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  // Zillow data (manual entry)
+  zillow_url            String?
+  zillow_zpid           String?
+  zillow_zestimate      Float?
+  zillow_rent_estimate  Float?
+  zillow_beds           Int?
+  zillow_baths          Float?
+  zillow_sqft           Int?
+  zillow_confidence     String?  // "high" | "medium" | "low"
+  zillow_last_synced    DateTime?
+
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  @@index([property_id])
+  @@index([zillow_zpid])
+}
+
+// Auction Calendar - Track upcoming tax sales
+model Auction {
+  id             String   @id @default(uuid())
+  county         String
+  state          String
+  auction_date   DateTime
+  format         String   // "online" | "in-person"
+  property_count Int
+  url            String?
+  notes          String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@index([county])
+  @@index([state])
+  @@index([auction_date])
+}
+
+// State Guides for US Map - Tax Sale Information by State
+model StateGuide {
+  id String @id @default(uuid())
+
+  state_code String @unique // "UT", "CA", etc.
+  state_name String
+
+  sale_type String // "tax_deed" | "tax_lien" | "redeemable_deed" | "hybrid"
+  interest_rate    String? // for liens, e.g., "12-18%"
+  redemption_period String? // e.g., "None" or "3 years"
+  auction_frequency String // e.g., "Annual (May)"
+  top_counties      String? // JSON array of top counties
+  notes             String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@index([state_code])
+  @@index([sale_type])
+}
+
+// Title Analysis - Automated document scraping and analysis
+model TitleAnalysis {
+  id              String   @id @default(uuid())
+  property_id     String   @unique
+  property        Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  score           Int      // 0-100 title score
+  recommendation  String   // 'clean' | 'caution' | 'danger' | 'avoid'
+  summary         String   // Plain English summary
+
+  redFlags        String?  // JSON array of RedFlag
+  yellowFlags     String?  // JSON array of YellowFlag
+  greenFlags      String?  // JSON array of GreenFlag
+  ownershipChain  String?  // JSON array of OwnershipEvent
+  activeLiens     String?  // JSON array of Lien
+
+  mortgageStatus  String   // 'paid_off' | 'active' | 'unclear'
+  yearsSameOwner  Int?
+  titleComplexity String   // 'simple' | 'moderate' | 'complex'
+  estimatedQuietTitleCost Int?
+  recommendedActions String? // JSON array of strings
+
+  rawDocuments    String?  // JSON - all scraped documents
+
+  // PDF Analysis results
+  pdfAnalyses      String?  // JSON - PDF document analysis results
+  pdfWarnings      String?  // JSON - Aggregated warnings from PDF review
+  hasPDFCriticalIssues Boolean @default(false)
+
+  analyzedAt      DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([property_id])
+  @@index([score])
+  @@index([recommendation])
 }

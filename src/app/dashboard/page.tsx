@@ -1,4 +1,6 @@
-import { prisma } from '@/lib/db'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Building2,
@@ -8,9 +10,27 @@ import {
   Filter,
   ChevronRight,
   Clock,
+  Wallet,
 } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
-import { cn, formatCurrency, getScoreColor } from '@/lib/ui-utils'
+import { cn, formatCurrency, getScoreColor, cleanHtmlEntities } from '@/lib/ui-utils'
+
+interface Property {
+  id: string
+  parcel_number: string
+  property_address: string | null
+  total_amount_due: number | null
+  estimated_market_value: number | null
+  final_score: number | null
+  property_type: string
+  recommendation: string | null
+}
+
+interface UserSettings {
+  totalBudget: number
+  maxPerProperty: number
+  reserveBuffer: number
+}
 
 const StatCard = ({
   label,
@@ -53,63 +73,104 @@ const StatCard = ({
   </div>
 )
 
-export default async function DashboardPage() {
-  // Aggregate stats from database
-  const totalProperties = await prisma.property.count({ where: { is_seed: false } })
-  const highScoring = await prisma.property.count({
-    where: { is_seed: false, final_score: { gte: 80 } },
+export default function DashboardPage() {
+  const [topProperties, setTopProperties] = useState<Property[]>([])
+  const [researchQueue, setResearchQueue] = useState<Property[]>([])
+  const [stats, setStats] = useState({
+    totalProperties: 0,
+    highScoring: 0,
+    totalMarketValue: 0,
+    totalPayoff: 0,
+    bidCount: 0,
   })
+  const [distributionData, setDistributionData] = useState<{ range: string; count: number; color: string }[]>([])
+  const [userSettings, setUserSettings] = useState<UserSettings | null>(null)
+  const [bidTargetsMode, setBidTargetsMode] = useState<'overall' | 'myBudget'>('overall')
+  const [loading, setLoading] = useState(true)
 
-  const marketValueAgg = await prisma.property.aggregate({
-    where: { is_seed: false },
-    _sum: { estimated_market_value: true },
-  })
-  const totalMarketValue = marketValueAgg._sum.estimated_market_value || 0
+  useEffect(() => {
+    fetchDashboardData()
+    fetchUserSettings()
+  }, [])
 
-  const payoffAgg = await prisma.property.aggregate({
-    where: { is_seed: false },
-    _sum: { total_amount_due: true },
-  })
-  const totalPayoff = payoffAgg._sum.total_amount_due || 0
+  const fetchDashboardData = async () => {
+    try {
+      const res = await fetch('/api/dashboard')
+      const data = await res.json()
+      setTopProperties(data.topProperties)
+      setResearchQueue(data.researchQueue)
+      setStats(data.stats)
+      setDistributionData(data.distributionData)
+    } catch (error) {
+      console.error('Failed to fetch dashboard data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  // Score distribution
-  const scoreRanges = [
-    { range: '0-40', min: 0, max: 40, color: '#ef4444' },
-    { range: '41-65', min: 41, max: 65, color: '#f59e0b' },
-    { range: '66-80', min: 66, max: 80, color: '#3b82f6' },
-    { range: '81-100', min: 81, max: 100, color: '#10b981' },
-  ]
+  const fetchUserSettings = async () => {
+    try {
+      const res = await fetch('/api/settings')
+      const data = await res.json()
+      setUserSettings(data)
+    } catch (error) {
+      console.error('Failed to fetch user settings:', error)
+    }
+  }
 
-  const distributionData = await Promise.all(
-    scoreRanges.map(async (r) => ({
-      ...r,
-      count: await prisma.property.count({
-        where: {
-          is_seed: false,
-          final_score: { gte: r.min, lte: r.max },
-        },
-      }),
-    }))
-  )
+  const getBudgetFit = (amountDue: number | null) => {
+    if (!userSettings || !amountDue) return null
+    const availableToBid = userSettings.totalBudget - userSettings.reserveBuffer
+    const fitsMax = amountDue <= userSettings.maxPerProperty
+    const fitsCash = amountDue <= availableToBid
+    return {
+      fitsMax,
+      fitsCash,
+      affordable: fitsMax && fitsCash,
+    }
+  }
 
-  // Top properties
-  const topProperties = await prisma.property.findMany({
-    where: { is_seed: false },
-    orderBy: { final_score: 'desc' },
-    take: 5,
-  })
+  // Compute displayed properties based on mode
+  const displayedBidTargets = (() => {
+    if (bidTargetsMode === 'overall' || !userSettings) {
+      return topProperties
+    }
 
-  // Research queue (RESEARCH_MORE recommendation)
-  const researchQueue = await prisma.property.findMany({
-    where: { is_seed: false, recommendation: 'research_more' },
-    orderBy: { final_score: 'desc' },
-    take: 3,
-  })
+    // Sort by bestForMyBudget logic
+    return [...topProperties].sort((a, b) => {
+      const aFit = getBudgetFit(a.total_amount_due)
+      const bFit = getBudgetFit(b.total_amount_due)
 
-  // BID count
-  const bidCount = await prisma.property.count({
-    where: { is_seed: false, recommendation: 'bid' },
-  })
+      const aAffordable = aFit?.affordable || false
+      const bAffordable = bFit?.affordable || false
+
+      // Affordable first
+      if (aAffordable && !bAffordable) return -1
+      if (!aAffordable && bAffordable) return 1
+
+      // Within same group, sort by finalScore DESC
+      const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
+      if (scoreDiff !== 0) return scoreDiff
+
+      // Then by amountDue ASC
+      return (a.total_amount_due || 0) - (b.total_amount_due || 0)
+    })
+  })()
+
+  // Count affordable properties
+  const affordableCount = userSettings
+    ? topProperties.filter((p) => getBudgetFit(p.total_amount_due)?.affordable).length
+    : 0
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-96">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+        </div>
+      </AppLayout>
+    )
+  }
 
   return (
     <AppLayout>
@@ -125,9 +186,9 @@ export default async function DashboardPage() {
             </h1>
           </div>
           <div className="flex items-center gap-2">
-            <button className="btn btn-secondary gap-2">
-              <Filter size={18} /> Filters
-            </button>
+            <Link href="/properties" className="btn btn-secondary gap-2">
+              <Filter size={18} /> View Properties
+            </Link>
             <Link href="/import" className="btn btn-primary gap-2">
               Import County List
             </Link>
@@ -138,13 +199,13 @@ export default async function DashboardPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             label="Total Properties"
-            value={totalProperties.toString()}
+            value={stats.totalProperties.toString()}
             subtext="In Utah County 2026 Sale"
             icon={<Building2 size={20} />}
           />
           <StatCard
             label="Total Market Value"
-            value={formatCurrency(totalMarketValue)}
+            value={formatCurrency(stats.totalMarketValue)}
             subtext="Aggregate value of auction"
             icon={<TrendingUp size={20} />}
             trend="+12%"
@@ -152,13 +213,13 @@ export default async function DashboardPage() {
           />
           <StatCard
             label="Auction Payoff"
-            value={formatCurrency(totalPayoff)}
+            value={formatCurrency(stats.totalPayoff)}
             subtext="Opening bid aggregate"
             icon={<AlertTriangle size={20} />}
           />
           <StatCard
             label="Top Opportunities"
-            value={highScoring.toString()}
+            value={stats.highScoring.toString()}
             subtext="Scored above 80/100"
             icon={<CheckCircle2 size={20} />}
           />
@@ -215,45 +276,105 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          {/* Top Properties List */}
+          {/* Top Properties List with Toggle */}
           <div className="card flex flex-col h-full">
             <div className="p-6 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">Top Rated Bid-Targets</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-bold text-slate-900">Top Rated Bid-Targets</h3>
+                {userSettings && (
+                  <div className="flex items-center gap-2 text-xs">
+                    <Wallet size={14} className="text-emerald-600" />
+                    <span className="text-slate-500">
+                      {formatCurrency(userSettings.totalBudget - userSettings.reserveBuffer)} available
+                    </span>
+                  </div>
+                )}
+              </div>
               <p className="text-sm text-slate-500">Highest scores for next auction</p>
+
+              {/* Toggle */}
+              <div className="flex items-center gap-2 mt-4">
+                <button
+                  onClick={() => setBidTargetsMode('overall')}
+                  className={cn(
+                    'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
+                    bidTargetsMode === 'overall'
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  )}
+                >
+                  Overall
+                </button>
+                <button
+                  onClick={() => setBidTargetsMode('myBudget')}
+                  className={cn(
+                    'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
+                    bidTargetsMode === 'myBudget'
+                      ? 'bg-emerald-600 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  )}
+                >
+                  My Budget
+                </button>
+                {userSettings && bidTargetsMode === 'myBudget' && (
+                  <span className="text-xs text-emerald-600 font-medium ml-2">
+                    {affordableCount} fit your budget
+                  </span>
+                )}
+              </div>
             </div>
             <div className="flex-grow overflow-auto">
-              {topProperties.map((property) => (
-                <Link
-                  key={property.id}
-                  href={`/properties/${property.id}`}
-                  className="flex items-center gap-4 p-4 hover:bg-slate-50 border-b border-slate-50 transition-colors"
-                >
-                  <div
-                    className={cn(
-                      'w-12 h-12 rounded-lg flex flex-col items-center justify-center font-bold',
-                      (property.final_score || 0) >= 80
-                        ? 'bg-emerald-50 text-emerald-600'
-                        : 'bg-blue-50 text-blue-600'
-                    )}
+              {displayedBidTargets.map((property) => {
+                const budgetFit = getBudgetFit(property.total_amount_due)
+                const showBudgetIndicator = bidTargetsMode === 'myBudget' && budgetFit
+
+                return (
+                  <Link
+                    key={property.id}
+                    href={`/properties/${property.id}`}
+                    className="flex items-center gap-4 p-4 hover:bg-slate-50 border-b border-slate-50 transition-colors"
                   >
-                    <span className="text-[10px] uppercase opacity-60 leading-none mb-0.5">
-                      Scr
-                    </span>
-                    <span className="text-lg leading-none">
-                      {Math.round(property.final_score || 0)}
-                    </span>
-                  </div>
-                  <div className="flex-grow flex flex-col overflow-hidden">
-                    <span className="text-sm font-bold text-slate-900 truncate">
-                      {property.property_address || property.parcel_number}
-                    </span>
-                    <span className="text-xs text-slate-400 font-mono">
-                      {property.parcel_number}
-                    </span>
-                  </div>
-                  <ChevronRight size={16} className="text-slate-300" />
-                </Link>
-              ))}
+                    <div
+                      className={cn(
+                        'w-12 h-12 rounded-lg flex flex-col items-center justify-center font-bold',
+                        (property.final_score || 0) >= 80
+                          ? 'bg-emerald-50 text-emerald-600'
+                          : 'bg-blue-50 text-blue-600'
+                      )}
+                    >
+                      <span className="text-[10px] uppercase opacity-60 leading-none mb-0.5">
+                        Scr
+                      </span>
+                      <span className="text-lg leading-none">
+                        {Math.round(property.final_score || 0)}
+                      </span>
+                    </div>
+                    <div className="flex-grow flex flex-col overflow-hidden">
+                      <span className="text-sm font-bold text-slate-900 truncate">
+                        {cleanHtmlEntities(property.property_address) || property.parcel_number}
+                      </span>
+                      <span className="text-xs text-slate-400 font-mono">
+                        {property.parcel_number}
+                      </span>
+                      {showBudgetIndicator && (
+                        <span className={cn(
+                          'text-[10px] font-medium mt-0.5',
+                          budgetFit.affordable ? 'text-emerald-600' : 'text-amber-600'
+                        )}>
+                          {budgetFit.affordable
+                            ? 'Fits My Budget'
+                            : !budgetFit.fitsMax
+                            ? 'Above Max Per Property'
+                            : 'Above Available Cash'}
+                          {' · '}
+                          {formatCurrency(property.total_amount_due)}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronRight size={16} className="text-slate-300" />
+                  </Link>
+                )
+              })}
             </div>
             <Link
               href="/properties"
@@ -280,7 +401,7 @@ export default async function DashboardPage() {
                 >
                   <div className="flex justify-between items-start">
                     <span className="text-sm font-bold text-slate-900">
-                      {p.property_address || p.parcel_number}
+                      {cleanHtmlEntities(p.property_address) || p.parcel_number}
                     </span>
                     <span className="px-2 py-0.5 rounded-full text-xs font-bold tracking-wider uppercase bg-amber-500 text-white">
                       RESEARCH

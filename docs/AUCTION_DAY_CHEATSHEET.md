@@ -1,0 +1,137 @@
+# May 21 2026 - Utah County Tax Sale - Auction Day Cheatsheet
+
+## Your Budget: $5,000 max total
+
+---
+
+## PRIMARY TARGET (Partner Deal)
+
+**Parcel:** 03:060:0016  
+**Address:** 591 E 200 NORTH, PLEASANT GROVE  
+**Payoff:** $8,673 | **Value:** $361,800 | Ratio: 2.4%  
+**Title Score:** 100/100 CLEAN | **Investment Score:** 64.5  
+**Owner:** HARBOLD (31 years) | **Mortgage:** PAID OFF  
+**Action:** Pitch to partner - bring the investor report PDF  
+**Partner split:** 85/15 after capital returned  
+
+**Why this one:** Only property with clean title, real house (not vacant land), long-term owner, mortgage paid off. Everything else in the auction has title problems or is unbuildable land.
+
+---
+
+## SOLO BID CANDIDATES (All Vacant Land - Micro Parcels)
+
+**⚠️ WARNING: All 3 are VACANT LAND slivers under 2,200 sqft. You cannot build on these.**
+
+### Candidate A: 47:040:0005
+- **Address:** 220 N 300 EAST, OREM
+- **Payoff:** $360 | Value: $2,600
+- **Size:** 0.03 acres (1,306 sqft) - SMALLEST
+- **Title:** 90/clean | 34 years owner
+- **Owner:** GREAVES (lives at 230 N 300 E - adjacent)
+- **Status:** Vacant land
+- **Verdict:** Land sliver. Owner lives next door - may want it back. SKIP.
+
+### Candidate B: 18:006:0056
+- **Address:** OREM (no specific street)
+- **Payoff:** $447 | Value: $4,300
+- **Size:** 0.05 acres (2,178 sqft)
+- **Title:** 80/clean | 43 years owner
+- **Owner:** BELL, CRAIG (lives in Orem)
+- **Status:** Vacant land
+- **Verdict:** 43 years owner but no address listed. Unbuildable sliver. SKIP.
+
+### Candidate C: 21:003:0084
+- **Address:** NONE LISTED
+- **Payoff:** $468 | Value: $3,800
+- **Size:** 0.047 acres (2,043 sqft)
+- **Title:** 98/clean | 5 years owner
+- **Owner:** BURR (mailing: Mesa, AZ - absentee)
+- **Status:** Vacant land
+- **Verdict:** No street address. Owner in Arizona. Likely unbuildable remnant. SKIP.
+
+**REALITY CHECK:** All 3 "solo candidates" are unbuildable land slivers. The micro-parcel penalty in the investment score (18.5) confirms this. Do not bid on these unless you understand they have no development value.
+
+---
+
+## PROPERTIES TO SKIP (Flagged by Title Analysis)
+
+| Parcel | Issue | Verdict |
+|--------|-------|---------|
+| **35:043:0085** | Fresh heir transfer April 2026 (5 weeks before auction) | WILL REDEEM |
+| **37:010:0002** | 1987 lien + 2020 death | HIGH REDEMPTION RISK |
+| **36:960:0017** | HOA lien 2019 (condo) | VERIFY BEFORE BIDDING |
+| **04:016:0003** | $165 payoff on suspicious property | DENSITY997 LLC - SKIP |
+| **66:707:0002** | $586 payoff, $6,200 value, no address | Micro-parcel, unclear title |
+
+**All BRMK Provo Canyon parcels:** Hillside, no road access - SKIP
+
+---
+
+## AUCTION RULES (Utah County)
+
+- **Format:** Online bid-up (premium bid)
+- **URL:** https://www.utahcounty.gov/dept/treas/TaxSale.html
+- **Starts:** May 21, 2026
+- **Payment:** Due immediately if you win
+- **Title:** Tax deed (quiet title needed before selling)
+- **Redemption:** Utah has NO redemption period after tax deed sale
+- **Research:** https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=030600016
+
+---
+
+## MAX BID FORMULA
+
+```
+Max Bid = (Market Value × 0.70) - Repairs - $3,500 quiet title - Profit
+```
+
+**For 03:060:0016:**
+- ($361,800 × 0.70) = $253,260
+- - $20,000 repairs
+- - $3,500 quiet title
+- = ~$229,760 max bid
+- **Conservative bid:** $150,000 (leaves $50k profit margin)
+
+---
+
+## RED FLAGS AT AUCTION
+
+| Red Flag | Meaning |
+|----------|---------|
+| LLC/City/HOA owner | Likely won't redeem but complex title |
+| Fresh probate/death transfer | Heirs WILL redeem - AVOID |
+| $165 payoff on $500K property | Something is wrong - AVOID |
+| No street address | Land parcel, not a house - VERIFY |
+| Value < $10,000 | Micro-parcel or land sliver - SKIP unless intentional |
+| Title score < 60 | Document problems - AVOID |
+
+---
+
+## WHAT YOU LEARNED (That Others Don't Know)
+
+**Critical insight from bulk title analysis:**
+- 63 of 127 properties (50%) have title problems
+- Only 31 properties (24%) have clean titles (80+)
+- Of those, only 1 is a real house under $10k payoff: **03:060:0016**
+- Most other bidders don't have this data
+
+**Your advantage:** You know which properties to avoid. Most bidders are flying blind.
+
+---
+
+## FINAL RECOMMENDATION
+
+**If you have a partner:** Bid on 03:060:0016 up to $150,000. Pitch it as "the only clean title house in the auction under $10k payoff."
+
+**If you're bidding solo:** Do not bid. All solo-budget properties are unbuildable land slivers. Wait for the next auction or find a partner.
+
+**Utah County Land Records Links:**
+- 03:060:0016: https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=030600016
+- 18:006:0056: https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=180060056
+- 21:003:0084: https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=210030084
+- 47:040:0005: https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=470400005
+
+---
+
+*Generated by TaxProperty Utah - Automated Title Analysis*
+*Date: 2026-04-30*

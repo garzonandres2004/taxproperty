@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Loader2, CheckCircle, AlertCircle, Home, TrendingUp, MapPin, DollarSign } from 'lucide-react'
+import { cleanHtmlEntities } from '@/lib/ui-utils'
 
 interface ExecutiveSummaryProps {
   parcelNumbers?: string[] // If not provided, fetches top 4 scored properties
@@ -86,7 +87,7 @@ export default function ExecutiveSummary({ parcelNumbers }: ExecutiveSummaryProp
 
             return {
               parcelNumber: p.parcel_number,
-              propertyAddress: p.property_address || 'Address not available',
+              propertyAddress: cleanHtmlEntities(p.property_address) || 'Address not available',
               ownerName: p.owner_name || 'Unknown',
               totalAmountDue: p.total_amount_due,
               estimatedMarketValue: p.estimated_market_value || 0,
@@ -200,7 +201,7 @@ export default function ExecutiveSummary({ parcelNumbers }: ExecutiveSummaryProp
                           <CardTitle className="text-lg font-mono">{prop.parcelNumber}</CardTitle>
                           <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
                             <MapPin className="h-3 w-3" />
-                            {prop.propertyAddress}
+                            {cleanHtmlEntities(prop.propertyAddress)}
                           </p>
                         </div>
                         <div className="text-right">

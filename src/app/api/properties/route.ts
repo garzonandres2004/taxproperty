@@ -137,7 +137,15 @@ export async function GET() {
         is_seed: false
       },
       orderBy: [{ final_score: 'desc' }],
-      include: { sources: true }
+      include: {
+        sources: true,
+        titleAnalysis: {
+          select: {
+            score: true,
+            recommendation: true
+          }
+        }
+      }
     })
     return NextResponse.json(properties)
   } catch (error) {

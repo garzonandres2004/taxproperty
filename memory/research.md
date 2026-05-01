@@ -146,3 +146,82 @@ https://maps.utahcounty.gov/arcgis/rest/services/Assessor/CommercialAppraiser/Ma
 2. Create fetcher for each city
 3. Update auto-fill pipeline to use city fetchers
 4. Test with sample parcels from each city
+
+### [2026-04-29] investigador — Municipal Lien Detection for Utah County
+
+**Pregunta:** What municipal lien and code enforcement data sources are available for Utah County properties, and how can we integrate them into the TaxProperty platform?
+
+**Hallazgo:**
+
+## 1. Utah County Code Enforcement API (Automated Source Found)
+
+**ArcGIS REST API Endpoint:**
+- Base URL: `https://gis2.codb.us/arcgis/rest/services/CustomResources/CodeEnforcementCases/MapServer`
+- Layer 7: "UT Cases - Open Current Year" (code enforcement for unincorporated Utah County)
+- Query URL: `https://gis2.codb.us/arcgis/rest/services/CustomResources/CodeEnforcementCases/MapServer/7/query`
+
+**Available Fields:**
+- `SITE_APN` - Parcel number (can query by this)
+- `CASE_NO`, `CASE_NAME`, `CaseType`, `CaseSubType`
+- `STATUS` - Values: "Investigation Started", "Notice Given", "At Hearing", "Closed", "Lien"
+- `DESCRIPTION` - Violation description
+- `STARTED`, `CLOSED`, `LASTACTION` - Dates
+- `FEES_CHARGED`, `FEES_PAID`, `BALANCE_DUE` - Financial impact
+- `SITE_ADDR`, `SITE_CITY`, `SITE_ZIP` - Location
+- `LAT`, `LON` - Coordinates
+
+**Important Limitation:**
+This API only covers **unincorporated areas** of Utah County (approximately 25/127 properties in our database). Cities like Provo, Orem, Lehi handle their own code enforcement and do NOT appear in this database.
+
+## 2. City Code Enforcement (Manual Sources Required)
+
+**Provo:**
+- CityView Portal: https://cvportal.provo.org/CityViewPortal
+- Code Compliance: (801) 852-6427
+- No public API found — must search manually or contact department
+
+**Other Cities (Orem, Lehi, etc.):**
+- No public APIs or searchable databases found
+- Each city maintains its own code enforcement records
+- Manual contact required for violation checks
+
+## 3. Utility Liens (Manual Search Required)
+
+**No centralized database found.** Utility liens:
+- Are recorded with Utah County Recorder's Office
+- Must be searched manually by property/owner name
+- Include water, sewer, gas, electric liens
+- Search URL: https://www.utahcounty.gov/LandRecords/namesearch.asp
+
+## 4. Legal Context — Why This Matters
+
+Per Utah law and Dustin Hahn's training:
+- **Municipal liens survive tax deed sales** — they are NOT wiped out like federal tax liens
+- Code enforcement fees and utility liens remain attached to property
+- Buyers must pay these before clear title
+
+**Implication:** Municipal liens directly impact max bid calculations and must be subtracted from bids.
+
+## 5. Implementation Strategy
+
+### Automated (Unincorporated Properties):
+- Query ArcGIS API by `SITE_APN` (parcel number without colons)
+- Check for open cases with `BALANCE_DUE > 0` or `STATUS = "Lien"`
+- Flag properties with active violations
+
+### Manual (City Properties):
+- Provide links to city code enforcement departments
+- Create checklist item for manual verification
+- Link to Utah County Recorder for utility lien search
+
+**Implicación:** 
+We can implement a hybrid approach:
+1. Auto-check unincorporated properties via API (20% coverage)
+2. Provide manual checklist + links for city properties (80% coverage)
+3. Add scoring penalty (-20 points) for municipal lien risk
+4. Display warning: "Municipal liens may survive foreclosure"
+
+**Sources:**
+- [Utah County Code Enforcement API](https://gis2.codb.us/arcgis/rest/services/CustomResources/CodeEnforcementCases/MapServer/7)
+- [Provo Code Compliance](https://ut-provo.civicplus.com/207/Code-Compliance)
+- [Utah County Land Records](https://www.utahcounty.gov/landrecords/)
