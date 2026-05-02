@@ -45,3 +45,55 @@ CSV Import → Scoring Engine → AGRC Enrichment → Zoning Auto-fill → Repor
 - Unincorporated properties (25/127) get real zone codes from Utah County GIS
 - Micro-parcel penalty NOT YET IMPLEMENTED (GitHub issue exists)
 - BRMK Provo Canyon LLC parcels flagged as hillside/avoid
+
+---
+
+## Adding a New Utah County (Quick Guide)
+
+### What you need from the county:
+1. Tax sale list (CSV/spreadsheet/PDF)
+2. Auction date and platform
+3. Land records URL (for title research)
+
+### What's automatic (same for ALL Utah counties):
+- **Market value, building data**: AGRC LIR API (auto, no setup needed)
+- **Coordinates**: AGRC or geocoding
+- **Scoring**: same engine
+- **Report generation**: same template
+
+### Steps to add a county:
+1. Get their tax sale CSV
+2. Go to `/import`, select county, upload CSV
+3. Confirm column mapping in the wizard
+4. Click "Auto-Enrich All"
+5. Done - all features work immediately
+
+### AGRC endpoint pattern:
+```
+https://services1.arcgis.com/99lidPhWCzftIe9K/ArcGIS/rest/services/Parcels_[CountyName]_LIR/FeatureServer/0/query
+```
+
+### County name formats for AGRC:
+Utah, Tooele, SaltLake, Davis, Weber, Washington, Cache, Summit, Iron, BoxElder, etc.
+
+### Column Detection:
+The import wizard auto-detects columns from ANY county CSV:
+- Parcel number: "parcel number", "serial number", "account number", "tax id", "pin", "apn"
+- Owner: "name", "owner", "taxpayer", "grantee"
+- Amount due: "estimated starting bid", "total due", "amount due", "starting bid"
+- Address: "address", "property address", "situs", "location"
+- Legal description: "legal", "legal description", "taxing description"
+
+### Currently Supported (29 Utah counties):
+| County | Status | Properties |
+|--------|--------|------------|
+| Utah | Active | 127 |
+| Tooele | Active | 29 |
+| All others | Pending | - |
+
+### To activate a county:
+```bash
+# County is already in database with AGRC endpoint
+# Just import their tax sale CSV via /import page
+# Then run: curl -X POST http://localhost:3000/api/counties/[name]/enrich-all
+```
