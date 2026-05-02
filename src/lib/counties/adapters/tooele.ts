@@ -109,16 +109,73 @@ export const tooeleAdapter: CountyAdapter = {
       result.zoning_description = 'Property is in unincorporated Tooele County. Contact county planning.'
     }
 
-    // 4. Market value strategy
-    // Tooele doesn't have public API like AGRC, so we:
-    // - Use assessed_value if available (from CSV)
-    // - Or set null and let user enter manually
-    if (property.assessed_value && property.assessed_value > 0) {
+    // 4. Query AGRC Tooele LIR for market data
+    // AGRC covers all Utah counties including Tooele
+    try {
+      // Convert numeric parcel ID to dashed format for AGRC
+      // CSV: 1305000014 -> AGRC: 13-050-0-0014
+      const numeric = property.parcel_number.replace(/[^0-9]/g, '')
+      // Format: XX-XXX-X-XXXX (2-3-1-4 digits)
+      const dashedFormat = `${numeric.slice(0,2)}-${numeric.slice(2,5)}-${numeric.slice(5,6)}-${numeric.slice(6,10)}`
+      const whereValue = `PARCEL_ID='${dashedFormat}'`.replace(/'/g, '%27')
+      const outFields = 'PARCEL_ID,PARCEL_ADD,PARCEL_CITY,PARCEL_ACRES,TOTAL_MKT_VALUE,LAND_MKT_VALUE,BLDG_SQFT,BUILT_YR'
+      const agrcUrl = `https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/Parcels_Tooele_LIR/FeatureServer/0/query?where=${whereValue}&outFields=${outFields}&returnGeometry=false&f=json`
+
+      const response = await fetch(agrcUrl, {
+        headers: { 'User-Agent': 'TaxProperty-Utah/1.0' }
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        if (data?.features?.length > 0) {
+          const attrs = data.features[0].attributes
+
+          // Market value from AGRC
+          if (attrs.TOTAL_MKT_VALUE) {
+            result.estimated_market_value = Math.round(attrs.TOTAL_MKT_VALUE)
+            result.confidence = Math.max(result.confidence || 50, 85)
+            result.notes += 'Market value from AGRC Tooele LIR. '
+          }
+
+          // Building data from AGRC
+          if (attrs.BLDG_SQFT) {
+            result.building_sqft = Math.round(attrs.BLDG_SQFT)
+          }
+          if (attrs.BUILT_YR) {
+            result.year_built = attrs.BUILT_YR
+          }
+
+          // Lot size from AGRC (prefer over legal description)
+          if (attrs.PARCEL_ACRES) {
+            result.lot_size_sqft = Math.round(attrs.PARCEL_ACRES * 43560)
+          }
+
+          // Jurisdiction from AGRC
+          if (attrs.PARCEL_CITY) {
+            const agrcCity = attrs.PARCEL_CITY.trim()
+            if (TOOELE_CITY_PLANNING_URLS[agrcCity]) {
+              result.jurisdiction = agrcCity
+              result.jurisdiction_type = 'city'
+              result.zoning = 'City jurisdiction - manual verification required'
+              result.zoning_description = `Property is within ${agrcCity} city limits. Contact city planning for zoning.`
+            } else {
+              result.jurisdiction = 'Unincorporated Tooele County'
+              result.jurisdiction_type = 'county'
+            }
+          }
+
+          result.data_source = 'AGRC Tooele LIR'
+        }
+      }
+    } catch (error) {
+      result.notes += 'AGRC enrichment failed. '
+    }
+
+    // Fallback to assessed_value if AGRC failed
+    if (!result.estimated_market_value && property.assessed_value && property.assessed_value > 0) {
       result.estimated_market_value = property.assessed_value
       result.confidence = Math.max(result.confidence || 50, 60)
       result.notes += 'Market value estimated from assessed value. '
-    } else {
-      result.notes += 'Market value unknown. Research required. '
     }
 
     // 5. Parse lot size from legal description if available
