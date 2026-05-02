@@ -45,34 +45,40 @@ Import 5-10 properties, run auto-fill, verify scores look correct.
 
 ## Phase 2: Next Counties (In Progress)
 
-### Tooele County 🔄 RESEARCH IN PROGRESS
+### Tooele County ✅ FULLY IMPLEMENTED
 
-**Priority: HIGH** (User has access to data)
+**Status:** LIVE - 29 properties imported
 
-**Sources Found:**
+**Auction Details:**
+- Date: May 7, 2026
+- Platform: PublicSurplus.com (publicsurplus.com/sms/tooeleco,ut/list/current?orgid=94332)
+- Deposit: $500 wire transfer
+- Buyer Premium: 8%
+- Format: Tax deed sale (no title guarantee)
+- Redemption: Until auction begins
+
+**Data Sources:**
 - Tax Sale: https://tooeleco.gov/departments/administration/auditor/may_tax_sale.php
-- Property List: Google Spreadsheet (shared)
-- Recorder: https://tooeleco.gov/departments/administration/recorder_surveyor/property_records_search.php
-- Property Search: https://search.tooeleco.gov.mediciland.com/ (requires Google auth)
+- Property List: Google Spreadsheet → CSV export
+- Recorder: https://search.tooeleco.gov.mediciland.com/ (requires Google auth)
 
 **Parcel Format:**
-- 13 digits numeric (e.g., 1305000014)
-- Format: `##############` (14 chars with leading zeros)
-- Alternative seen: 0305700014, 11-070-0-0014 (hyphenated)
+- CSV: 1305000014 (numeric, 12-14 digits)
+- AGRC: 11-032-0-0210 (dashes)
+- Format: Numeric for API, dashes for display
 
-**To Research:**
-- [ ] Auction platform (in-person vs online)
-- [ ] Deposit amount
-- [ ] Redemption rules (until when?)
-- [ ] Sale date (likely May 2026)
-- [ ] CSV download format
-- [ ] GIS/parcel API availability
-- [ ] Zoning lookup source
+**AGRC API:**
+- Endpoint: services1.arcgis.com/99lidPhWCzftIe9K/ArcGIS/rest/services/Parcels_Tooele_LIR/FeatureServer/0/query
+- Fields: Same as Utah County (PARCEL_ID, PARCEL_ADD, PARCEL_CITY, TOTAL_MKT_VALUE, PARCEL_ACRES, BLDG_SQFT, BUILT_YR)
 
-**Data Access Notes:**
-- Mediciland requires Google authentication
-- PDF exports available from document search
-- May need manual CSV download from county
+**Implementation:**
+- CountyConfig: ✅ Added to database
+- CSV Import: ✅ Account Number, Parcel Number, Name, Estimated Starting Bid, Property Type, Address, City State Zip, Legal
+- Land Records: ✅ Mediciland integration
+- AGRC Enrichment: ✅ Same fields as Utah County
+- Zoning: Manual verification (city-based lookup)
+
+**GitHub Issues:** #14, #15
 
 ---
 
