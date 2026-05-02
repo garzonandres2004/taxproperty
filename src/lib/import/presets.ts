@@ -11,7 +11,7 @@ export type FieldMapping = {
 
 export type ImportPreset = {
   name: string
-  county: 'utah' | 'salt_lake'
+  county: 'utah' | 'salt_lake' | 'tooele'
   description: string
   confidence: PresetConfidence
   confidenceNote: string
@@ -82,6 +82,76 @@ export const utahCountyPreset: ImportPreset = {
 // Salt Lake County Preset
 // Based on public info: https://www.saltlakecounty.gov/property-tax/property-tax-sale/
 // NOTE: Verify current procedures at saltlakecounty.gov before bidding
+// Tooele County Preset
+// Based on 2026 Tax Sale Terms and Conditions
+// Sale Date: May 7, 2026
+// Platform: Public Surplus (https://www.publicsurplus.com)
+// Deposit: $500 wire transfer
+// Buyer Premium: 8%
+export const tooeleCountyPreset: ImportPreset = {
+  name: 'Tooele County',
+  county: 'tooele',
+  description: 'Tooele County May 2026 Tax Sale property list',
+  confidence: 'likely',
+  confidenceNote: 'Based on 2026 Terms & Conditions. Sale on May 7, 2026 via Public Surplus. $500 wire deposit. 8% buyer premium. Redemption allowed until auction begins.',
+  expectedColumns: [
+    'Account Number',
+    'Parcel Number',
+    'Name',
+    'Estimated Starting Bid',
+    'Property Type',
+    'Address',
+    'City State Zip',
+    'Legal'
+  ],
+  mappings: [
+    { csvColumn: 'Account Number', appField: 'account_number', transform: 'string' },
+    { csvColumn: 'Parcel Number', appField: 'parcel_number', transform: 'string' },
+    { csvColumn: 'Name', appField: 'owner_name', transform: 'string' },
+    { csvColumn: 'Estimated Starting Bid', appField: 'total_amount_due', transform: 'currency' },
+    { csvColumn: 'Property Type', appField: 'property_type', transform: 'lowercase' },
+    { csvColumn: 'Address', appField: 'property_address', transform: 'string' },
+    { csvColumn: 'City State Zip', appField: 'city_state_zip', transform: 'string' },
+    { csvColumn: 'Legal', appField: 'legal_description', transform: 'string' },
+    { csvColumn: 'Serial Number', appField: 'parcel_number', transform: 'string' },
+    { csvColumn: 'Tax ID', appField: 'parcel_number', transform: 'string' },
+    { csvColumn: 'Owner Name', appField: 'owner_name', transform: 'string' },
+    { csvColumn: 'Owner', appField: 'owner_name', transform: 'string' },
+    { csvColumn: 'Situs Address', appField: 'property_address', transform: 'string' },
+    { csvColumn: 'City', appField: 'city', transform: 'string' },
+    { csvColumn: 'Legal Description', appField: 'legal_description', transform: 'string' },
+    { csvColumn: 'Legal Desc', appField: 'legal_description', transform: 'string' },
+    { csvColumn: 'Assessed Value', appField: 'assessed_value', transform: 'currency' },
+    { csvColumn: 'Value', appField: 'assessed_value', transform: 'currency' },
+    { csvColumn: 'Amount Due', appField: 'total_amount_due', transform: 'currency' },
+    { csvColumn: 'Tax Amount', appField: 'total_amount_due', transform: 'currency' },
+    { csvColumn: 'Due', appField: 'total_amount_due', transform: 'currency' },
+    { csvColumn: 'Land Use', appField: 'property_type', transform: 'lowercase' },
+    { csvColumn: 'Acres', appField: 'lot_size_acres', transform: 'number' },
+    { csvColumn: 'Sale Date', appField: 'sale_date', transform: 'date' },
+    { csvColumn: 'Notes', appField: 'notes', transform: 'string' }
+  ],
+  defaults: {
+    county: 'tooele',
+    sale_year: 2026,
+    sale_date: '2026-05-07',
+    property_type: 'unknown',
+    status: 'new',
+    access_risk: 'unknown',
+    title_risk: 'unknown',
+    legal_risk: 'unknown',
+    marketability_risk: 'unknown',
+    presale_volatility_risk: 10, // High - redemption until auction begins
+    is_active_sale_candidate: true
+  },
+  countyUrls: {
+    main: 'https://tooeleco.gov/departments/administration/auditor/',
+    propertyList: 'https://tooeleco.gov/departments/administration/auditor/may_tax_sale.php',
+    policies: 'https://tooeleco.gov/departments/administration/auditor/',
+    currentList: 'https://tooeleco.gov/departments/administration/auditor/may_tax_sale.php'
+  }
+}
+
 export const saltLakeCountyPreset: ImportPreset = {
   name: 'Salt Lake County',
   county: 'salt_lake',
@@ -139,6 +209,7 @@ export const saltLakeCountyPreset: ImportPreset = {
 
 export const importPresets: Record<string, ImportPreset> = {
   utah: utahCountyPreset,
+  tooele: tooeleCountyPreset,
   salt_lake: saltLakeCountyPreset
 }
 

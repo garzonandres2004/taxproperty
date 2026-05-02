@@ -368,7 +368,7 @@ export default function PropertiesPage() {
   }
 
   const propertyTypes = ['All', 'single_family', 'condo', 'vacant_land', 'commercial', 'multifamily', 'mobile_home']
-  const counties = ['All', 'utah', 'salt_lake']
+  const counties = ['All', 'utah', 'salt_lake', 'tooele']
   const statuses = ['All', 'new', 'researching', 'ready', 'redeemed', 'removed', 'sold', 'passed', 'struck_off']
 
   const formatPropertyType = (type: string) => {
@@ -535,6 +535,7 @@ export default function PropertiesPage() {
               <option value="All">All Counties</option>
               <option value="utah">Utah County</option>
               <option value="salt_lake">Salt Lake County</option>
+              <option value="tooele">Tooele County</option>
             </select>
             <select
               className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-200 min-w-[140px]"

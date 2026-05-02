@@ -18,7 +18,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { getAllPresets, getPreset, ImportPreset, getConfidenceColor, getConfidenceLabel } from '@/lib/import/presets'
-import { parseCSV, normalizeRows, autoMapHeaders, ImportRow, ImportError } from '@/lib/import/parser'
+import { parseCSV, autoMapHeaders, ImportRow, ImportError } from '@/lib/import/parser'
 
 type ImportStep = 'upload' | 'preview' | 'mapping' | 'results'
 
@@ -63,6 +63,14 @@ export default function ImportPage() {
 
       if (headersLower.some(h => h.includes('salt') || h.includes('slc'))) {
         detectedPreset = 'salt_lake'
+      } else if (headersLower.some(h => h.includes('account number')) && headersLower.some(h => h.includes('estimated starting bid'))) {
+        // Tooele County 2026 format
+        detectedPreset = 'tooele'
+      } else if (headersLower.some(h => h.includes('tooele'))) {
+        detectedPreset = 'tooele'
+      } else if (headersLower.some(h => h.includes('serial number') || h.includes('tax id'))) {
+        // Tooele County uses "Serial Number" or "Tax ID"
+        detectedPreset = 'tooele'
       } else if (headersLower.some(h => h.includes('utah') || h.includes('provo'))) {
         detectedPreset = 'utah'
       } else {
@@ -111,19 +119,41 @@ export default function ImportPage() {
 
     setIsImporting(true)
 
-    // Apply custom field mappings
+    // Apply custom field mappings and transform values
     const remappedRows = parseResult.rows.map(row => {
       const newRow: Record<string, string> = {}
+      // Add county from preset defaults
+      if (currentPreset.defaults.county) {
+        newRow.county = String(currentPreset.defaults.county)
+      }
+      if (currentPreset.defaults.sale_year) {
+        newRow.sale_year = String(currentPreset.defaults.sale_year)
+      }
+      if (currentPreset.defaults.sale_date) {
+        newRow.sale_date = String(currentPreset.defaults.sale_date)
+      }
       for (const [csvHeader, appField] of Object.entries(fieldMappings)) {
-        if (appField && row[csvHeader]) {
+        if (appField && appField !== '_ignore' && row[csvHeader]) {
           newRow[appField] = row[csvHeader]
         }
       }
       return newRow
     })
 
-    // Normalize rows
-    const { valid, errors } = normalizeRows(remappedRows, currentPreset)
+    // Validate rows manually since we're already mapped
+    const validRows: typeof remappedRows = []
+    const importErrors: ImportError[] = []
+
+    for (let i = 0; i < remappedRows.length; i++) {
+      const row = remappedRows[i]
+      if (!row.parcel_number || row.parcel_number.trim() === '') {
+        importErrors.push({ rowIndex: i + 1, row, reason: 'Missing required field: parcel_number' })
+      } else if (!row.county) {
+        importErrors.push({ rowIndex: i + 1, row, reason: 'Missing required field: county' })
+      } else {
+        validRows.push(row)
+      }
+    }
 
     // Import valid rows with source tracking
     let imported = 0
@@ -131,7 +161,7 @@ export default function ImportPage() {
 
     const now = new Date().toISOString()
 
-    for (const row of valid) {
+    for (const row of validRows) {
       try {
         // Add source tracking data
         const rowWithSource = {
@@ -157,7 +187,7 @@ export default function ImportPage() {
       }
     }
 
-    setImportResult({ imported, skipped, errors })
+    setImportResult({ imported, skipped, errors: importErrors })
     setIsImporting(false)
     setStep('results')
   }
@@ -310,7 +340,7 @@ export default function ImportPage() {
     if (!parseResult || !currentPreset) return null
 
     const appFields = [
-      { value: '', label: '-- Ignore --' },
+      { value: '_ignore', label: '-- Ignore --' },
       { value: 'parcel_number', label: 'Parcel Number *' },
       { value: 'owner_name', label: 'Owner Name' },
       { value: 'owner_mailing_address', label: 'Mailing Address' },
@@ -361,9 +391,9 @@ export default function ImportPage() {
                 <div key={header} className="grid grid-cols-2 gap-4 items-center">
                   <div className="font-medium text-sm">{header}</div>
                   <Select
-                    value={fieldMappings[header] || ''}
+                    value={fieldMappings[header] || '_ignore'}
                     onValueChange={(value) =>
-                      setFieldMappings(prev => ({ ...prev, [header]: value }))
+                      setFieldMappings(prev => ({ ...prev, [header]: value === '_ignore' ? '' : value }))
                     }
                   >
                     <SelectTrigger>

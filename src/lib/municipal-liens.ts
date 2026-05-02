@@ -398,7 +398,7 @@ export function calculateLienRiskLevel(result: MunicipalLienCheckResult): Munici
 
 /**
  * Get scoring penalty for municipal lien risk
- * Dustin Hahn: Municipal liens survive foreclosure, must subtract from max bid
+ * Expert Investor: Municipal liens survive foreclosure, must subtract from max bid
  */
 export function getMunicipalLienScorePenalty(riskLevel: MunicipalLienRisk): number {
   switch (riskLevel) {

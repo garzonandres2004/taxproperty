@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/db'
 import { scoreProperty, calculateDataConfidence, getDefaultSettings } from '@/lib/scoring'
+
+// Force dynamic rendering for database access
+export const dynamic = 'force-dynamic'
 
 async function getOrCreateSettings() {
   let settings = await prisma.userSettings.findUnique({
@@ -9,6 +11,7 @@ async function getOrCreateSettings() {
   })
 
   if (!settings) {
+    // Create with null values (user hasn't configured yet)
     const defaults = getDefaultSettings()
     settings = await prisma.userSettings.create({
       data: { ...defaults, id: 'default' }
@@ -20,14 +23,17 @@ async function getOrCreateSettings() {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession()
-    if (!session?.user?.id) {
+    // Simple auth check using cookie (middleware already validated)
+    const cookieHeader = request.headers.get('cookie')
+    const isAuthenticated = cookieHeader?.includes('taxproperty-auth=true')
+
+    if (!isAuthenticated) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const data = await request.json()
 
-    // Get user settings for capital fit calculation
+    // Get user settings for capital fit calculation (may be unconfigured)
     const settings = await getOrCreateSettings()
 
     // Calculate data confidence and scores
@@ -73,7 +79,7 @@ export async function POST(request: Request) {
     // Create property with calculated scores and user ownership
     const property = await prisma.property.create({
       data: {
-        user_id: session.user.id,
+        user_id: null, // Simple auth - no user tracking
         county: data.county,
         sale_year: parseInt(data.sale_year),
         sale_date: data.sale_date || null,

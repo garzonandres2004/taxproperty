@@ -97,7 +97,7 @@ export default function LandingPage() {
               New Tools for Professional Investors
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-              Built from Dustin Hahn's methodology — the exact workflow used by professional tax deed investors.
+              Built from Expert Investor's methodology — the exact workflow used by professional tax deed investors.
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Title Research Checklist</h3>
               <p className="text-slate-400 leading-relaxed mb-6">
-                8-step due diligence workflow based on Dustin Hahn's methodology. Track progress from drive-by inspection through max bid calculation.
+                8-step due diligence workflow based on Expert Investor's methodology. Track progress from drive-by inspection through max bid calculation.
               </p>
               <ul className="space-y-2 text-sm text-slate-500">
                 <li className="flex items-center gap-2">
@@ -138,7 +138,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-3">Max Bid Calculator</h3>
               <p className="text-slate-400 leading-relaxed mb-6">
-                Dustin Hahn's proven formula: (ARV × 80%) − Costs − Profit. Automatically calculates maximum bid with real-time deal viability indicators.
+                Expert Investor's proven formula: (ARV × 80%) − Costs − Profit. Automatically calculates maximum bid with real-time deal viability indicators.
               </p>
               <div className="bg-slate-900 rounded-lg p-4 font-mono text-sm text-slate-400">
                 <div className="text-emerald-400">Max Bid = Quick Sale − Costs − Profit</div>

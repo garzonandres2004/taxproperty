@@ -74,7 +74,7 @@ export type OpportunityBreakdown = {
   too_good_adjustment: number
   otc_adjustment: number
   total: number
-  capital_fit_details: CapitalFitDetails
+  capital_fit_details: CapitalFitDetails | null
 }
 
 export type RiskBreakdown = {
@@ -87,9 +87,16 @@ export type RiskBreakdown = {
 }
 
 export type UserSettingsInput = {
-  totalBudget: number
-  maxPerProperty: number
-  reserveBuffer: number
+  totalBudget: number | null
+  maxPerProperty: number | null
+  reserveBuffer: number | null
+}
+
+// Null settings indicate user hasn't configured budget yet
+export const UNCONFIGURED_SETTINGS: UserSettingsInput = {
+  totalBudget: null,
+  maxPerProperty: null,
+  reserveBuffer: null
 }
 
 export type RedFlagResult = {
@@ -166,16 +173,15 @@ export type ScoringResult = {
   title_recommendation?: string
 }
 
-const DEFAULT_SETTINGS: UserSettingsInput = {
-  totalBudget: 50000,
-  maxPerProperty: 25000,
-  reserveBuffer: 5000
-}
-
 export function calculateCapitalFit(
   property: Partial<PropertyInput>,
-  settings: UserSettingsInput = DEFAULT_SETTINGS
-): CapitalFitDetails {
+  settings: UserSettingsInput = UNCONFIGURED_SETTINGS
+): CapitalFitDetails | null {
+  // If budget is not configured, return null (Capital Fit is not calculated)
+  if (settings.totalBudget === null || settings.totalBudget <= 0) {
+    return null
+  }
+
   const estimatedTotalCost = (property.total_amount_due || 0) +
                              (property.estimated_repair_cost || 0) +
                              (property.estimated_cleanup_cost || 0) +
@@ -189,11 +195,14 @@ export function calculateCapitalFit(
   const notes: string[] = []
   let score = 0
 
-  if (estimatedTotalCost > settings.maxPerProperty) {
-    notes.push(`Exceeds max per property limit ($${settings.maxPerProperty.toLocaleString()})`)
+  const maxPerProperty = settings.maxPerProperty ?? settings.totalBudget
+  const reserveBuffer = settings.reserveBuffer ?? 0
+
+  if (estimatedTotalCost > maxPerProperty) {
+    notes.push(`Exceeds max per property limit ($${maxPerProperty.toLocaleString()})`)
     score = 0
-  } else if (estimatedTotalCost > settings.totalBudget - settings.reserveBuffer) {
-    notes.push(`Would violate reserve buffer ($${settings.reserveBuffer.toLocaleString()} kept uncommitted)`)
+  } else if (estimatedTotalCost > settings.totalBudget - reserveBuffer) {
+    notes.push(`Would violate reserve buffer ($${reserveBuffer.toLocaleString()} kept uncommitted)`)
     score = 3
   } else if (estimatedTotalCost > settings.totalBudget * 0.7) {
     notes.push('Uses significant portion of budget')
@@ -294,7 +303,7 @@ function calculatePresaleVolatility(property: PropertyInput): {
 
 export function calculateOpportunityScore(
   property: PropertyInput,
-  settings: UserSettingsInput = DEFAULT_SETTINGS,
+  settings: UserSettingsInput = UNCONFIGURED_SETTINGS,
   redemptionRisk: RedemptionRiskResult | null = null,
   tooGoodResult: TooGoodResult | null = null
 ): OpportunityBreakdown {
@@ -344,7 +353,8 @@ export function calculateOpportunityScore(
   if (property.building_sqft && property.building_sqft > 800) exit_ease += 5
 
   const capital_fit_details = calculateCapitalFit(property, settings)
-  const capital_fit = capital_fit_details.score
+  // If budget not configured, capital_fit contributes 0 to score (neutral)
+  const capital_fit = capital_fit_details?.score ?? 0
 
   let data_confidence = property.data_confidence || 0
   data_confidence = Math.min(15, Math.max(0, data_confidence))
@@ -455,7 +465,7 @@ export function calculateRecommendation(
   redemptionRisk: RedemptionRiskResult | null,
   tooGoodResult: TooGoodResult | null,
   volatilityDetails?: { countyFactor: string },
-  capitalFitDetails?: CapitalFitDetails
+  capitalFitDetails?: CapitalFitDetails | null
 ): RecommendationResult {
   const reasons: string[] = []
   const warnings: string[] = []
@@ -632,7 +642,7 @@ export function calculateRecommendation(
 
 export function scoreProperty(
   property: PropertyInput,
-  settings: UserSettingsInput = DEFAULT_SETTINGS
+  settings: UserSettingsInput = UNCONFIGURED_SETTINGS
 ): ScoringResult {
   const redemptionRiskInput: RedemptionRiskInput = {
     yearsDelinquent: property.years_delinquent || 1,
@@ -762,10 +772,8 @@ export function calculateDataConfidence(property: Partial<PropertyInput>): numbe
 }
 
 export function getDefaultSettings(): UserSettingsInput {
-  return { ...DEFAULT_SETTINGS }
+  return { ...UNCONFIGURED_SETTINGS }
 }
-
-export { DEFAULT_SETTINGS }
 
 export * from './redemption-risk'
 export * from './too-good-detector'

@@ -76,9 +76,46 @@ See: /docs/PRODUCT_IDEAS_FROM_RESEARCH.md
 ## Open GitHub Issues
 Run: gh issue list
 
-## Next Phase: Perfect Utah County
-NOT expanding to other counties until Utah is perfect.
-Research shows Dustin Hahn's methodology - implement these features first.
+## County Expansion Phase - IN PROGRESS 🔄
+
+### Tooele County ✅ FULLY INTEGRATED
+- **Status:** Fully functional with real data
+- **Sale Date:** May 7, 2026
+- **Platform:** Public Surplus (verified)
+- **Deposit:** $500 wire transfer (verified)
+- **Properties:** 29 properties imported
+- **Data Source:** Mediciland (Google Auth required)
+- **Features:**
+  - County-specific research links ✅
+  - Title Research Checklist with Tooele sources ✅
+  - Due Diligence Checklist with Tooele links ✅
+  - County Resources panel ✅
+- **Files:**
+  - `src/lib/counties/adapters/tooele.ts` ✅
+  - `src/lib/import/presets.ts` ✅
+  - `src/app/properties/[id]/page.tsx` ✅
+  - `src/components/property/TitleResearchChecklist.tsx` ✅
+  - `src/components/DueDiligenceChecklist.tsx` ✅
+
+### Rich County 📋
+- **Status:** Pending
+- **Next:** Contact Clerk/Auditor for data access
+
+### Sanpete County 📋
+- **Status:** Pending
+- **Next:** Contact Auditor for sale info
+
+### Implementation Pattern Established ✅
+- County config in `src/lib/counties/config.ts`
+- CSV adapter pattern in `src/lib/counties/adapters/[county].ts`
+- Parcel normalization utilities
+- Title research links per county
+
+---
+
+## Next Phase: Multi-County Support
+Priority: Tooele County first (you have data access), then Rich/Sanpete.
 
 ## Long-term Vision
 National expansion to all US counties with SaaS subscription model.
+Target: All 29 Utah counties by end of 2026.

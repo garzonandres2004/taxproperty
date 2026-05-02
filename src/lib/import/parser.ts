@@ -42,9 +42,42 @@ export type NormalizedResult = {
   errors: ImportError[]
 }
 
-// Parse CSV string into rows
+// Parse CSV string into rows - handles multiline quoted fields
 export function parseCSV(csvText: string): ParseResult {
-  const lines = csvText.split('\n').filter(line => line.trim() !== '')
+  // Split into lines while respecting multiline quoted fields
+  const lines: string[] = []
+  let currentLine = ''
+  let inQuotes = false
+
+  for (let i = 0; i < csvText.length; i++) {
+    const char = csvText[i]
+    const nextChar = csvText[i + 1]
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        // Escaped quote - add to current line
+        currentLine += '"'
+        i++ // Skip next quote
+      } else {
+        // Toggle quote mode
+        inQuotes = !inQuotes
+        currentLine += char
+      }
+    } else if (char === '\n' && !inQuotes) {
+      // End of line (outside quotes)
+      if (currentLine.trim() !== '') {
+        lines.push(currentLine)
+      }
+      currentLine = ''
+    } else {
+      currentLine += char
+    }
+  }
+
+  // Don't forget the last line
+  if (currentLine.trim() !== '') {
+    lines.push(currentLine)
+  }
 
   if (lines.length === 0) {
     return { headers: [], rows: [], rowCount: 0 }
@@ -57,7 +90,7 @@ export function parseCSV(csvText: string): ParseResult {
   const rows: Record<string, string>[] = []
   for (let i = 1; i < lines.length; i++) {
     const values = parseCSVLine(lines[i])
-    if (values.length > 0) {
+    if (values.length > 0 && values.some(v => v.trim() !== '')) {
       const row: Record<string, string> = {}
       headers.forEach((header, index) => {
         row[header] = values[index] || ''
@@ -284,7 +317,7 @@ export function applyMappings(
 function validateRow(row: ImportRow): string | null {
   if (!row.county) return 'Missing required field: county'
   if (!row.parcel_number) return 'Missing required field: parcel_number'
-  if (!['utah', 'salt_lake'].includes(row.county)) return `Invalid county: ${row.county}`
+  if (!['utah', 'salt_lake', 'tooele'].includes(row.county)) return `Invalid county: ${row.county}`
   return null
 }
 

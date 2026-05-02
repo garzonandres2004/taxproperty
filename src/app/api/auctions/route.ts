@@ -3,6 +3,9 @@ import { prisma } from '@/lib/db';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
+// Force dynamic rendering for database access
+export const dynamic = 'force-dynamic';
+
 // GET /api/auctions - List all auctions
 export async function GET(request: NextRequest) {
   try {

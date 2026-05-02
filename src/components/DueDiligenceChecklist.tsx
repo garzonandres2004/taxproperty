@@ -41,6 +41,7 @@ interface DueDiligenceChecklistProps {
   codeViolationsFound?: boolean | null
   codeViolationsBalance?: number | null
   utilityLienNotes?: string | null
+  county?: string
 }
 
 function generateMunicipalLienLinks(address: string | null | undefined, parcelNumber: string) {
@@ -128,6 +129,7 @@ export function DueDiligenceChecklist({
   codeViolationsFound,
   codeViolationsBalance,
   utilityLienNotes,
+  county = 'utah',
 }: DueDiligenceChecklistProps) {
   const [checkedItems, setCheckedItems] = useState<Set<string>>(new Set())
   const [notes, setNotes] = useState<Record<string, string>>({})
@@ -140,12 +142,17 @@ export function DueDiligenceChecklist({
     : null
   const taxSanityWarning = taxSanityRatio !== null && taxSanityRatio < 0.1
 
-  // Generate dynamic links
+  const isTooele = county === 'tooele'
+
+  // Generate dynamic links based on county
   const googleMapsLink = address
-    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ', Utah')}`
+    ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + (isTooele ? ', Tooele County, Utah' : ', Utah'))}`
     : null
 
-  const parcelMapLink = `https://maps.utahcounty.gov/ParcelMap/ParcelMap?parcel=${parcelNumber}`
+  // County-specific parcel map links
+  const parcelMapLink = isTooele
+    ? `https://search.tooeleco.gov.mediciland.com/?q=${parcelNumber}`
+    : `https://maps.utahcounty.gov/ParcelMap/ParcelMap?parcel=${parcelNumber}`
 
   const municipalLienLinks = useMemo(() => 
     generateMunicipalLienLinks(address, parcelNumber),
@@ -241,7 +248,7 @@ export function DueDiligenceChecklist({
         </div>
         <div>
           <h3 className="text-lg font-bold text-slate-900">Due Diligence Checklist</h3>
-          <p className="text-xs text-slate-500">Dustin Hahn Workflow</p>
+          <p className="text-xs text-slate-500">Expert Investor Workflow</p>
         </div>
       </div>
 
@@ -452,7 +459,7 @@ export function DueDiligenceChecklist({
       </button>
 
       <div className="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-500">
-        <p className="font-medium mb-1">Based on Dustin Hahn's Workflow:</p>
+        <p className="font-medium mb-1">Based on Expert Investor's Workflow:</p>
         <p>
           1. Drive property → 2. Check ARV → 3. Tax sanity → 4. Verify parcel →
           5. Check liens → 6. Title search → 7. Occupancy → 8. Calculate max bid

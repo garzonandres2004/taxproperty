@@ -9,12 +9,13 @@ import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Info } from 'lucide-react'
 
 type UserSettings = {
   id: string
-  totalBudget: number
-  maxPerProperty: number
-  reserveBuffer: number
+  totalBudget: number | null
+  maxPerProperty: number | null
+  reserveBuffer: number | null
 }
 
 export default function SettingsPage() {
@@ -24,7 +25,7 @@ export default function SettingsPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
 
-  // Form state
+  // Form state - empty by default, user must enter their own values
   const [formData, setFormData] = useState({
     totalBudget: '',
     maxPerProperty: '',
@@ -41,10 +42,11 @@ export default function SettingsPage() {
       if (response.ok) {
         const data = await response.json()
         setSettings(data)
+        // Only populate if values exist (not null/undefined)
         setFormData({
-          totalBudget: data.totalBudget.toString(),
-          maxPerProperty: data.maxPerProperty.toString(),
-          reserveBuffer: data.reserveBuffer.toString()
+          totalBudget: data.totalBudget?.toString() || '',
+          maxPerProperty: data.maxPerProperty?.toString() || '',
+          reserveBuffer: data.reserveBuffer?.toString() || ''
         })
       }
     } catch (error) {
@@ -57,23 +59,30 @@ export default function SettingsPage() {
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {}
+
+    // Allow empty values (user hasn't configured yet)
+    if (!formData.totalBudget && !formData.maxPerProperty && !formData.reserveBuffer) {
+      return true // Allow clearing all values
+    }
+
     const totalBudget = parseFloat(formData.totalBudget)
     const maxPerProperty = parseFloat(formData.maxPerProperty)
     const reserveBuffer = parseFloat(formData.reserveBuffer)
 
-    if (isNaN(totalBudget) || totalBudget <= 0) {
+    if (!formData.totalBudget || isNaN(totalBudget) || totalBudget <= 0) {
       newErrors.totalBudget = 'Total budget must be a positive number'
     }
-    if (isNaN(maxPerProperty) || maxPerProperty <= 0) {
+    if (!formData.maxPerProperty || isNaN(maxPerProperty) || maxPerProperty <= 0) {
       newErrors.maxPerProperty = 'Max per property must be a positive number'
     }
-    if (isNaN(reserveBuffer) || reserveBuffer < 0) {
+    if (formData.reserveBuffer === '' || isNaN(reserveBuffer) || reserveBuffer < 0) {
       newErrors.reserveBuffer = 'Reserve buffer must be 0 or greater'
     }
-    if (maxPerProperty > totalBudget) {
+
+    if (!newErrors.totalBudget && !newErrors.maxPerProperty && maxPerProperty > totalBudget) {
       newErrors.maxPerProperty = 'Max per property cannot exceed total budget'
     }
-    if (reserveBuffer >= totalBudget) {
+    if (!newErrors.totalBudget && !newErrors.reserveBuffer && reserveBuffer >= totalBudget) {
       newErrors.reserveBuffer = 'Reserve buffer must be less than total budget'
     }
 
@@ -89,14 +98,17 @@ export default function SettingsPage() {
     setMessage(null)
 
     try {
+      // Convert empty strings to null
+      const payload = {
+        totalBudget: formData.totalBudget ? parseFloat(formData.totalBudget) : null,
+        maxPerProperty: formData.maxPerProperty ? parseFloat(formData.maxPerProperty) : null,
+        reserveBuffer: formData.reserveBuffer ? parseFloat(formData.reserveBuffer) : null
+      }
+
       const response = await fetch('/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          totalBudget: parseFloat(formData.totalBudget),
-          maxPerProperty: parseFloat(formData.maxPerProperty),
-          reserveBuffer: parseFloat(formData.reserveBuffer)
-        })
+        body: JSON.stringify(payload)
       })
 
       if (response.ok) {
@@ -133,6 +145,7 @@ export default function SettingsPage() {
   }
 
   const preview = calculatePreview()
+  const hasConfiguredBudget = (settings?.totalBudget ?? 0) > 0
 
   if (isLoading) {
     return (
@@ -175,6 +188,17 @@ export default function SettingsPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {!hasConfiguredBudget && (
+                <Alert className="bg-amber-50 border-amber-200">
+                  <Info className="h-4 w-4 text-amber-600" />
+                  <AlertTitle className="text-amber-800">Budget Required for Capital Fit Scoring</AlertTitle>
+                  <AlertDescription className="text-amber-700">
+                    Enter your budget below to enable Capital Fit calculations in property scores.
+                    Without a configured budget, the Capital Fit factor will be excluded from scoring.
+                  </AlertDescription>
+                </Alert>
+              )}
+
               <div className="space-y-2">
                 <Label htmlFor="totalBudget">Total Budget for Sale Cycle</Label>
                 <div className="relative">
@@ -185,7 +209,7 @@ export default function SettingsPage() {
                     value={formData.totalBudget}
                     onChange={(e) => setFormData({ ...formData, totalBudget: e.target.value })}
                     className={`pl-7 ${errors.totalBudget ? 'border-red-500' : ''}`}
-                    placeholder="50000"
+                    placeholder="Enter your total available capital"
                   />
                 </div>
                 {errors.totalBudget ? (
@@ -207,7 +231,7 @@ export default function SettingsPage() {
                     value={formData.maxPerProperty}
                     onChange={(e) => setFormData({ ...formData, maxPerProperty: e.target.value })}
                     className={`pl-7 ${errors.maxPerProperty ? 'border-red-500' : ''}`}
-                    placeholder="25000"
+                    placeholder="Enter maximum per property"
                   />
                 </div>
                 {errors.maxPerProperty ? (
@@ -229,7 +253,7 @@ export default function SettingsPage() {
                     value={formData.reserveBuffer}
                     onChange={(e) => setFormData({ ...formData, reserveBuffer: e.target.value })}
                     className={`pl-7 ${errors.reserveBuffer ? 'border-red-500' : ''}`}
-                    placeholder="5000"
+                    placeholder="Enter reserve amount"
                   />
                 </div>
                 {errors.reserveBuffer ? (
@@ -330,9 +354,9 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <p>
-                <strong>Example:</strong> With $50k total, $25k max per property, and $5k reserve,
-                you could safely bid on 2 properties at $22.5k each, or spread across more smaller deals.
+              <p className="text-sm text-gray-500 italic">
+                Configure your budget above to see a personalized capacity preview and enable
+                Capital Fit scoring for all properties.
               </p>
             </div>
           </CardContent>

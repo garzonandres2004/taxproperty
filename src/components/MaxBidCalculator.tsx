@@ -23,7 +23,7 @@ export function MaxBidCalculator({
   savedMaxBidCalculated,
   onSave,
 }: MaxBidCalculatorProps) {
-  // Dustin Hahn's Formula: Max Bid = (ARV × 80%) - Municipal Liens - $3,500 (quiet title) - Repairs - Desired Profit
+  // Expert Investor's Formula: Max Bid = (ARV × 80%) - Municipal Liens - $3,500 (quiet title) - Repairs - Desired Profit
   const [arv, setArv] = useState(initialArv?.toString() || '')
   const [repairEstimate, setRepairEstimate] = useState(savedRepairEstimate?.toString() || '0')
   const [municipalLiens, setMunicipalLiens] = useState(amountDue?.toString() || '')
@@ -34,7 +34,7 @@ export function MaxBidCalculator({
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
 
-  const ARV_PERCENT = 80 // Fixed at 80% per Dustin Hahn formula
+  const ARV_PERCENT = 80 // Fixed at 80% per Expert Investor formula
 
   // Pre-fill municipal liens when amountDue prop changes
   useEffect(() => {
@@ -53,7 +53,7 @@ export function MaxBidCalculator({
     return profitValue
   }
 
-  // Calculate based on Dustin Hahn's formula
+  // Calculate based on Expert Investor's formula
   const calculateMaxBid = () => {
     const arvValue = parseFloat(arv) || 0
     const quickSalePrice = arvValue * (ARV_PERCENT / 100)
@@ -147,7 +147,7 @@ export function MaxBidCalculator({
         </div>
         <div>
           <h3 className="text-lg font-bold text-slate-900">Max Bid Calculator</h3>
-          <p className="text-xs text-slate-500">Dustin Hahn Formula</p>
+          <p className="text-xs text-slate-500">Expert Investor Formula</p>
         </div>
       </div>
 
@@ -388,7 +388,7 @@ export function MaxBidCalculator({
       <div className="mt-4 flex items-start gap-2 text-xs text-slate-500">
         <Info size={14} className="shrink-0 mt-0.5" />
         <p>
-          Based on Dustin Hahn's formula. Municipal liens in Utah survive the tax deed sale.
+          Based on Expert Investor's formula. Municipal liens in Utah survive the tax deed sale.
           Quiet title action required to clear title (~$3,500). Always verify amounts with county before bidding.
         </p>
       </div>

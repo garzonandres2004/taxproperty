@@ -106,6 +106,7 @@ interface TitleResearchChecklistProps {
   hasStreetView?: boolean
   hasAerial?: boolean
   estimatedMarketValue?: number | null
+  county?: string
 }
 
 const TOTAL_STEPS = 9
@@ -117,22 +118,32 @@ export function TitleResearchChecklist({
   address,
   hasStreetView = false,
   hasAerial = false,
-  estimatedMarketValue
+  estimatedMarketValue,
+  county = 'utah'
 }: TitleResearchChecklistProps) {
   const [checklist, setChecklist] = useState<TitleResearchChecklistData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Generate URLs based on property data
+  // Generate URLs based on property data and county
   const parcelSerial = parcelNumber.replace(/:/g, '')
+  const isTooele = county === 'tooele'
+
+  // Tooele County URLs
+  const tooeleMedicilandUrl = `https://search.tooeleco.gov.mediciland.com/?q=${parcelNumber}`
+  const tooeleRecorderUrl = 'https://tooeleco.gov/departments/administration/recorder_surveyor/property_records_search.php'
+  const tooeleAuditorUrl = 'https://tooeleco.gov/departments/administration/auditor/'
+
+  // Utah County URLs (default)
   const landRecordsUrl = `https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelSerial}`
   const recorderUrl = 'https://www.utahcounty.gov/LandRecords/Index.asp'
   const auditorUrl = 'https://www.utahcounty.gov/auditor/recordssearch/index.cfm'
   const parcelMapUrl = `https://maps.utahcounty.gov/ParcelMap/ParcelMap?parcel=${parcelNumber}`
   const utahCourtsUrl = 'https://www.utcourts.gov/courts/district/utah.html'
 
-  // Define the 9 checklist items from Dustin Hahn methodology
+  // Define the 9 checklist items from Expert Investor methodology
+  // URLs change based on county (Tooele vs Utah)
   const checklistItems: ChecklistItemConfig[] = [
     {
       id: 'drive_by',
@@ -140,7 +151,7 @@ export function TitleResearchChecklist({
       description: 'Verify property exists and matches description. Check neighborhood, access, and visible issues via Street View or physical visit.',
       icon: <Car className="w-5 h-5" />,
       link: address
-        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ', Utah')}`
+        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + (isTooele ? ', Tooele County, Utah' : ', Utah'))}`
         : undefined,
       linkText: 'Open Google Maps',
       autoVerified: hasStreetView,
@@ -151,40 +162,42 @@ export function TitleResearchChecklist({
       title: 'County Recorder Deed Search Done',
       description: 'Search county recorder for deed history. Verify legal description matches tax records. Look for quitclaim deeds or unusual transfers.',
       icon: <FileSearch className="w-5 h-5" />,
-      link: recorderUrl,
-      linkText: 'Utah County Recorder'
+      link: isTooele ? tooeleRecorderUrl : recorderUrl,
+      linkText: isTooele ? 'Tooele County Recorder' : 'Utah County Recorder'
     },
     {
       id: 'grantor_grantee',
       title: 'Grantor/Grantee Chain Reviewed',
       description: 'Review chain of title from current owner backwards. Verify no breaks in ownership chain. Note any foreclosures, divorces, or probate transfers.',
       icon: <Users className="w-5 h-5" />,
-      link: landRecordsUrl,
-      linkText: 'Land Records Search'
+      link: isTooele ? tooeleMedicilandUrl : landRecordsUrl,
+      linkText: isTooele ? 'Mediciland Search (Google Auth)' : 'Land Records Search'
     },
     {
       id: 'municipal_liens',
       title: 'Municipal Liens Checked',
-      description: 'Search for city/county liens that survive tax sale (Utah: municipal liens survive). Check code enforcement, utility, weed abatement liens.',
+      description: isTooele
+        ? 'Search for city/county liens that survive tax sale (Tooele: municipal liens survive). Check Tooele County records.'
+        : 'Search for city/county liens that survive tax sale (Utah: municipal liens survive). Check code enforcement, utility, weed abatement liens.',
       icon: <Scale className="w-5 h-5" />,
-      link: auditorUrl,
-      linkText: 'Auditor Records Search'
+      link: isTooele ? tooeleAuditorUrl : auditorUrl,
+      linkText: isTooele ? 'Tooele County Auditor' : 'Auditor Records Search'
     },
     {
       id: 'owner_lien_search',
       title: 'Owner Name Lien Search Done',
       description: 'Search current owner name in county records for UCC filings, judgments, other liens against owner that may attach to property.',
       icon: <Building className="w-5 h-5" />,
-      link: auditorUrl,
-      linkText: 'Search by Owner Name'
+      link: isTooele ? tooeleMedicilandUrl : auditorUrl,
+      linkText: isTooele ? 'Search Mediciland by Owner' : 'Search by Owner Name'
     },
     {
       id: 'hoa',
       title: 'HOA Status Checked',
       description: 'Determine if property is in HOA. HOA liens may survive tax sale in some jurisdictions. Get HOA contact info and payment status.',
       icon: <Home className="w-5 h-5" />,
-      link: landRecordsUrl,
-      linkText: 'Check CCRs in Records'
+      link: isTooele ? tooeleMedicilandUrl : landRecordsUrl,
+      linkText: isTooele ? 'Check CCRs in Mediciland' : 'Check CCRs in Records'
     },
     {
       id: 'arv_verified',
@@ -201,8 +214,8 @@ export function TitleResearchChecklist({
       title: 'GIS / Parcel Boundary Verified',
       description: 'Verify parcel boundaries match legal description. Check for encroachments, easements, or boundary disputes using county GIS.',
       icon: <MapPin className="w-5 h-5" />,
-      link: parcelMapUrl,
-      linkText: 'Utah County Parcel Map',
+      link: isTooele ? tooeleMedicilandUrl : parcelMapUrl,
+      linkText: isTooele ? 'Tooele County Parcel Search' : 'Utah County Parcel Map',
       autoVerified: hasAerial,
       autoVerifiedCondition: 'Aerial imagery available'
     },
@@ -211,8 +224,8 @@ export function TitleResearchChecklist({
       title: 'Lawsuit Search Done',
       description: 'Search court records for active litigation involving property or owner. Look for foreclosure proceedings, partition suits, quiet title actions.',
       icon: <Gavel className="w-5 h-5" />,
-      link: utahCourtsUrl,
-      linkText: 'Utah Courts Search'
+      link: isTooele ? 'https://www.utcourts.gov/courts/district/tooele.html' : utahCourtsUrl,
+      linkText: isTooele ? 'Tooele Courts Search' : 'Utah Courts Search'
     }
   ]
 
@@ -446,7 +459,7 @@ export function TitleResearchChecklist({
             <div>
               <CardTitle>Title Research Checklist</CardTitle>
               <CardDescription>
-                Dustin Hahn 9-Step Process — {completedCount}/{TOTAL_STEPS} Completed
+                Expert Investor 9-Step Process — {completedCount}/{TOTAL_STEPS} Completed
               </CardDescription>
             </div>
           </div>
@@ -679,7 +692,7 @@ export function TitleResearchChecklist({
 
         {/* Legend */}
         <div className="text-xs text-slate-500 pt-4 border-t border-slate-200">
-          <p className="font-medium mb-2">Dustin Hahn Title Research Methodology:</p>
+          <p className="font-medium mb-2">Expert Investor Title Research Methodology:</p>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             <span>1. Drive-by verification</span>
             <span>2. County deed search</span>

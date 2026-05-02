@@ -236,9 +236,9 @@ model OutcomeEvent {
 model UserSettings {
   id             String   @id @default("default")
   user_id        String?  @unique // Link to actual User model when available
-  totalBudget    Float    @default(50000) // total budget for this sale cycle
-  maxPerProperty Float    @default(25000) // max spend per property
-  reserveBuffer  Float    @default(5000) // amount of cash to keep uncommitted
+  totalBudget    Float?   // total budget for this sale cycle - null until user configures
+  maxPerProperty Float?   // max spend per property - null until user configures
+  reserveBuffer  Float?   // amount of cash to keep uncommitted - null until user configures
   created_at     DateTime @default(now())
   updated_at     DateTime @updatedAt
 }
@@ -417,6 +417,47 @@ model Auction {
   @@index([county])
   @@index([state])
   @@index([auction_date])
+}
+
+// County Configuration - Per-county settings and API endpoints
+model CountyConfig {
+  id                      String   @id @default(uuid())
+  county_name             String   @unique
+  state                   String   @default("Utah")
+  display_name            String
+
+  // Auction info
+  auction_date            String?
+  auction_platform        String?  // "county_website" | "public_surplus" | "bid4assets"
+  auction_url             String?
+  auction_format          String   @default("bid_up") // "bid_up" | "lien"
+  sale_type               String   @default("deed")   // "deed" | "lien" | "redeemable"
+
+  // API endpoints
+  parcel_api_url          String?
+  parcel_api_layer        String?
+  zoning_api_url          String?
+  land_records_url        String?
+  land_records_requires_auth Boolean @default(false)
+
+  // Parcel ID format
+  parcel_id_format        String?  // regex pattern
+  parcel_id_separator     String   @default(":")
+  parcel_id_for_api       String?  // "numeric_only" | "dashes" | "as_is"
+
+  // CSV import
+  csv_source_url          String?
+  csv_format_notes        String?
+
+  // Status
+  is_active               Boolean  @default(true)
+  notes                   String?
+
+  created_at              DateTime @default(now())
+  updated_at              DateTime @updatedAt
+
+  @@index([county_name])
+  @@index([state])
 }
 
 // State Guides for US Map - Tax Sale Information by State

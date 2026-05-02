@@ -1,6 +1,6 @@
 // Redemption Risk Scoring Engine
 // Calculates likelihood that original owner will redeem property
-// Based on Dustin Hahn signals and Utah County tax sale patterns
+// Based on Expert Investor signals and Utah County tax sale patterns
 
 export type OwnerType = 'individual' | 'llc' | 'corporation' | 'bank' | 'trust' | 'government' | 'unknown'
 export type PropertyUse = 'owner_occupied' | 'rental' | 'vacant' | 'commercial' | 'unknown'

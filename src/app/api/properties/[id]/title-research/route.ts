@@ -3,6 +3,9 @@ import { prisma } from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
+// Force dynamic rendering for database access
+export const dynamic = 'force-dynamic'
+
 // GET /api/properties/[id]/title-research - Get checklist for property
 export async function GET(
   request: NextRequest,
@@ -16,14 +19,19 @@ export async function GET(
 
     const { id } = await params
 
-    // Verify property ownership
+    // Verify property exists (ownership check optional for public properties)
     const property = await prisma.property.findFirst({
-      where: { id, user_id: session.user.id },
-      select: { id: true, photo_url: true, aerial_url: true }
+      where: { id },
+      select: { id: true, photo_url: true, aerial_url: true, user_id: true }
     })
 
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
+    }
+
+    // If property has user_id, verify ownership
+    if (property.user_id && property.user_id !== session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
     // Get or create checklist
@@ -82,13 +90,19 @@ export async function POST(
       )
     }
 
-    // Verify property ownership
+    // Verify property exists (ownership check optional for public properties)
     const property = await prisma.property.findFirst({
-      where: { id, user_id: session.user.id }
+      where: { id },
+      select: { id: true, user_id: true }
     })
 
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
+    }
+
+    // If property has user_id, verify ownership
+    if (property.user_id && property.user_id !== session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
     // Valid items and their field names
@@ -197,13 +211,19 @@ export async function PATCH(
       )
     }
 
-    // Verify property ownership
+    // Verify property exists (ownership check optional for public properties)
     const property = await prisma.property.findFirst({
-      where: { id, user_id: session.user.id }
+      where: { id },
+      select: { id: true, user_id: true }
     })
 
     if (!property) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
+    }
+
+    // If property has user_id, verify ownership
+    if (property.user_id && property.user_id !== session.user.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
     // Get or create checklist

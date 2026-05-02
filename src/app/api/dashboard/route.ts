@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+// Force dynamic rendering for database access
+export const dynamic = 'force-dynamic'
+
 const scoreRanges = [
   { range: '0-40', min: 0, max: 40, color: '#ef4444' },
   { range: '41-65', min: 41, max: 65, color: '#f59e0b' },

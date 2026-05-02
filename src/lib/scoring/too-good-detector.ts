@@ -1,6 +1,6 @@
 // "Too Good To Be True" Detector
 // Identifies properties that appear exceptional but may have hidden issues
-// Based on Dustin Hahn due diligence framework
+// Based on Expert Investor due diligence framework
 
 import { OutcomeEvent } from '@prisma/client'
 

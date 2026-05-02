@@ -115,11 +115,14 @@ export function ScoreBadge({ score, type, size = 'md' }: ScoreBadgeProps) {
 
   const getColor = () => {
     if (type === 'opportunity' || type === 'final') {
-      if (score >= 75) return 'bg-emerald-100 text-emerald-700 border-emerald-300'
-      if (score >= 55) return 'bg-amber-100 text-amber-700 border-amber-300'
+      // 0-40 red, 41-65 amber, 66-80 blue, 81-100 green
+      if (score >= 81) return 'bg-emerald-100 text-emerald-700 border-emerald-300'
+      if (score >= 66) return 'bg-blue-100 text-blue-700 border-blue-300'
+      if (score >= 41) return 'bg-amber-100 text-amber-700 border-amber-300'
       return 'bg-red-100 text-red-700 border-red-300'
     } else {
-      // risk score - lower is better
+      // risk score - lower is better (inverted)
+      // 0-30 green, 31-50 amber, 51+ red
       if (score <= 30) return 'bg-emerald-100 text-emerald-700 border-emerald-300'
       if (score <= 50) return 'bg-amber-100 text-amber-700 border-amber-300'
       return 'bg-red-100 text-red-700 border-red-300'
@@ -128,16 +131,18 @@ export function ScoreBadge({ score, type, size = 'md' }: ScoreBadgeProps) {
 
   const getLabel = () => {
     if (type === 'opportunity') {
-      if (score >= 75) return 'Strong'
-      if (score >= 55) return 'Moderate'
+      if (score >= 81) return 'Strong'
+      if (score >= 66) return 'Good'
+      if (score >= 41) return 'Moderate'
       return 'Weak'
     } else if (type === 'risk') {
       if (score <= 30) return 'Low'
       if (score <= 50) return 'Medium'
       return 'High'
     } else {
-      if (score >= 75) return 'Strong Buy'
-      if (score >= 55) return 'Consider'
+      if (score >= 81) return 'Strong Buy'
+      if (score >= 66) return 'Consider'
+      if (score >= 41) return 'Caution'
       return 'Avoid'
     }
   }
@@ -309,7 +314,7 @@ export function generatePropertyAlerts(property: any) {
     })
   }
 
-  // Tax sanity check (0.3% threshold per Dustin Hahn requirement)
+  // Tax sanity check (0.3% threshold per industry standard)
   if (property.total_amount_due && property.estimated_market_value) {
     const taxRatio = (property.total_amount_due / property.estimated_market_value) * 100
     if (taxRatio < 0.3) {

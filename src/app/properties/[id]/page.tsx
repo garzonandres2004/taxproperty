@@ -1,16 +1,18 @@
 import { prisma } from '@/lib/db'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ExternalLink, FileSearch, Calculator } from 'lucide-react'
+import { ExternalLink, FileSearch, FileText, Calculator, Building } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { countyConfigs, propertyTypeLabels, occupancyLabels, statusLabels } from '@/lib/counties/config'
+import { getTooeleResearchLinks } from '@/lib/counties/adapters/tooele'
 import { calculateCapitalFit, getDefaultSettings } from '@/lib/scoring'
 import OutcomeTracker from '@/components/outcomes/OutcomeTracker'
 import ZoningAutoFillButton from '@/components/ZoningAutoFillButton'
+import EnrichPropertyButton from '@/components/EnrichPropertyButton'
 import { MaxBidCalculator } from '@/components/MaxBidCalculator'
 import { DueDiligenceChecklist } from '@/components/DueDiligenceChecklist'
 import { PropertyAlert, ScoreBadge, RecommendationBadge, DataConfidenceIndicator, generatePropertyAlerts } from '@/components/DataTrustIndicators'
@@ -84,13 +86,27 @@ export default async function PropertyDetailPage({
 
   // Calculate capital fit using current settings
   const userSettings = settings || getDefaultSettings()
-  const capitalFit = calculateCapitalFit({
+  const capitalFitResult = calculateCapitalFit({
     total_amount_due: property.total_amount_due,
     estimated_repair_cost: property.estimated_repair_cost,
     estimated_cleanup_cost: property.estimated_cleanup_cost,
     estimated_closing_cost: property.estimated_closing_cost,
     deposit_required: property.deposit_required
   }, userSettings)
+
+  // Provide fallback when budget is not configured
+  const capitalFit = capitalFitResult || {
+    score: 0,
+    estimatedTotalCost: (property.total_amount_due || 0) +
+                       (property.estimated_repair_cost || 0) +
+                       (property.estimated_cleanup_cost || 0) +
+                       (property.estimated_closing_cost || 0) +
+                       (property.deposit_required || 0),
+    budgetUsagePercent: 0,
+    notes: userSettings.totalBudget === null
+      ? ['Budget not configured. Go to Settings to enable Capital Fit scoring.']
+      : ['Budget configuration error']
+  }
 
   // Calculate enhanced scoring with redemption risk and too-good-to-be-true detection
   const scoringResult = scoreProperty({
@@ -185,9 +201,22 @@ export default async function PropertyDetailPage({
     return clean.padStart(11, '0')
   }
 
-  // Utah County URLs for due diligence
-  const landRecordsUrl = `https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`
-  const recorderUrl = 'https://www.utahcounty.gov/LandRecords/Index.asp'
+  // County-specific URLs for due diligence
+  let landRecordsUrl: string
+  let recorderUrl: string
+  let countyLinks: { taxSale?: string; mediciland?: string } = {}
+
+  if (property.county === 'tooele') {
+    // Tooele County uses Mediciland (requires Google Auth)
+    const tooeleLinks = getTooeleResearchLinks(property.parcel_number, property.owner_name || undefined)
+    landRecordsUrl = tooeleLinks.mediciland
+    recorderUrl = tooeleLinks.recorder
+    countyLinks = { taxSale: tooeleLinks.taxSale, mediciland: tooeleLinks.mediciland }
+  } else {
+    // Utah County (default)
+    landRecordsUrl = `https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`
+    recorderUrl = 'https://www.utahcounty.gov/LandRecords/Index.asp'
+  }
 
   // Calculate staleness for warning banner
   const getStalenessWarning = () => {
@@ -392,24 +421,49 @@ export default async function PropertyDetailPage({
               <div className="bg-slate-50 p-4 rounded-lg">
                 <h4 className="text-sm font-semibold text-gray-700 mb-3">Due Diligence Links</h4>
                 <div className="flex flex-wrap gap-3">
-                  <a
-                    href={landRecordsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
-                  >
-                    <ExternalLink size={14} />
-                    Utah County Land Records
-                  </a>
-                  <a
-                    href={recorderUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
-                  >
-                    <FileSearch size={14} />
-                    Recorder / Documents
-                  </a>
+                  {property.county === 'tooele' ? (
+                    <>
+                      <a
+                        href={landRecordsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                      >
+                        <ExternalLink size={14} />
+                        Mediciland (Google Auth Required)
+                      </a>
+                      <a
+                        href={recorderUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                      >
+                        <FileSearch size={14} />
+                        Tooele County Recorder
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      <a
+                        href={landRecordsUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                      >
+                        <ExternalLink size={14} />
+                        Utah County Land Records
+                      </a>
+                      <a
+                        href={recorderUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
+                      >
+                        <FileSearch size={14} />
+                        Recorder / Documents
+                      </a>
+                    </>
+                  )}
                 </div>
 
                 {/* Tax Sanity Check */}
@@ -761,9 +815,9 @@ export default async function PropertyDetailPage({
                   </Link>
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs text-gray-500">
-                  <div>Total: ${userSettings.totalBudget.toLocaleString()}</div>
-                  <div>Max/Property: ${userSettings.maxPerProperty.toLocaleString()}</div>
-                  <div>Reserve: ${userSettings.reserveBuffer.toLocaleString()}</div>
+                  <div>Total: ${userSettings.totalBudget?.toLocaleString() ?? 'Not set'}</div>
+                  <div>Max/Property: ${userSettings.maxPerProperty?.toLocaleString() ?? 'Not set'}</div>
+                  <div>Reserve: ${userSettings.reserveBuffer?.toLocaleString() ?? 'Not set'}</div>
                 </div>
               </div>
             </CardContent>
@@ -781,7 +835,7 @@ export default async function PropertyDetailPage({
             </Card>
           )}
 
-          {/* Title Research Checklist - Dustin Hahn 9-Step Process */}
+          {/* Title Research Checklist - Expert Investor 9-Step Process */}
           <TitleResearchChecklist
             propertyId={id}
             parcelNumber={property.parcel_number}
@@ -790,24 +844,20 @@ export default async function PropertyDetailPage({
             hasStreetView={!!property.photo_url}
             hasAerial={!!property.aerial_url}
             estimatedMarketValue={property.estimated_market_value}
+            county={property.county}
           />
 
-          {/* Automated Title Analysis - Document Scraper & Analyzer */}
-          <TitleAnalysisCard
-            propertyId={id}
-            parcelNumber={property.parcel_number}
-          />
-
-          {/* Due Diligence Checklist - Dustin Hahn Workflow */}
+          {/* Due Diligence Checklist - Expert Investor Workflow */}
           <DueDiligenceChecklist
             propertyId={id}
             parcelNumber={property.parcel_number}
             address={cleanHtmlEntities(property.property_address)}
             amountDue={property.total_amount_due}
             marketValue={property.estimated_market_value}
+            county={property.county}
           />
 
-          {/* Max Bid Calculator - Dustin Hahn Formula */}
+          {/* Max Bid Calculator - Expert Investor Formula */}
           <MaxBidCalculator
             propertyId={id}
             arv={property.estimated_market_value}
@@ -881,10 +931,89 @@ export default async function PropertyDetailPage({
           </Card>
 
           {/* County Links Panel - Direct access to research tools */}
-          <CountyLinksPanel
-            ownerName={property.owner_name}
-            parcelNumber={property.parcel_number}
-          />
+          {property.county === 'tooele' ? (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Building size={18} className="text-blue-600" />
+                  Tooele County Resources
+                </CardTitle>
+                <CardDescription>
+                  Direct links to Tooele County research tools
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <a
+                    href={`https://search.tooeleco.gov.mediciland.com/?q=${property.parcel_number}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-colors group"
+                  >
+                    <div className="p-2 bg-blue-100 rounded-md group-hover:bg-blue-200 transition-colors">
+                      <FileSearch size={18} className="text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-slate-700 group-hover:text-blue-700">Mediciland Parcel Search</span>
+                        <ExternalLink size={12} className="text-slate-400 group-hover:text-blue-500" />
+                      </div>
+                      <div className="text-xs text-slate-500">Search property records (Google Auth required)</div>
+                    </div>
+                  </a>
+                  <a
+                    href="https://tooeleco.gov/departments/administration/recorder_surveyor/property_records_search.php"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-colors group"
+                  >
+                    <div className="p-2 bg-blue-100 rounded-md group-hover:bg-blue-200 transition-colors">
+                      <FileText size={18} className="text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium text-sm text-slate-700 group-hover:text-blue-700">Recorder Search</span>
+                        <ExternalLink size={12} className="text-slate-400 group-hover:text-blue-500" />
+                      </div>
+                      <div className="text-xs text-slate-500">Search recorded documents</div>
+                    </div>
+                  </a>
+                </div>
+                <div className="mt-4 pt-4 border-t border-slate-100">
+                  <a
+                    href="https://tooeleco.gov/departments/administration/auditor/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                  >
+                    Visit Tooele County Auditor website
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <CountyLinksPanel
+              ownerName={property.owner_name}
+              parcelNumber={property.parcel_number}
+            />
+          )}
+
+          {/* Property Enrichment - CountyAdapter Auto-Fill */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Property Enrichment</CardTitle>
+              <CardDescription>
+                Auto-fetch market value, coordinates, and images
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <EnrichPropertyButton
+                propertyId={id}
+                county={property.county}
+              />
+            </CardContent>
+          </Card>
 
           {/* Market Signals - Third Party Enrichment (Zillow) */}
           <MarketSignalsCard

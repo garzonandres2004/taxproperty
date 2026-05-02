@@ -3,6 +3,9 @@ import { getServerSession } from 'next-auth'
 import { prisma } from '@/lib/db'
 import { scoreProperty, calculateDataConfidence } from '@/lib/scoring'
 
+// Force dynamic rendering for database access
+export const dynamic = 'force-dynamic'
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
