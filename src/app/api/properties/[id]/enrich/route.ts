@@ -5,6 +5,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getCountyAdapter, CountyId } from '@/lib/counties'
 import { geocodeAddress, generateStreetViewUrl, generateAerialUrl } from '@/lib/geocoding'
+import { scoreProperty, calculateDataConfidence, getDefaultSettings } from '@/lib/scoring'
 
 export async function POST(
   request: Request,
@@ -155,7 +156,69 @@ export async function POST(
       propertyUpdates.longitude = coordinates.longitude
     }
 
-    // Apply property updates
+    // Update risk assessment fields from enrichment
+    if (enrichmentResult.legal_risk) {
+      propertyUpdates.legal_risk = enrichmentResult.legal_risk
+    }
+    if (enrichmentResult.access_risk) {
+      propertyUpdates.access_risk = enrichmentResult.access_risk
+    }
+    if (enrichmentResult.title_risk) {
+      propertyUpdates.title_risk = enrichmentResult.title_risk
+    }
+    if (enrichmentResult.marketability_risk) {
+      propertyUpdates.marketability_risk = enrichmentResult.marketability_risk
+    }
+
+    // Step 6b: Rescore using enriched values so stored scores stay consistent.
+    // Build input by overlaying propertyUpdates on top of the original property.
+    // Mirrors the field set used by /api/rescore — uses getDefaultSettings() for parity.
+    try {
+      const scoringInput = {
+        county: property.county,
+        total_amount_due: property.total_amount_due,
+        estimated_market_value: propertyUpdates.estimated_market_value ?? property.estimated_market_value,
+        estimated_repair_cost: property.estimated_repair_cost,
+        estimated_cleanup_cost: property.estimated_cleanup_cost,
+        estimated_closing_cost: property.estimated_closing_cost,
+        property_type: property.property_type || 'unknown',
+        occupancy_status: property.occupancy_status || 'unknown',
+        zoning: property.zoning,
+        lot_size_sqft: propertyUpdates.lot_size_sqft ?? property.lot_size_sqft,
+        building_sqft: propertyUpdates.building_sqft ?? property.building_sqft,
+        year_built: propertyUpdates.year_built ?? property.year_built,
+        assessed_value: property.assessed_value,
+        deposit_required: property.deposit_required,
+        access_risk: propertyUpdates.access_risk ?? property.access_risk ?? 'unknown',
+        title_risk: propertyUpdates.title_risk ?? property.title_risk ?? 'unknown',
+        legal_risk: propertyUpdates.legal_risk ?? property.legal_risk ?? 'unknown',
+        marketability_risk: propertyUpdates.marketability_risk ?? property.marketability_risk ?? 'unknown',
+        owner_name: property.owner_name,
+        owner_mailing_address: property.owner_mailing_address,
+        property_address: property.property_address,
+        is_active_sale_candidate: property.is_active_sale_candidate,
+        status_last_verified_at: property.status_last_verified_at,
+        sale_date: property.sale_date,
+        data_confidence: null as number | null
+      }
+      const dataConfidence = calculateDataConfidence(scoringInput)
+      scoringInput.data_confidence = dataConfidence
+      const scores = scoreProperty(scoringInput, getDefaultSettings())
+      propertyUpdates.opportunity_score = scores.opportunity_score
+      propertyUpdates.risk_score = scores.risk_score
+      propertyUpdates.final_score = scores.final_score
+      propertyUpdates.recommendation = scores.recommendation
+      propertyUpdates.data_confidence = dataConfidence
+      propertyUpdates.max_bid = scores.maxBid ?? null
+      propertyUpdates.absentee_owner = scores.absenteeOwner ?? null
+      propertyUpdates.micro_parcel = scores.microParcel ?? null
+      propertyUpdates.assemblage_opportunity = scores.assemblageOpportunity ?? null
+      results.stepsCompleted.push('Scores recalculated')
+    } catch (scoreError) {
+      results.warnings.push(`Score recalculation failed — stored scores may be stale. Run /api/rescore to fix. (${(scoreError as Error).message})`)
+    }
+
+    // Apply property updates (enrichment fields + scores if recalculation succeeded)
     if (Object.keys(propertyUpdates).length > 0) {
       try {
         await prisma.property.update({
