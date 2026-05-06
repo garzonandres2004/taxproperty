@@ -13,14 +13,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 1.04084589,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.10751818815048,
+    "longitude": -113.75145084714251,
     "opening_bid": 370.48,
     "buyers_premium_pct": 5,
     "all_in_cost": 389,
@@ -29,11 +29,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 74.1,
+    "equity_multiple": 1.3,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -54,15 +54,87 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:22:53.675Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:26.398Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "011500012",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 1.04084589,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.10751818815048,
+      "longitude": -113.75145084714251,
+      "raw_attributes": {
+        "OBJECTID": 7941,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "011500012",
+        "SERIAL_NUM": "01-150-0012",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 1.04084589,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 7426.76953125,
+        "Shape__Length": 355.8151940027445,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.751035264034,
+                41.1077456347737
+              ],
+              [
+                -113.751035470647,
+                41.1072927991832
+              ],
+              [
+                -113.751534043714,
+                41.1072915381887
+              ],
+              [
+                -113.752032619477,
+                41.1072903293125
+              ],
+              [
+                -113.752032420949,
+                41.1077431926711
+              ],
+              [
+                -113.751035264034,
+                41.1077456347737
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994084",
       "county": "box_elder",
@@ -82,7 +154,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -99,14 +171,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 0.26011869,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.114477921647286,
+    "longitude": -113.75025262275615,
     "opening_bid": 367.45,
     "buyers_premium_pct": 5,
     "all_in_cost": 386,
@@ -115,11 +187,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 73.5,
+    "equity_multiple": 1.4,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -140,15 +212,91 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:22:54.612Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:27.014Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "011500014",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 0.26011869,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.114477921647286,
+      "longitude": -113.75025262275615,
+      "raw_attributes": {
+        "OBJECTID": 7942,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "011500014",
+        "SERIAL_NUM": "01-150-0014",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 0.26011869,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 1856.4296875,
+        "Shape__Length": 177.87351928334573,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.750039081792,
+                41.1145432609614
+              ],
+              [
+                -113.750039021604,
+                41.1143167505902
+              ],
+              [
+                -113.750537315296,
+                41.1143153090276
+              ],
+              [
+                -113.750537341347,
+                41.1145417882716
+              ],
+              [
+                -113.750537341347,
+                41.1145418200806
+              ],
+              [
+                -113.750039176115,
+                41.1145432616382
+              ],
+              [
+                -113.750039081792,
+                41.1145432609614
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994083",
       "county": "box_elder",
@@ -168,7 +316,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -185,14 +333,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 0.24672809,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.435598523699184,
+    "longitude": -113.41431023344214,
     "opening_bid": 362.66,
     "buyers_premium_pct": 5,
     "all_in_cost": 381,
@@ -201,11 +349,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 72.5,
+    "equity_multiple": 1.4,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -226,15 +374,91 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:22:55.615Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:27.508Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "020820140",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 0.24672809,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.435598523699184,
+      "longitude": -113.41431023344214,
+      "raw_attributes": {
+        "OBJECTID": 8436,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "020820140",
+        "SERIAL_NUM": "02-082-0140",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 0.24672809,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 1778.12890625,
+        "Shape__Length": 173.1633068624742,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.414425092419,
+                41.4354448459954
+              ],
+              [
+                -113.414424434853,
+                41.4358023618798
+              ],
+              [
+                -113.414324311326,
+                41.4358027598976
+              ],
+              [
+                -113.414123737286,
+                41.4358035593004
+              ],
+              [
+                -113.414123996001,
+                41.4354460494838
+              ],
+              [
+                -113.414324969791,
+                41.4354452433419
+              ],
+              [
+                -113.414425092419,
+                41.4354448459954
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994082",
       "county": "box_elder",
@@ -254,7 +478,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -271,14 +495,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 0.25226728,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.232989587162166,
+    "longitude": -113.6194378130495,
     "opening_bid": 362.89,
     "buyers_premium_pct": 5,
     "all_in_cost": 381,
@@ -287,11 +511,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 72.6,
+    "equity_multiple": 1.4,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -312,15 +536,87 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:22:56.556Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:28.001Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "011400482",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 0.25226728,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.232989587162166,
+      "longitude": -113.6194378130495,
+      "raw_attributes": {
+        "OBJECTID": 5472,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "011400482",
+        "SERIAL_NUM": "01-140-0482",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 0.25226728,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 1806.87109375,
+        "Shape__Length": 188.1567688805601,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.619357171586,
+                41.2331658835854
+              ],
+              [
+                -113.619357265011,
+                41.2330145802259
+              ],
+              [
+                -113.619357453657,
+                41.2327120298797
+              ],
+              [
+                -113.619599283724,
+                41.2327126284329
+              ],
+              [
+                -113.619598532733,
+                41.2331665172637
+              ],
+              [
+                -113.619357171586,
+                41.2331658835854
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994081",
       "county": "box_elder",
@@ -340,7 +636,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -357,14 +653,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 0.2454438,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.43068522275295,
+    "longitude": -113.4155087127795,
     "opening_bid": 367.45,
     "buyers_premium_pct": 5,
     "all_in_cost": 386,
@@ -373,11 +669,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 73.5,
+    "equity_multiple": 1.4,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -398,15 +694,87 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:22:57.493Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:28.507Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "020820244",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 0.2454438,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.43068522275295,
+      "longitude": -113.4155087127795,
+      "raw_attributes": {
+        "OBJECTID": 8529,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "020820244",
+        "SERIAL_NUM": "02-082-0244",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 0.2454438,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 1768.61328125,
+        "Shape__Length": 173.33955734129333,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.415621194729,
+                41.4305640833588
+              ],
+              [
+                -113.41562064496,
+                41.4309263461219
+              ],
+              [
+                -113.415325291471,
+                41.4309273759271
+              ],
+              [
+                -113.415325804409,
+                41.4305650855554
+              ],
+              [
+                -113.415538146379,
+                41.4305643621957
+              ],
+              [
+                -113.415621194729,
+                41.4305640833588
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994079",
       "county": "box_elder",
@@ -426,7 +794,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -443,14 +811,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 10.12982497,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.20482941288692,
+    "longitude": -113.7492709742534,
     "opening_bid": 385.34,
     "buyers_premium_pct": 5,
     "all_in_cost": 405,
@@ -459,11 +827,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 77.1,
+    "equity_multiple": 1.3,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -484,15 +852,83 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:22:58.525Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:29.056Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "010570051",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 10.12982497,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.20482941288692,
+      "longitude": -113.7492709742534,
+      "raw_attributes": {
+        "OBJECTID": 2331,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "010570051",
+        "SERIAL_NUM": "01-057-0051",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 10.12982497,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 72492.96875,
+        "Shape__Length": 1076.989173155604,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.750240335856,
+                41.2055555453501
+              ],
+              [
+                -113.747826878895,
+                41.2055597626442
+              ],
+              [
+                -113.747811494347,
+                41.2037354473594
+              ],
+              [
+                -113.750235826313,
+                41.2037407637308
+              ],
+              [
+                -113.750240335856,
+                41.2055555453501
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994077",
       "county": "box_elder",
@@ -512,7 +948,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -529,14 +965,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 10.05678379,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.212206914029636,
+    "longitude": -113.81917358631681,
     "opening_bid": 535.97,
     "buyers_premium_pct": 5,
     "all_in_cost": 563,
@@ -545,11 +981,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 2500,
+    "land_value": 2500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 21.4,
+    "equity_multiple": 4.7,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -570,15 +1006,83 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:22:59.423Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:29.634Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "010590064",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 10.05678379,
+      "market_value": 2500,
+      "land_value": 2500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.212206914029636,
+      "longitude": -113.81917358631681,
+      "raw_attributes": {
+        "OBJECTID": 2921,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "010590064",
+        "SERIAL_NUM": "01-059-0064",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 2500,
+        "LAND_MKT_VALUE": 2500,
+        "PARCEL_ACRES": 10.05678379,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 71986.33203125,
+        "Shape__Length": 1073.2530052954542,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.820142366889,
+                41.2129346486888
+              ],
+              [
+                -113.817744243271,
+                41.2129414456053
+              ],
+              [
+                -113.817725550229,
+                41.2111135753528
+              ],
+              [
+                -113.820113404306,
+                41.2111102518125
+              ],
+              [
+                -113.820142366889,
+                41.2129346486888
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994075",
       "county": "box_elder",
@@ -598,7 +1102,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -615,14 +1119,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 2.42866895,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.965795947145374,
+    "longitude": -113.1940245941314,
     "opening_bid": 381.34,
     "buyers_premium_pct": 5,
     "all_in_cost": 400,
@@ -631,11 +1135,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 76.3,
+    "equity_multiple": 1.3,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -656,15 +1160,83 @@
     "code_violation_flag": false,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:00.634Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:29.884Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "080670051",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 2.42866895,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.965795947145374,
+      "longitude": -113.1940245941314,
+      "raw_attributes": {
+        "OBJECTID": 38177,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "080670051",
+        "SERIAL_NUM": "08-067-0051",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 2.42866895,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 17789.19921875,
+        "Shape__Length": 533.5846046352947,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.193555553538,
+                41.9661631890587
+              ],
+              [
+                -113.193549489012,
+                41.9652576889341
+              ],
+              [
+                -113.194726637767,
+                41.9652450775065
+              ],
+              [
+                -113.194735736802,
+                41.9661505911689
+              ],
+              [
+                -113.193555553538,
+                41.9661631890587
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994074",
       "county": "box_elder",
@@ -684,7 +1256,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -701,14 +1273,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 10.010862,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.210269486045306,
+    "longitude": -113.74446044470301,
     "opening_bid": 385.34,
     "buyers_premium_pct": 5,
     "all_in_cost": 405,
@@ -717,11 +1289,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 500,
+    "land_value": 500,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 77.1,
+    "equity_multiple": 1.3,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -742,15 +1314,83 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:01.535Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:30.447Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "010570029",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 10.010862,
+      "market_value": 500,
+      "land_value": 500,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.210269486045306,
+      "longitude": -113.74446044470301,
+      "raw_attributes": {
+        "OBJECTID": 2280,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "010570029",
+        "SERIAL_NUM": "01-057-0029",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 500,
+        "LAND_MKT_VALUE": 500,
+        "PARCEL_ACRES": 10.010862,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 71653.48046875,
+        "Shape__Length": 1070.746617690539,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.745424963488,
+                41.210994847547
+              ],
+              [
+                -113.743026255965,
+                41.2109896392159
+              ],
+              [
+                -113.743006646641,
+                41.2091814710911
+              ],
+              [
+                -113.745419393933,
+                41.2091866248255
+              ],
+              [
+                -113.745424963488,
+                41.210994847547
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994065",
       "county": "box_elder",
@@ -770,7 +1410,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   },
   {
@@ -787,14 +1427,14 @@
     "situs_address": null,
     "legal_description": null,
     "subdivision": null,
-    "acres": null,
+    "acres": 9.96899412,
     "building_sqft": null,
     "year_built": null,
     "property_class": "unknown",
     "property_type": "unknown",
     "zoning": null,
-    "latitude": null,
-    "longitude": null,
+    "latitude": 41.21570313545868,
+    "longitude": -113.73204428442281,
     "opening_bid": 427.18,
     "buyers_premium_pct": 5,
     "all_in_cost": 449,
@@ -803,11 +1443,11 @@
     "auction_platform": "public_surplus",
     "auction_end": "2026-05-22T00:00:00.000Z",
     "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
+    "market_value": 1000,
+    "land_value": 1000,
+    "value_confidence": "HIGH",
+    "bid_to_value_pct": 42.7,
+    "equity_multiple": 2.3,
     "title": {
       "has_deed_records": null,
       "document_count_5yr": null,
@@ -828,15 +1468,83 @@
     "code_violation_flag": true,
     "buildability_notes": null,
     "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
       "NO_TITLE_DATA"
     ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:02.619Z",
-    "agrc_hit": false,
-    "agrc_data": null,
+    "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
+    "enriched_at": "2026-05-06T22:59:31.043Z",
+    "agrc_hit": true,
+    "agrc_data": {
+      "parcel_id_returned": "010570032",
+      "owner_name": null,
+      "situs_address": null,
+      "city": null,
+      "legal_description": null,
+      "acres": 9.96899412,
+      "market_value": 1000,
+      "land_value": 1000,
+      "building_sqft": null,
+      "year_built": null,
+      "property_class": "NON-FAA",
+      "latitude": 41.21570313545868,
+      "longitude": -113.73204428442281,
+      "raw_attributes": {
+        "OBJECTID": 2283,
+        "COUNTY_NAME": "BoxElder",
+        "COUNTY_ID": "2",
+        "ASSESSOR_SRC": "https://www.boxeldercountyut.gov/169/Assessor",
+        "BOUNDARY_SRC": "https://www.boxeldercountyut.gov/243/Recorder",
+        "DISCLAIMER": "http://www.utah.gov/disclaimer.html",
+        "CURRENT_ASOF": 1594944000000,
+        "PARCEL_ID": "010570032",
+        "SERIAL_NUM": "01-057-0032",
+        "PARCEL_ADD": null,
+        "PARCEL_CITY": null,
+        "TAXEXEMPT_TYPE": null,
+        "TAX_DISTRICT": null,
+        "TOTAL_MKT_VALUE": 1000,
+        "LAND_MKT_VALUE": 1000,
+        "PARCEL_ACRES": 9.96899412,
+        "PROP_CLASS": "NON-FAA",
+        "PRIMARY_RES": null,
+        "HOUSE_CNT": null,
+        "SUBDIV_NAME": null,
+        "BLDG_SQFT": null,
+        "BLDG_SQFT_INFO": null,
+        "FLOORS_CNT": null,
+        "FLOORS_INFO": null,
+        "BUILT_YR": null,
+        "EFFBUILT_YR": null,
+        "CONST_MATERIAL": null,
+        "Shape__Area": 71365.5390625,
+        "Shape__Length": 1068.6502874489577,
+        "_geometry": {
+          "rings": [
+            [
+              [
+                -113.73110011715,
+                41.216431807522
+              ],
+              [
+                -113.731086078279,
+                41.2146120897946
+              ],
+              [
+                -113.733454723681,
+                41.2146053937391
+              ],
+              [
+                -113.733480385854,
+                41.2164345787157
+              ],
+              [
+                -113.73110011715,
+                41.216431807522
+              ]
+            ]
+          ]
+        }
+      }
+    },
     "listing_data": {
       "listing_id": "3994064",
       "county": "box_elder",
@@ -856,437 +1564,7 @@
       "address_hint": null,
       "acres_hint": null,
       "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
-    }
-  },
-  {
-    "listing_id": "3994063",
-    "county": "box_elder",
-    "county_display": "Box Elder",
-    "county_readiness": "PLANNED",
-    "parcel_id": "01-088-0004",
-    "parcel_ids": [
-      "01-088-0004"
-    ],
-    "is_multi_parcel": false,
-    "owner_name": null,
-    "situs_address": null,
-    "legal_description": null,
-    "subdivision": null,
-    "acres": null,
-    "building_sqft": null,
-    "year_built": null,
-    "property_class": "unknown",
-    "property_type": "unknown",
-    "zoning": null,
-    "latitude": null,
-    "longitude": null,
-    "opening_bid": 694.44,
-    "buyers_premium_pct": 5,
-    "all_in_cost": 729,
-    "sale_type": "deed",
-    "auction_url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994063",
-    "auction_platform": "public_surplus",
-    "auction_end": "2026-05-22T00:00:00.000Z",
-    "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
-    "title": {
-      "has_deed_records": null,
-      "document_count_5yr": null,
-      "last_transfer_date": null,
-      "last_transfer_type": null,
-      "mortgage_docs_found": null,
-      "lien_docs_found": null,
-      "release_docs_found": null,
-      "confidence": "NONE",
-      "notes": "Title research not yet run for this county.",
-      "red_flags": [],
-      "source": null
-    },
-    "access_notes": null,
-    "subdivision_pattern": "unknown",
-    "likely_utilities": "unknown",
-    "hoa_flag": null,
-    "code_violation_flag": true,
-    "buildability_notes": null,
-    "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
-      "NO_TITLE_DATA"
-    ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:03.620Z",
-    "agrc_hit": false,
-    "agrc_data": null,
-    "listing_data": {
-      "listing_id": "3994063",
-      "county": "box_elder",
-      "county_display": "Box Elder",
-      "parcel_ids": [
-        "01-088-0004"
-      ],
-      "parcel_raw": "01-088-0004",
-      "title": "Real Property in Box Elder 01-088-0004 (Non-Compliant)",
-      "opening_bid": 694.44,
-      "start_date": "May 21, 2026 10:00 AM MDT",
-      "end_date": "May 21, 2026 06:00 PM MDT",
-      "end_date_parsed": "2026-05-22T00:00:00.000Z",
-      "status": "Has Not Started",
-      "url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994063",
-      "description": "English Chat | Help | Login Home | Browse | Search Auction #3994063 - Real Property in Box Elder 01-088-0004 (Non-Compliant) Time Left: Not Started [View Box Elder County Auctions] [View Terms and Conditions] Bidding Starts May 21, 2026 10:00 AM MDT Auction Ends May 21, 2026 06:00 PM MDT This auction might extend Pick-up Location Box Elder County - Tax Sale Box Elder County [Deeds will be mailed to purchaser Brigham City, UT 84302] Auction Contact Please login to view contact Payment Visa, MasterCard, Discover  Online CC Payment Less than or equal to $4,000.00 Shipping Contact agency for shipping Bid on Item Region: UT  How to place a bid High Bidder # of Bids No Bids Opening Price: $694.44 Increment: $10.00 Minimum bid: $694.44 * Your proxy bid: $ Currency: USD Bid Deposit: REQUIRED   Remember - this bid is the same as a contract. Only bid on item(s) that you are serious about buying. If you win the bid, you are legally bound by contract to purchase the item(s). Questions [View/Ask]",
-      "address_hint": null,
-      "acres_hint": null,
-      "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
-    }
-  },
-  {
-    "listing_id": "3994059",
-    "county": "box_elder",
-    "county_display": "Box Elder",
-    "county_readiness": "PLANNED",
-    "parcel_id": "01-088-0006",
-    "parcel_ids": [
-      "01-088-0006"
-    ],
-    "is_multi_parcel": false,
-    "owner_name": null,
-    "situs_address": null,
-    "legal_description": null,
-    "subdivision": null,
-    "acres": null,
-    "building_sqft": null,
-    "year_built": null,
-    "property_class": "unknown",
-    "property_type": "unknown",
-    "zoning": null,
-    "latitude": null,
-    "longitude": null,
-    "opening_bid": 958.83,
-    "buyers_premium_pct": 5,
-    "all_in_cost": 1007,
-    "sale_type": "deed",
-    "auction_url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994059",
-    "auction_platform": "public_surplus",
-    "auction_end": "2026-05-22T00:00:00.000Z",
-    "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
-    "title": {
-      "has_deed_records": null,
-      "document_count_5yr": null,
-      "last_transfer_date": null,
-      "last_transfer_type": null,
-      "mortgage_docs_found": null,
-      "lien_docs_found": null,
-      "release_docs_found": null,
-      "confidence": "NONE",
-      "notes": "Title research not yet run for this county.",
-      "red_flags": [],
-      "source": null
-    },
-    "access_notes": null,
-    "subdivision_pattern": "unknown",
-    "likely_utilities": "unknown",
-    "hoa_flag": null,
-    "code_violation_flag": false,
-    "buildability_notes": null,
-    "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
-      "NO_TITLE_DATA"
-    ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:04.526Z",
-    "agrc_hit": false,
-    "agrc_data": null,
-    "listing_data": {
-      "listing_id": "3994059",
-      "county": "box_elder",
-      "county_display": "Box Elder",
-      "parcel_ids": [
-        "01-088-0006"
-      ],
-      "parcel_raw": "01-088-0006",
-      "title": "Real Property in Box Elder 01-088-0006 (Compliant)",
-      "opening_bid": 958.83,
-      "start_date": "May 21, 2026 10:00 AM MDT",
-      "end_date": "May 21, 2026 06:00 PM MDT",
-      "end_date_parsed": "2026-05-22T00:00:00.000Z",
-      "status": "Has Not Started",
-      "url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994059",
-      "description": "English Chat | Help | Login Home | Browse | Search Auction #3994059 - Real Property in Box Elder 01-088-0006 (Compliant) Time Left: Not Started [View Box Elder County Auctions] [View Terms and Conditions] Bidding Starts May 21, 2026 10:00 AM MDT Auction Ends May 21, 2026 06:00 PM MDT This auction might extend Pick-up Location Box Elder County - Tax Sale Box Elder County [Deeds will be mailed to purchaser Brigham City, UT 84302] Auction Contact Please login to view contact Payment Visa, MasterCard, Discover  Online CC Payment Less than or equal to $4,000.00 Shipping Contact agency for shipping Bid on Item Region: UT  How to place a bid High Bidder # of Bids No Bids Opening Price: $958.83 Increment: $10.00 Minimum bid: $958.83 * Your proxy bid: $ Currency: USD Bid Deposit: REQUIRED   Remember - this bid is the same as a contract. Only bid on item(s) that you are serious about buying. If you win the bid, you are legally bound by contract to purchase the item(s). Questions [View/Ask] You",
-      "address_hint": null,
-      "acres_hint": null,
-      "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
-    }
-  },
-  {
-    "listing_id": "3994057",
-    "county": "box_elder",
-    "county_display": "Box Elder",
-    "county_readiness": "PLANNED",
-    "parcel_id": "08-074-0009",
-    "parcel_ids": [
-      "08-074-0009"
-    ],
-    "is_multi_parcel": false,
-    "owner_name": null,
-    "situs_address": null,
-    "legal_description": null,
-    "subdivision": null,
-    "acres": null,
-    "building_sqft": null,
-    "year_built": null,
-    "property_class": "unknown",
-    "property_type": "unknown",
-    "zoning": null,
-    "latitude": null,
-    "longitude": null,
-    "opening_bid": 385.34,
-    "buyers_premium_pct": 5,
-    "all_in_cost": 405,
-    "sale_type": "deed",
-    "auction_url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994057",
-    "auction_platform": "public_surplus",
-    "auction_end": "2026-05-22T00:00:00.000Z",
-    "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
-    "title": {
-      "has_deed_records": null,
-      "document_count_5yr": null,
-      "last_transfer_date": null,
-      "last_transfer_type": null,
-      "mortgage_docs_found": null,
-      "lien_docs_found": null,
-      "release_docs_found": null,
-      "confidence": "NONE",
-      "notes": "Title research not yet run for this county.",
-      "red_flags": [],
-      "source": null
-    },
-    "access_notes": null,
-    "subdivision_pattern": "unknown",
-    "likely_utilities": "unknown",
-    "hoa_flag": null,
-    "code_violation_flag": false,
-    "buildability_notes": null,
-    "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
-      "NO_TITLE_DATA"
-    ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:05.451Z",
-    "agrc_hit": false,
-    "agrc_data": null,
-    "listing_data": {
-      "listing_id": "3994057",
-      "county": "box_elder",
-      "county_display": "Box Elder",
-      "parcel_ids": [
-        "08-074-0009"
-      ],
-      "parcel_raw": "08-074-0009",
-      "title": "Real Property in Box Elder 08-074-0009 (Compliant)",
-      "opening_bid": 385.34,
-      "start_date": "May 21, 2026 10:00 AM MDT",
-      "end_date": "May 21, 2026 06:00 PM MDT",
-      "end_date_parsed": "2026-05-22T00:00:00.000Z",
-      "status": "Has Not Started",
-      "url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994057",
-      "description": "English Chat | Help | Login Home | Browse | Search Auction #3994057 - Real Property in Box Elder 08-074-0009 (Compliant) Time Left: Not Started [View Box Elder County Auctions] [View Terms and Conditions] Bidding Starts May 21, 2026 10:00 AM MDT Auction Ends May 21, 2026 06:00 PM MDT This auction might extend Pick-up Location Box Elder County - Tax Sale Box Elder County [Deeds will be mailed to purchaser Brigham City, UT 84302] Auction Contact Please login to view contact Payment Visa, MasterCard, Discover  Online CC Payment Less than or equal to $4,000.00 Shipping Contact agency for shipping Bid on Item Region: UT  How to place a bid High Bidder # of Bids No Bids Opening Price: $385.34 Increment: $5.00 Minimum bid: $385.34 * Your proxy bid: $ Currency: USD Bid Deposit: May Apply   Remember - this bid is the same as a contract. Only bid on item(s) that you are serious about buying. If you win the bid, you are legally bound by contract to purchase the item(s). Questions [View/Ask] You",
-      "address_hint": null,
-      "acres_hint": null,
-      "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
-    }
-  },
-  {
-    "listing_id": "3994053",
-    "county": "box_elder",
-    "county_display": "Box Elder",
-    "county_readiness": "PLANNED",
-    "parcel_id": "02-086-0328",
-    "parcel_ids": [
-      "02-086-0328"
-    ],
-    "is_multi_parcel": false,
-    "owner_name": null,
-    "situs_address": null,
-    "legal_description": null,
-    "subdivision": null,
-    "acres": null,
-    "building_sqft": null,
-    "year_built": null,
-    "property_class": "unknown",
-    "property_type": "unknown",
-    "zoning": null,
-    "latitude": null,
-    "longitude": null,
-    "opening_bid": 367.45,
-    "buyers_premium_pct": 5,
-    "all_in_cost": 386,
-    "sale_type": "deed",
-    "auction_url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994053",
-    "auction_platform": "public_surplus",
-    "auction_end": "2026-05-22T00:00:00.000Z",
-    "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
-    "title": {
-      "has_deed_records": null,
-      "document_count_5yr": null,
-      "last_transfer_date": null,
-      "last_transfer_type": null,
-      "mortgage_docs_found": null,
-      "lien_docs_found": null,
-      "release_docs_found": null,
-      "confidence": "NONE",
-      "notes": "Title research not yet run for this county.",
-      "red_flags": [],
-      "source": null
-    },
-    "access_notes": null,
-    "subdivision_pattern": "unknown",
-    "likely_utilities": "unknown",
-    "hoa_flag": null,
-    "code_violation_flag": true,
-    "buildability_notes": null,
-    "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
-      "NO_TITLE_DATA"
-    ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:06.406Z",
-    "agrc_hit": false,
-    "agrc_data": null,
-    "listing_data": {
-      "listing_id": "3994053",
-      "county": "box_elder",
-      "county_display": "Box Elder",
-      "parcel_ids": [
-        "02-086-0328"
-      ],
-      "parcel_raw": "02-086-0328",
-      "title": "Real Property in Box Elder 02-086-0328 (Non-Compliant)",
-      "opening_bid": 367.45,
-      "start_date": "May 21, 2026 10:00 AM MDT",
-      "end_date": "May 21, 2026 06:00 PM MDT",
-      "end_date_parsed": "2026-05-22T00:00:00.000Z",
-      "status": "Has Not Started",
-      "url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994053",
-      "description": "English Chat | Help | Login Home | Browse | Search Auction #3994053 - Real Property in Box Elder 02-086-0328 (Non-Compliant) Time Left: Not Started [View Box Elder County Auctions] [View Terms and Conditions] Bidding Starts May 21, 2026 10:00 AM MDT Auction Ends May 21, 2026 06:00 PM MDT This auction might extend Pick-up Location Box Elder County - Tax Sale Box Elder County [Deeds will be mailed to purchaser Brigham City, UT 84302] Auction Contact Please login to view contact Payment Visa, MasterCard, Discover  Online CC Payment Less than or equal to $4,000.00 Shipping Contact agency for shipping Bid on Item Region: UT  How to place a bid High Bidder # of Bids No Bids Opening Price: $367.45 Increment: $5.00 Minimum bid: $367.45 * Your proxy bid: $ Currency: USD Bid Deposit: May Apply   Remember - this bid is the same as a contract. Only bid on item(s) that you are serious about buying. If you win the bid, you are legally bound by contract to purchase the item(s). Questions [View/Ask]",
-      "address_hint": null,
-      "acres_hint": null,
-      "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
-    }
-  },
-  {
-    "listing_id": "3994049",
-    "county": "box_elder",
-    "county_display": "Box Elder",
-    "county_readiness": "PLANNED",
-    "parcel_id": "01-063-0020",
-    "parcel_ids": [
-      "01-063-0020"
-    ],
-    "is_multi_parcel": false,
-    "owner_name": null,
-    "situs_address": null,
-    "legal_description": null,
-    "subdivision": null,
-    "acres": null,
-    "building_sqft": null,
-    "year_built": null,
-    "property_class": "unknown",
-    "property_type": "unknown",
-    "zoning": null,
-    "latitude": null,
-    "longitude": null,
-    "opening_bid": 494.46,
-    "buyers_premium_pct": 5,
-    "all_in_cost": 519,
-    "sale_type": "deed",
-    "auction_url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994049",
-    "auction_platform": "public_surplus",
-    "auction_end": "2026-05-22T00:00:00.000Z",
-    "assessed_value": null,
-    "market_value": null,
-    "land_value": null,
-    "value_confidence": "LOW",
-    "bid_to_value_pct": null,
-    "equity_multiple": null,
-    "title": {
-      "has_deed_records": null,
-      "document_count_5yr": null,
-      "last_transfer_date": null,
-      "last_transfer_type": null,
-      "mortgage_docs_found": null,
-      "lien_docs_found": null,
-      "release_docs_found": null,
-      "confidence": "NONE",
-      "notes": "Title research not yet run for this county.",
-      "red_flags": [],
-      "source": null
-    },
-    "access_notes": null,
-    "subdivision_pattern": "unknown",
-    "likely_utilities": "unknown",
-    "hoa_flag": null,
-    "code_violation_flag": true,
-    "buildability_notes": null,
-    "missing_data_flags": [
-      "NO_AGRC_MATCH",
-      "NO_MARKET_VALUE",
-      "NO_COORDINATES",
-      "NO_TITLE_DATA"
-    ],
-    "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
-    "enriched_at": "2026-05-06T12:23:07.402Z",
-    "agrc_hit": false,
-    "agrc_data": null,
-    "listing_data": {
-      "listing_id": "3994049",
-      "county": "box_elder",
-      "county_display": "Box Elder",
-      "parcel_ids": [
-        "01-063-0020"
-      ],
-      "parcel_raw": "01-063-0020",
-      "title": "Real Property in Box Elder 01-063-0020 (Non-Compliant)",
-      "opening_bid": 494.46,
-      "start_date": "May 21, 2026 10:00 AM MDT",
-      "end_date": "May 21, 2026 06:00 PM MDT",
-      "end_date_parsed": "2026-05-22T00:00:00.000Z",
-      "status": "Has Not Started",
-      "url": "https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994049",
-      "description": "English Chat | Help | Login Home | Browse | Search Auction #3994049 - Real Property in Box Elder 01-063-0020 (Non-Compliant) Time Left: Not Started [View Box Elder County Auctions] [View Terms and Conditions] Bidding Starts May 21, 2026 10:00 AM MDT Auction Ends May 21, 2026 06:00 PM MDT This auction might extend Pick-up Location Box Elder County - Tax Sale Box Elder County [Deeds will be mailed to purchaser Brigham City, UT 84302] Auction Contact Please login to view contact Payment Visa, MasterCard, Discover  Online CC Payment Less than or equal to $4,000.00 Shipping Contact agency for shipping Bid on Item Region: UT  How to place a bid High Bidder # of Bids No Bids Opening Price: $494.46 Increment: $5.00 Minimum bid: $494.46 * Your proxy bid: $ Currency: USD Bid Deposit: May Apply   Remember - this bid is the same as a contract. Only bid on item(s) that you are serious about buying. If you win the bid, you are legally bound by contract to purchase the item(s). Questions [View/Ask]",
-      "address_hint": null,
-      "acres_hint": null,
-      "source_file": "utah_auctions.csv",
-      "scraped_at": "2026-05-06T12:22:52.391Z"
+      "scraped_at": "2026-05-06T22:59:25.924Z"
     }
   }
 ]

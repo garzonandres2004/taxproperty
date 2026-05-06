@@ -48,7 +48,7 @@ No title research data available yet.
 
 ---
 
-*Generated: 5/6/2026, 6:18:18 AM*
+*Generated: 5/6/2026, 4:59:44 PM*
 *Data Sources: Tax Sale CSV Import*
 *Analyst Notes: NEAR_LIVE county: High confidence with minor verification needed. Confidence reduced by 15%.*
 

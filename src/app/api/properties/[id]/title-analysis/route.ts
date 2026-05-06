@@ -101,9 +101,10 @@ async function loadScrapers() {
     return null
   }
   try {
+    // Use webpackIgnore to prevent build-time analysis of these imports
     const [{ scrapeTooeleEagleWeb }, { scrapeRichCounty, saveRichTitleSignals }] = await Promise.all([
-      import('@/lib/title/scrapers/tooele-eagleweb'),
-      import('@/lib/title/scrapers/rich-county')
+      import(/* webpackIgnore: true */ '@/lib/title/scrapers/tooele-eagleweb'),
+      import(/* webpackIgnore: true */ '@/lib/title/scrapers/rich-county')
     ])
     return { scrapeTooeleEagleWeb, scrapeRichCounty, saveRichTitleSignals }
   } catch (error) {

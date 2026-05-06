@@ -1,11 +1,11 @@
-## Sanpete – 24737 – unknown – RESEARCH [NEAR_LIVE] (13% conf)
+## Sanpete – 24737 – unknown – RESEARCH [NEAR_LIVE] (23% conf)
 
 > **County Status:** 〔NEAR-LIVE〕 High confidence with minor verification needed
-> **Confidence Impact:** -15% (Current: 13%)
-> **Data Gaps:** NO_AGRC_MATCH, NO_MARKET_VALUE, NO_COORDINATES, NO_TITLE_DATA
+> **Confidence Impact:** -15% (Current: 23%)
+> **Data Gaps:** NO_MARKET_VALUE, NO_TITLE_DATA
 
 **Recommendation:** 🔍 RESEARCH  
-**Confidence Score:** 13%  
+**Confidence Score:** 23%  
 
 ### Scores
 
@@ -38,17 +38,17 @@ No title research data available yet.
 - No title research data yet — recorder search has not been run. Title risk is unknown.
 - Parcel size and physical characteristics are unknown — check assessor or GIS records.
 - Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.
-- 4 unresolved data gap(s) in pipeline: NO_AGRC_MATCH, NO_MARKET_VALUE, NO_COORDINATES.
+- 2 unresolved data gap(s) in pipeline: NO_MARKET_VALUE, NO_TITLE_DATA.
 
 ### Next Actions
 
 1. Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).
 2. Run title search via EagleWeb at erecording.sanpetecountyutah.gov to assess deed history and lien status before bidding.
-3. Resolve 4 data gap(s) before making a bid decision: NO_AGRC_MATCH, NO_MARKET_VALUE, NO_COORDINATES.
+3. Resolve 2 data gap(s) before making a bid decision: NO_MARKET_VALUE, NO_TITLE_DATA.
 
 ---
 
-*Generated: 5/6/2026, 6:19:30 AM*
+*Generated: 5/6/2026, 4:59:47 PM*
 *Data Sources: Tax Sale CSV Import*
 *Analyst Notes: NEAR_LIVE county: High confidence with minor verification needed. Confidence reduced by 15%.*
 
