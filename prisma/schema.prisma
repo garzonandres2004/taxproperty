@@ -59,6 +59,15 @@ model Property {
   final_score       Float?
   recommendation    String? // "bid" | "research_more" | "avoid"
 
+  // Scoring V2
+  opportunity_score_v2  Float?
+  risk_score_v2         Float?
+  title_score_v2        Float?
+  confidence_score_v2   Float?
+  investability_score   Float?
+  recommendation_bucket String? // "AVOID" | "RESEARCH" | "WATCHLIST" | "BID_CANDIDATE" | "TOP_TARGET"
+  score_version         String? // "2.0.0"
+
   // Enhanced scoring fields (new)
   max_bid                Float? // Calculated max bid recommendation
   max_bid_calculated     Float? // Auto-calculated max bid (Dustin Hahn formula)
@@ -108,6 +117,7 @@ model Property {
   outcomes         OutcomeEvent[]
   adjacent_parcels AdjacentParcel[]
   red_flags        RedFlag[]
+  data_gaps        DataGap[]
 
   // Timestamps
   created_at DateTime @default(now())
@@ -118,6 +128,10 @@ model Property {
   titleResearch TitleResearchChecklist?
   thirdPartyEnrichment ThirdPartyEnrichment?
   titleAnalysis TitleAnalysis?
+
+  // NEW: Pipeline tracking (Phase 1)
+  pipelineRuns      PipelineRun[]
+  titleSignals      TitleSignals?
 
   @@index([county])
   @@index([status])
@@ -453,11 +467,31 @@ model CountyConfig {
   is_active               Boolean  @default(true)
   notes                   String?
 
+  // NEW: Completeness tracking (Phase 1)
+  total_properties          Int       @default(0)
+  completeness_score        Float?
+  physical_completeness     Float?
+  valuation_completeness    Float?
+  location_completeness       Float?
+  title_completeness          Float?
+
+  // NEW: Automation metadata (Phase 1)
+  automation_potential        String    @default("unknown") // "high" | "medium" | "low"
+  manual_playbook_required    Boolean   @default(false)
+
+  // NEW: County status (Phase 1)
+  status                      String    @default("pending") // "pending" | "alpha" | "beta" | "production"
+  // NEW: County readiness for county-agnostic operations (Agent A)
+  readiness                   String    @default("PLANNED") // "LIVE" | "NEAR_LIVE" | "PARTIAL" | "PLANNED"
+  readiness_reason            String?   // Why this status (e.g., "Awaiting zoning data")
+  last_completeness_check     DateTime?
+
   created_at              DateTime @default(now())
   updated_at              DateTime @updatedAt
 
   @@index([county_name])
   @@index([state])
+  @@index([status])
 }
 
 // State Guides for US Map - Tax Sale Information by State
@@ -479,6 +513,32 @@ model StateGuide {
 
   @@index([state_code])
   @@index([sale_type])
+}
+
+// Data Gap Registry — structural gaps recorded per-property, per-phase
+model DataGap {
+  id          String   @id @default(uuid())
+  property_id String
+  property    Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  phase       String   // "physical" | "valuation" | "location" | "title" | "zoning"
+  field       String   // e.g. "year_built", "title_signals", "recorder_url"
+  reason      String   // see DataGapReason in pipeline/types.ts
+  level       String   // "A" | "B" | "C" automation level
+  source_hint String?  // human-readable next step
+
+  resolved    Boolean  @default(false)
+  resolved_at DateTime?
+  resolved_by String?  // "enrichment" | "manual" | "pipeline"
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@unique([property_id, phase, field])
+  @@index([property_id])
+  @@index([phase])
+  @@index([reason])
+  @@index([level])
 }
 
 // Title Analysis - Automated document scraping and analysis
@@ -517,4 +577,64 @@ model TitleAnalysis {
   @@index([property_id])
   @@index([score])
   @@index([recommendation])
+}
+
+// NEW MODELS for Pipeline Infrastructure (Phase 1)
+
+// Pipeline Run Tracking - One record per property pipeline execution
+model PipelineRun {
+  id                    String   @id @default(uuid())
+  property_id           String
+  property              Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  pipeline_version      String
+  county                String
+
+  phases_requested      String   // JSON array of phase names
+  phases_completed      String?  // JSON array of completed phases
+  current_phase         String?
+
+  status                String   @default("running")
+  started_at            DateTime @default(now())
+  completed_at          DateTime?
+  duration_ms           Int?
+
+  investability_score   Float?
+  recommendation_bucket String?
+
+  error_message         String?
+
+  created_at            DateTime @default(now())
+
+  @@index([property_id])
+  @@index([status])
+  @@index([county])
+  @@index([pipeline_version])
+  @@index([property_id, pipeline_version])
+  @@index([started_at])
+}
+
+// Title Signals - Automated title research data
+model TitleSignals {
+  id                    String   @id @default(uuid())
+  property_id           String   @unique
+  property              Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  has_deed_records      Boolean?
+  document_count_5yr    Int?
+  last_transfer_date    DateTime?
+  last_transfer_type    String?
+  mortgage_docs_found   Int?
+  lien_docs_found       Int?
+  release_docs_found    Int?
+
+  red_flags_count       Int      @default(0)
+  yellow_flags_count    Int      @default(0)
+
+  data_source           String
+  source_url            String?
+  scraped_at            DateTime @default(now())
+
+  @@index([property_id])
+  @@index([data_source])
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import { getCountyAdapter } from '@/lib/counties'
 import { getZoneRules } from '@/lib/zoning/utah-county-zones'
 import { generateUseIdeas, calculateBuildabilityScore } from '@/lib/zoning/use-idea-generator'
 
@@ -68,6 +69,75 @@ export async function POST(
 
     results.stepsCompleted.push('Found property in database')
     results.data.parcelNumber = property.parcel_number
+
+    // Non-Utah-County path: no automated zoning identify service available.
+    // Save a manual-verification profile and generate images if coordinates exist.
+    if (property.county !== 'utah') {
+      const adapter = getCountyAdapter(property.county)
+      const adapterLinks = adapter.makeExternalLinks(
+        property.parcel_number,
+        property.property_address || '',
+        null
+      )
+      const planningUrl = adapterLinks.planningUrl || null
+      const jurisdiction = adapter.name
+
+      const zoningProfileData: any = {
+        property_id: id,
+        jurisdiction,
+        is_unincorporated: true,
+        zoning_code: null,
+        zoning_name: 'Manual verification required',
+        buildability_notes: `${adapter.name} does not have an automated zoning identify service. Look up zoning at the county planning department.`,
+        next_steps: `1. Visit ${planningUrl || 'the county planning website'} to search by parcel number or address.\n2. Note the zone code and permitted uses.\n3. Update this record manually using Edit Zoning.`,
+        zoning_map_url: planningUrl,
+        data_last_verified: new Date()
+      }
+
+      try {
+        const existing = await prisma.zoningProfile.findUnique({ where: { property_id: id } })
+        if (existing) {
+          await prisma.zoningProfile.update({ where: { property_id: id }, data: zoningProfileData })
+          results.stepsCompleted.push('Updated ZoningProfile (manual verification required)')
+        } else {
+          await prisma.zoningProfile.create({ data: zoningProfileData })
+          results.stepsCompleted.push('Created ZoningProfile (manual verification required)')
+        }
+      } catch (error) {
+        results.errors.push(`Database save error: ${(error as Error).message}`)
+      }
+
+      // Generate Street View / aerial images if coordinates are already present
+      if (property.latitude && property.longitude && !property.photo_url) {
+        try {
+          const apiKey = process.env.GOOGLE_MAPS_API_KEY
+          if (apiKey) {
+            const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?size=400x300&location=${property.latitude},${property.longitude}&fov=80&pitch=0&key=${apiKey}`
+            const aerialUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${property.latitude},${property.longitude}&zoom=18&size=400x300&maptype=satellite&key=${apiKey}`
+            await prisma.property.update({
+              where: { id },
+              data: { photo_url: streetViewUrl, aerial_url: aerialUrl, photo_date: new Date().toISOString() }
+            })
+            results.stepsCompleted.push('Generated Street View and aerial images')
+            results.data.images = { streetViewUrl, aerialUrl }
+          } else {
+            results.warnings.push('GOOGLE_MAPS_API_KEY not set - skipping image generation')
+          }
+        } catch (imageError) {
+          results.warnings.push(`Could not generate images: ${(imageError as Error).message}`)
+        }
+      }
+
+      results.warnings.push(`${adapter.name} zoning requires manual lookup. No automated GIS identify service available.`)
+      if (planningUrl) results.data.planningUrl = planningUrl
+
+      return NextResponse.json({
+        success: results.errors.length === 0,
+        message: `Zoning set to manual verification required for ${adapter.name}`,
+        results,
+        zoningProfile: zoningProfileData
+      })
+    }
 
     const serial = property.parcel_number
     // AGRC expects numeric-only parcel ID (e.g., "55-123-4567" -> "551234567")

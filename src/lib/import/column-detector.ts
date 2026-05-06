@@ -181,6 +181,7 @@ export function detectCountyFromFile(
 
   // Check filename
   if (lowerName.includes('tooele')) return 'tooele'
+  if (lowerName.includes('rich')) return 'rich'
   if (lowerName.includes('utah')) return 'utah'
   if (lowerName.includes('salt lake') || lowerName.includes('saltlake')) return 'salt_lake'
   if (lowerName.includes('davis')) return 'davis'

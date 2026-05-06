@@ -16,7 +16,8 @@ import {
   X,
   ChevronDown,
   Calendar,
-  Map
+  Map,
+  Database
 } from 'lucide-react';
 import { cn } from '@/lib/ui-utils';
 
@@ -54,6 +55,7 @@ export const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children })
     { href: '/reports/history', icon: <FileText size={20} />, label: 'Investor Reports' },
     { href: '/calendar', icon: <Calendar size={20} />, label: 'Calendar' },
     { href: '/states', icon: <Map size={20} />, label: 'States' },
+    { href: '/counties', icon: <Database size={20} />, label: 'Counties' },
     { href: '/settings', icon: <BarChart3 size={20} />, label: 'Settings' },
   ];
 

@@ -11,19 +11,57 @@ import {
   ChevronRight,
   Clock,
   Wallet,
+  MapPin,
+  ArrowUpRight,
+  Target,
+  AlertOctagon,
+  Search,
+  FileText
 } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { cn, formatCurrency, getScoreColor, cleanHtmlEntities } from '@/lib/ui-utils'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Progress } from '@/components/ui/progress'
 
 interface Property {
   id: string
   parcel_number: string
+  county: string
   property_address: string | null
   total_amount_due: number | null
   estimated_market_value: number | null
-  final_score: number | null
+  investability_score: number | null
+  max_bid_calculated: number | null
   property_type: string
+  recommendation_bucket: string | null
   recommendation: string | null
+  photo_url: string | null
+}
+
+interface CountySummary {
+  id: string
+  name: string
+  displayName: string
+  propertyCount: number
+  auctionDate: string | null
+  readinessScore: number
+  status: 'LIVE' | 'NEAR_LIVE' | 'PARTIAL' | 'PLANNED'
+}
+
+interface DashboardStats {
+  totalProperties: number
+  totalCounties: number
+  recommendationCounts: {
+    TOP_TARGET: number
+    BID_CANDIDATE: number
+    WATCHLIST: number
+    RESEARCH: number
+    AVOID: number
+  }
+  totalMarketValue: number
+  totalPayoff: number
 }
 
 interface UserSettings {
@@ -39,6 +77,7 @@ const StatCard = ({
   icon,
   trend,
   isPositive,
+  href
 }: {
   label: string
   value: string
@@ -46,47 +85,116 @@ const StatCard = ({
   icon: React.ReactNode
   trend?: string
   isPositive?: boolean
+  href?: string
 }) => (
-  <div className="card p-6 flex flex-col gap-4">
-    <div className="flex items-center justify-between">
-      <div className="p-2 rounded-lg bg-slate-50 text-slate-600 border border-slate-100">
-        {icon}
+  <Card className={cn('transition-shadow', href && 'hover:shadow-lg cursor-pointer')}>
+    <CardContent className="p-6">
+      <div className="flex items-center justify-between">
+        <div className="p-2 rounded-lg bg-slate-50 text-slate-600 border border-slate-100">
+          {icon}
+        </div>
+        {trend && (
+          <span
+            className={cn(
+              'text-xs font-bold px-2 py-0.5 rounded-full',
+              isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+            )}
+          >
+            {trend}
+          </span>
+        )}
       </div>
-      {trend && (
-        <span
-          className={cn(
-            'text-xs font-bold px-2 py-0.5 rounded-full',
-            isPositive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
-          )}
-        >
-          {trend}
-        </span>
+      <div className="mt-4">
+        <h3 className="text-slate-500 text-sm font-semibold uppercase tracking-wider">
+          {label}
+        </h3>
+        <p className="text-3xl font-black text-slate-900 mt-1">{value}</p>
+        <p className="text-xs text-slate-400 mt-1">{subtext}</p>
+      </div>
+      {href && (
+        <Link href={href} className="absolute inset-0" aria-label={`View ${label}`} />
       )}
-    </div>
-    <div>
-      <h3 className="text-slate-500 text-sm font-semibold uppercase tracking-wider">
-        {label}
-      </h3>
-      <p className="text-3xl font-black text-slate-900 mt-1">{value}</p>
-      <p className="text-xs text-slate-400 mt-1">{subtext}</p>
-    </div>
-  </div>
+    </CardContent>
+  </Card>
 )
+
+const RecommendationBadge = ({
+  type,
+  count,
+  href
+}: {
+  type: 'GO' | 'CAUTION' | 'RESEARCH' | 'SKIP'
+  count: number
+  href: string
+}) => {
+  const config = {
+    GO: {
+      color: 'bg-emerald-500',
+      bg: 'bg-emerald-50',
+      text: 'text-emerald-700',
+      icon: <CheckCircle2 size={16} />,
+      label: 'GO'
+    },
+    CAUTION: {
+      color: 'bg-amber-500',
+      bg: 'bg-amber-50',
+      text: 'text-amber-700',
+      icon: <AlertTriangle size={16} />,
+      label: 'CAUTION'
+    },
+    RESEARCH: {
+      color: 'bg-blue-500',
+      bg: 'bg-blue-50',
+      text: 'text-blue-700',
+      icon: <Search size={16} />,
+      label: 'RESEARCH'
+    },
+    SKIP: {
+      color: 'bg-red-500',
+      bg: 'bg-red-50',
+      text: 'text-red-700',
+      icon: <AlertOctagon size={16} />,
+      label: 'SKIP'
+    }
+  }
+
+  const style = config[type]
+
+  return (
+    <Link href={href}>
+      <div className={cn(
+        'flex items-center justify-between p-4 rounded-xl border-2 transition-all hover:shadow-md',
+        style.bg,
+        'border-transparent hover:border-slate-200'
+      )}>
+        <div className="flex items-center gap-3">
+          <div className={cn('p-2 rounded-lg text-white', style.color)}>
+            {style.icon}
+          </div>
+          <div>
+            <p className={cn('text-2xl font-black', style.text)}>{count}</p>
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{style.label}</p>
+          </div>
+        </div>
+        <ChevronRight size={20} className="text-slate-300" />
+      </div>
+    </Link>
+  )
+}
 
 export default function DashboardPage() {
   const [topProperties, setTopProperties] = useState<Property[]>([])
-  const [researchQueue, setResearchQueue] = useState<Property[]>([])
-  const [stats, setStats] = useState({
+  const [counties, setCounties] = useState<CountySummary[]>([])
+  const [stats, setStats] = useState<DashboardStats>({
     totalProperties: 0,
-    highScoring: 0,
+    totalCounties: 0,
+    recommendationCounts: { TOP_TARGET: 0, BID_CANDIDATE: 0, WATCHLIST: 0, RESEARCH: 0, AVOID: 0 },
     totalMarketValue: 0,
-    totalPayoff: 0,
-    bidCount: 0,
+    totalPayoff: 0
   })
-  const [distributionData, setDistributionData] = useState<{ range: string; count: number; color: string }[]>([])
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null)
-  const [bidTargetsMode, setBidTargetsMode] = useState<'overall' | 'myBudget'>('overall')
   const [loading, setLoading] = useState(true)
+  const [nextAuction, setNextAuction] = useState<{ date: string; county: string; daysUntil: number } | null>(null)
 
   useEffect(() => {
     fetchDashboardData()
@@ -95,12 +203,40 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
+      // Fetch dashboard data
       const res = await fetch('/api/dashboard')
-      const data = await res.json()
-      setTopProperties(data.topProperties)
-      setResearchQueue(data.researchQueue)
-      setStats(data.stats)
-      setDistributionData(data.distributionData)
+      if (res.ok) {
+        const data = await res.json()
+        setTopProperties(data.topProperties || [])
+        setCounties(data.counties || [])
+        setStats(data.stats || {
+          totalProperties: 0,
+          totalCounties: 0,
+          recommendationCounts: { TOP_TARGET: 0, BID_CANDIDATE: 0, WATCHLIST: 0, RESEARCH: 0, AVOID: 0 },
+          totalMarketValue: 0,
+          totalPayoff: 0
+        })
+
+        // Calculate next auction
+        if (data.counties && data.counties.length > 0) {
+          const upcoming = data.counties
+            .filter((c: CountySummary) => c.auctionDate && new Date(c.auctionDate) > new Date())
+            .sort((a: CountySummary, b: CountySummary) =>
+              new Date(a.auctionDate!).getTime() - new Date(b.auctionDate!).getTime()
+            )[0]
+
+          if (upcoming && upcoming.auctionDate) {
+            const daysUntil = Math.ceil(
+              (new Date(upcoming.auctionDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+            )
+            setNextAuction({
+              date: upcoming.auctionDate,
+              county: upcoming.displayName,
+              daysUntil
+            })
+          }
+        }
+      }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error)
     } finally {
@@ -123,44 +259,17 @@ export default function DashboardPage() {
     const availableToBid = userSettings.totalBudget - userSettings.reserveBuffer
     const fitsMax = amountDue <= userSettings.maxPerProperty
     const fitsCash = amountDue <= availableToBid
-    return {
-      fitsMax,
-      fitsCash,
-      affordable: fitsMax && fitsCash,
-    }
+    return { fitsMax, fitsCash, affordable: fitsMax && fitsCash }
   }
 
-  // Compute displayed properties based on mode
-  const displayedBidTargets = (() => {
-    if (bidTargetsMode === 'overall' || !userSettings) {
-      return topProperties
-    }
-
-    // Sort by bestForMyBudget logic
-    return [...topProperties].sort((a, b) => {
-      const aFit = getBudgetFit(a.total_amount_due)
-      const bFit = getBudgetFit(b.total_amount_due)
-
-      const aAffordable = aFit?.affordable || false
-      const bAffordable = bFit?.affordable || false
-
-      // Affordable first
-      if (aAffordable && !bAffordable) return -1
-      if (!aAffordable && bAffordable) return 1
-
-      // Within same group, sort by finalScore DESC
-      const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
-      if (scoreDiff !== 0) return scoreDiff
-
-      // Then by amountDue ASC
-      return (a.total_amount_due || 0) - (b.total_amount_due || 0)
-    })
-  })()
-
-  // Count affordable properties
-  const affordableCount = userSettings
-    ? topProperties.filter((p) => getBudgetFit(p.total_amount_due)?.affordable).length
-    : 0
+  // Calculate GO count (TOP_TARGET + BID_CANDIDATE)
+  const goCount = stats.recommendationCounts.TOP_TARGET + stats.recommendationCounts.BID_CANDIDATE
+  // Calculate CAUTION count (WATCHLIST)
+  const cautionCount = stats.recommendationCounts.WATCHLIST
+  // Calculate RESEARCH count (RESEARCH)
+  const researchCount = stats.recommendationCounts.RESEARCH
+  // Calculate SKIP count (AVOID)
+  const skipCount = stats.recommendationCounts.AVOID
 
   if (loading) {
     return (
@@ -174,275 +283,351 @@ export default function DashboardPage() {
 
   return (
     <AppLayout>
-      <div className="flex flex-col gap-10">
-        {/* Page Title & Actions */}
+      <div className="flex flex-col gap-8">
+        {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <span className="text-xs font-bold text-emerald-600 uppercase tracking-widest">
-              Market Overview
+              AI Tax Sale Deal Analyst
             </span>
             <h1 className="text-3xl font-black text-slate-900 tracking-tight">
               Investment Dashboard
             </h1>
+            <p className="text-slate-500 mt-1">
+              {stats.totalCounties} counties • {stats.totalProperties} properties analyzed
+            </p>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/properties" className="btn btn-secondary gap-2">
-              <Filter size={18} /> View Properties
-            </Link>
-            <Link href="/import" className="btn btn-primary gap-2">
-              Import County List
+            {nextAuction && (
+              <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 text-amber-700 rounded-lg border border-amber-200">
+                <Clock size={18} />
+                <span className="text-sm font-medium">
+                  Next Sale: {nextAuction.county} in {nextAuction.daysUntil} days
+                </span>
+              </div>
+            )}
+            <Link href="/properties" className="btn btn-primary gap-2">
+              <Filter size={18} /> Browse Properties
             </Link>
           </div>
         </div>
 
         {/* Primary Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             label="Total Properties"
             value={stats.totalProperties.toString()}
-            subtext="In Utah County 2026 Sale"
+            subtext="Across all counties"
             icon={<Building2 size={20} />}
+            href="/properties"
           />
           <StatCard
             label="Total Market Value"
             value={formatCurrency(stats.totalMarketValue)}
-            subtext="Aggregate value of auction"
+            subtext="Aggregate estimated value"
             icon={<TrendingUp size={20} />}
             trend="+12%"
             isPositive={true}
           />
           <StatCard
-            label="Auction Payoff"
+            label="Total Payoff Due"
             value={formatCurrency(stats.totalPayoff)}
-            subtext="Opening bid aggregate"
+            subtext="Opening bids aggregate"
             icon={<AlertTriangle size={20} />}
           />
           <StatCard
-            label="Top Opportunities"
-            value={stats.highScoring.toString()}
-            subtext="Scored above 80/100"
-            icon={<CheckCircle2 size={20} />}
+            label="Active Counties"
+            value={stats.totalCounties.toString()}
+            subtext="With tax sale data"
+            icon={<MapPin size={20} />}
+            href="/counties"
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Score Distribution Chart */}
-          <div className="lg:col-span-2 card p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h3 className="text-xl font-bold text-slate-900">Score Distribution</h3>
-                <p className="text-sm text-slate-500">
-                  Distribution of property investment scores
-                </p>
-              </div>
-              <div className="hidden sm:flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Optimal
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    High Risk
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Simple bar chart */}
-            <div className="h-[300px] w-full flex items-end gap-8 px-4">
-              {distributionData.map((item) => (
-                <div key={item.range} className="flex-1 flex flex-col items-center gap-2">
-                  <div
-                    className="w-full rounded-t-lg transition-all"
-                    style={{
-                      backgroundColor: item.color,
-                      height: `${Math.max(
-                        (item.count / Math.max(...distributionData.map((d) => d.count))) * 250,
-                        20
-                      )}px`,
-                    }}
-                  />
-                  <div className="text-center">
-                    <div className="text-lg font-black text-slate-900">{item.count}</div>
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      {item.range}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Properties List with Toggle */}
-          <div className="card flex flex-col h-full">
-            <div className="p-6 border-b border-slate-100">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-bold text-slate-900">Top Rated Bid-Targets</h3>
-                {userSettings && (
-                  <div className="flex items-center gap-2 text-xs">
-                    <Wallet size={14} className="text-emerald-600" />
-                    <span className="text-slate-500">
-                      {formatCurrency(userSettings.totalBudget - userSettings.reserveBuffer)} available
-                    </span>
-                  </div>
-                )}
-              </div>
-              <p className="text-sm text-slate-500">Highest scores for next auction</p>
-
-              {/* Toggle */}
-              <div className="flex items-center gap-2 mt-4">
-                <button
-                  onClick={() => setBidTargetsMode('overall')}
-                  className={cn(
-                    'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                    bidTargetsMode === 'overall'
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  )}
-                >
-                  Overall
-                </button>
-                <button
-                  onClick={() => setBidTargetsMode('myBudget')}
-                  className={cn(
-                    'px-3 py-1.5 text-xs font-medium rounded-lg transition-colors',
-                    bidTargetsMode === 'myBudget'
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                  )}
-                >
-                  My Budget
-                </button>
-                {userSettings && bidTargetsMode === 'myBudget' && (
-                  <span className="text-xs text-emerald-600 font-medium ml-2">
-                    {affordableCount} fit your budget
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex-grow overflow-auto">
-              {displayedBidTargets.map((property) => {
-                const budgetFit = getBudgetFit(property.total_amount_due)
-                const showBudgetIndicator = bidTargetsMode === 'myBudget' && budgetFit
-
-                return (
-                  <Link
-                    key={property.id}
-                    href={`/properties/${property.id}`}
-                    className="flex items-center gap-4 p-4 hover:bg-slate-50 border-b border-slate-50 transition-colors"
-                  >
-                    <div
-                      className={cn(
-                        'w-12 h-12 rounded-lg flex flex-col items-center justify-center font-bold',
-                        (property.final_score || 0) >= 80
-                          ? 'bg-emerald-50 text-emerald-600'
-                          : 'bg-blue-50 text-blue-600'
-                      )}
-                    >
-                      <span className="text-[10px] uppercase opacity-60 leading-none mb-0.5">
-                        Scr
-                      </span>
-                      <span className="text-lg leading-none">
-                        {Math.round(property.final_score || 0)}
-                      </span>
-                    </div>
-                    <div className="flex-grow flex flex-col overflow-hidden">
-                      <span className="text-sm font-bold text-slate-900 truncate">
-                        {cleanHtmlEntities(property.property_address) || property.parcel_number}
-                      </span>
-                      <span className="text-xs text-slate-400 font-mono">
-                        {property.parcel_number}
-                      </span>
-                      {showBudgetIndicator && (
-                        <span className={cn(
-                          'text-[10px] font-medium mt-0.5',
-                          budgetFit.affordable ? 'text-emerald-600' : 'text-amber-600'
-                        )}>
-                          {budgetFit.affordable
-                            ? 'Fits My Budget'
-                            : !budgetFit.fitsMax
-                            ? 'Above Max Per Property'
-                            : 'Above Available Cash'}
-                          {' · '}
-                          {formatCurrency(property.total_amount_due)}
-                        </span>
-                      )}
-                    </div>
-                    <ChevronRight size={16} className="text-slate-300" />
-                  </Link>
-                )
-              })}
-            </div>
-            <Link
-              href="/properties"
-              className="p-4 text-sm font-bold text-slate-500 hover:text-slate-900 text-center uppercase tracking-widest border-t border-slate-100 transition-colors"
-            >
-              View All Properties
-            </Link>
+        {/* Recommendation Summary - Key Feature */}
+        <div>
+          <h2 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4">
+            AI Recommendations
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <RecommendationBadge
+              type="GO"
+              count={goCount}
+              href="/properties?recommendation=TOP_TARGET,BID_CANDIDATE"
+            />
+            <RecommendationBadge
+              type="CAUTION"
+              count={cautionCount}
+              href="/properties?recommendation=WATCHLIST"
+            />
+            <RecommendationBadge
+              type="RESEARCH"
+              count={researchCount}
+              href="/properties?recommendation=RESEARCH"
+            />
+            <RecommendationBadge
+              type="SKIP"
+              count={skipCount}
+              href="/properties?recommendation=AVOID"
+            />
           </div>
         </div>
 
-        {/* Market Activity / Recent Data */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Research Queue */}
-          <div className="card p-6 flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">Research Queue</h3>
-              <span className="badge bg-amber-50 text-amber-600">Action Required</span>
-            </div>
-            <div className="flex flex-col gap-4">
-              {researchQueue.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex flex-col gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100"
-                >
-                  <div className="flex justify-between items-start">
-                    <span className="text-sm font-bold text-slate-900">
-                      {cleanHtmlEntities(p.property_address) || p.parcel_number}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full text-xs font-bold tracking-wider uppercase bg-amber-500 text-white">
-                      RESEARCH
-                    </span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Top Opportunities */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg font-bold text-slate-900">Top Opportunities</CardTitle>
+                    <p className="text-sm text-slate-500">Highest scored properties ready for review</p>
                   </div>
-                  <div className="flex items-center gap-4 text-xs font-semibold text-slate-500">
-                    <span className="flex items-center gap-1">
-                      <Clock size={12} /> Score: {Math.round(p.final_score || 0)}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Building2 size={12} /> {p.property_type}
-                    </span>
-                  </div>
+                  <Link href="/properties?sort=highestScore">
+                    <Button variant="outline" size="sm">View All</Button>
+                  </Link>
                 </div>
-              ))}
-              {researchQueue.length === 0 && (
-                <p className="text-sm text-slate-500 text-center py-4">
-                  No properties in research queue
-                </p>
-              )}
-            </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {topProperties.slice(0, 5).map((property) => {
+                  const budgetFit = getBudgetFit(property.total_amount_due)
+                  const bucket = property.recommendation_bucket
+                  const bucketColors: Record<string, string> = {
+                    TOP_TARGET: 'bg-emerald-500 text-white',
+                    BID_CANDIDATE: 'bg-blue-500 text-white',
+                    WATCHLIST: 'bg-amber-500 text-white',
+                    RESEARCH: 'bg-slate-400 text-white',
+                    AVOID: 'bg-red-500 text-white'
+                  }
+                  const bucketLabels: Record<string, string> = {
+                    TOP_TARGET: 'TOP TARGET',
+                    BID_CANDIDATE: 'BID',
+                    WATCHLIST: 'WATCH',
+                    RESEARCH: 'RESEARCH',
+                    AVOID: 'AVOID'
+                  }
+
+                  return (
+                    <Link
+                      key={property.id}
+                      href={`/properties/${property.county}/${property.parcel_number}`}
+                    >
+                      <div className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all group">
+                        {/* Score */}
+                        <div className={cn(
+                          'w-14 h-14 rounded-xl flex flex-col items-center justify-center font-bold shrink-0',
+                          getScoreColor(property.investability_score)
+                        )}>
+                          <span className="text-[10px] uppercase opacity-70">Score</span>
+                          <span className="text-lg leading-none">{Math.round(property.investability_score || 0)}</span>
+                        </div>
+
+                        {/* Property Info */}
+                        <div className="flex-grow min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-xs font-mono text-slate-400">{property.parcel_number}</span>
+                            <span className="text-xs text-slate-400 capitalize">• {property.county.replace('_', ' ')}</span>
+                          </div>
+                          <p className="text-sm font-bold text-slate-900 truncate group-hover:text-emerald-600 transition-colors">
+                            {cleanHtmlEntities(property.property_address) || 'No address'}
+                          </p>
+                          <div className="flex items-center gap-3 mt-1">
+                            <span className="text-xs text-slate-500">
+                              Due: {formatCurrency(property.total_amount_due)}
+                            </span>
+                            {property.max_bid_calculated && (
+                              <span className="text-xs text-emerald-600 font-medium">
+                                Max Bid: {formatCurrency(property.max_bid_calculated)}
+                              </span>
+                            )}
+                            {budgetFit?.affordable && (
+                              <Badge variant="secondary" className="bg-emerald-50 text-emerald-600 text-[10px]">
+                                Fits Budget
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Recommendation */}
+                        <div className="shrink-0">
+                          <Badge className={cn('font-bold text-xs', bucketColors[bucket || ''] || 'bg-slate-200')}>
+                            {bucketLabels[bucket || ''] || 'PENDING'}
+                          </Badge>
+                        </div>
+
+                        <ChevronRight size={20} className="text-slate-300 shrink-0" />
+                      </div>
+                    </Link>
+                  )
+                })}
+                {topProperties.length === 0 && (
+                  <div className="text-center py-8 text-slate-500">
+                    <Target size={48} className="mx-auto mb-3 text-slate-300" />
+                    <p>No scored properties yet. Run analysis to see opportunities.</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* County Readiness */}
+            <Card>
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-lg font-bold text-slate-900">County Readiness</CardTitle>
+                    <p className="text-sm text-slate-500">Data completeness by county</p>
+                  </div>
+                  <Link href="/counties">
+                    <Button variant="outline" size="sm">View All</Button>
+                  </Link>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {counties.slice(0, 5).map((county) => {
+                  const statusColors = {
+                    LIVE: 'bg-emerald-500',
+                    NEAR_LIVE: 'bg-blue-500',
+                    PARTIAL: 'bg-amber-500',
+                    PLANNED: 'bg-slate-400'
+                  }
+
+                  return (
+                    <div key={county.id} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-slate-900">{county.displayName}</span>
+                          <Badge variant="secondary" className="text-[10px]">
+                            {county.propertyCount} properties
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={cn(
+                            'text-xs font-bold px-2 py-0.5 rounded-full text-white',
+                            statusColors[county.status]
+                          )}>
+                            {county.status.replace('_', ' ')}
+                          </span>
+                          <span className="text-sm font-bold text-slate-700">{county.readinessScore}%</span>
+                        </div>
+                      </div>
+                      <Progress value={county.readinessScore} className="h-2" />
+                      {county.auctionDate && (
+                        <p className="text-xs text-slate-400">
+                          Auction: {new Date(county.auctionDate).toLocaleDateString()}
+                        </p>
+                      )}
+                    </div>
+                  )
+                })}
+                {counties.length === 0 && (
+                  <div className="text-center py-8 text-slate-500">
+                    <MapPin size={48} className="mx-auto mb-3 text-slate-300" />
+                    <p>No counties configured yet. Import your first county.</p>
+                    <Link href="/import">
+                      <Button className="mt-4">Import County</Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Portfolio Generator CTA */}
-          <div className="card p-6 bg-slate-900 text-white flex flex-col justify-center gap-6 relative overflow-hidden">
-            <div className="z-10">
-              <h3 className="text-xl font-bold mb-2">Portfolio Generator</h3>
-              <p className="text-slate-400 text-sm mb-6 leading-relaxed">
-                Create a custom investment fund report based on your selected properties.
-                Formatted for institutional investors.
-              </p>
-              <Link
-                href="/reports"
-                className="btn bg-emerald-500 hover:bg-emerald-600 text-white border-none w-fit px-8 py-3 font-black uppercase tracking-widest text-sm"
-              >
-                Generate Portfolio Report
-              </Link>
-            </div>
-            <div className="absolute top-0 right-0 p-10 opacity-10 pointer-events-none">
-              <TrendingUp size={180} />
-            </div>
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <Card className="bg-slate-900 text-white">
+              <CardContent className="p-6 space-y-4">
+                <h3 className="text-lg font-bold">Quick Actions</h3>
+                <div className="space-y-2">
+                  <Link href="/properties?recommendation=TOP_TARGET,BID_CANDIDATE">
+                    <Button variant="secondary" className="w-full justify-between bg-white/10 hover:bg-white/20 text-white border-0">
+                      <span className="flex items-center gap-2">
+                        <Target size={16} />
+                        View GO Properties
+                      </span>
+                      <ArrowUpRight size={16} />
+                    </Button>
+                  </Link>
+                  <Link href="/reports">
+                    <Button variant="secondary" className="w-full justify-between bg-white/10 hover:bg-white/20 text-white border-0">
+                      <span className="flex items-center gap-2">
+                        <FileText size={16} />
+                        Generate Report
+                      </span>
+                      <ArrowUpRight size={16} />
+                    </Button>
+                  </Link>
+                  <Link href="/import">
+                    <Button variant="secondary" className="w-full justify-between bg-white/10 hover:bg-white/20 text-white border-0">
+                      <span className="flex items-center gap-2">
+                        <Building2 size={16} />
+                        Import County
+                      </span>
+                      <ArrowUpRight size={16} />
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Budget Status */}
+            {userSettings && (
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Wallet size={20} className="text-emerald-600" />
+                    <h3 className="font-bold text-slate-900">Budget Status</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Total Budget</span>
+                      <span className="font-medium">{formatCurrency(userSettings.totalBudget)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Reserve Buffer</span>
+                      <span className="font-medium">{formatCurrency(userSettings.reserveBuffer)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Available</span>
+                      <span className="font-bold text-emerald-600">
+                        {formatCurrency(userSettings.totalBudget - userSettings.reserveBuffer)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-500">Max/Property</span>
+                      <span className="font-medium">{formatCurrency(userSettings.maxPerProperty)}</span>
+                    </div>
+                  </div>
+                  <Link href="/settings">
+                    <Button variant="outline" size="sm" className="w-full mt-4">
+                      Edit Settings
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Getting Started */}
+            {!userSettings && (
+              <Card className="border-amber-200 bg-amber-50">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-3">
+                    <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <h3 className="font-bold text-amber-900 mb-1">Set Your Budget</h3>
+                      <p className="text-sm text-amber-700 mb-3">
+                        Configure your investment budget to see personalized recommendations and capital fit scores.
+                      </p>
+                      <Link href="/settings">
+                        <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
+                          Configure Budget
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

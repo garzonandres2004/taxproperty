@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { countyConfigs, propertyTypeLabels, occupancyLabels, statusLabels } from '@/lib/counties/config'
-import { getTooeleResearchLinks } from '@/lib/counties/adapters/tooele'
+import { getCountyAdapter } from '@/lib/counties'
 import { calculateCapitalFit, getDefaultSettings } from '@/lib/scoring'
 import OutcomeTracker from '@/components/outcomes/OutcomeTracker'
 import ZoningAutoFillButton from '@/components/ZoningAutoFillButton'
@@ -21,6 +21,7 @@ import { SafeImageWithLink } from '@/components/SafeImage'
 import { cleanHtmlEntities } from '@/lib/ui-utils'
 import { CountyLinksPanel } from '@/components/property/CountyLinksPanel'
 import { TitleAnalysisCard } from '@/components/title/TitleAnalysisCard'
+import { TitleSignalsPanel } from '@/components/title/TitleSignalsPanel'
 import { TitleResearchChecklist } from '@/components/property/TitleResearchChecklist'
 import { RiskIndicators } from '@/components/property/RiskIndicators'
 import { ZillowStyleImageHero } from '@/components/property/ZillowStyleImageHero'
@@ -40,7 +41,8 @@ export default async function PropertyDetailPage({
         sources: true,
         outcomes: {
           orderBy: { event_date: 'desc' }
-        }
+        },
+        titleSignals: true
       }
     }),
     prisma.userSettings.findUnique({ where: { id: 'default' } }),
@@ -134,7 +136,7 @@ export default async function PropertyDetailPage({
     property_address: property.property_address,
     years_delinquent: property.sale_year ? Math.max(1, new Date().getFullYear() - property.sale_year) : 1,
     outcomes: property.outcomes,
-    is_unincorporated: !zoningProfile || zoningProfile?.jurisdiction === 'Unincorporated Utah County',
+    is_unincorporated: !zoningProfile || zoningProfile?.is_unincorporated === true,
     has_zoning_profile: !!zoningProfile,
     buildability_score: zoningProfile?.buildability_score ?? null
   }, userSettings)
@@ -193,30 +195,15 @@ export default async function PropertyDetailPage({
 
   const payoffInfo = payoffRatio ? getPayoffRatioLabel(payoffRatio) : null
 
-  // Convert parcel number format: 03:060:0016 → 30600016001 for Utah County Land Records
-  const parcelToSerial = (parcel: string) => {
-    // Remove colons and pad with zeros to match Utah County's format
-    const clean = parcel.replace(/:/g, '')
-    // Pad to 11 characters as needed
-    return clean.padStart(11, '0')
-  }
-
   // County-specific URLs for due diligence
-  let landRecordsUrl: string
-  let recorderUrl: string
-  let countyLinks: { taxSale?: string; mediciland?: string } = {}
-
-  if (property.county === 'tooele') {
-    // Tooele County uses Mediciland (requires Google Auth)
-    const tooeleLinks = getTooeleResearchLinks(property.parcel_number, property.owner_name || undefined)
-    landRecordsUrl = tooeleLinks.mediciland
-    recorderUrl = tooeleLinks.recorder
-    countyLinks = { taxSale: tooeleLinks.taxSale, mediciland: tooeleLinks.mediciland }
-  } else {
-    // Utah County (default)
-    landRecordsUrl = `https://www.utahcounty.gov/LandRecords/Property.asp?av_serial=${parcelToSerial(property.parcel_number)}`
-    recorderUrl = 'https://www.utahcounty.gov/LandRecords/Index.asp'
-  }
+  const countyAdapter = getCountyAdapter(property.county)
+  const adapterLinks = countyAdapter.makeExternalLinks(
+    property.parcel_number,
+    property.property_address || '',
+    null
+  )
+  const landRecordsUrl = adapterLinks.medicilandUrl || adapterLinks.recorderUrl || '#'
+  const recorderUrl = adapterLinks.recorderUrl || '#'
 
   // Calculate staleness for warning banner
   const getStalenessWarning = () => {
@@ -421,10 +408,10 @@ export default async function PropertyDetailPage({
               <div className="bg-slate-50 p-4 rounded-lg">
                 <h4 className="text-sm font-semibold text-gray-700 mb-3">Due Diligence Links</h4>
                 <div className="flex flex-wrap gap-3">
-                  {property.county === 'tooele' ? (
+                  {adapterLinks.medicilandUrl ? (
                     <>
                       <a
-                        href={landRecordsUrl}
+                        href={adapterLinks.medicilandUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
@@ -439,7 +426,7 @@ export default async function PropertyDetailPage({
                         className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
                       >
                         <FileSearch size={14} />
-                        Tooele County Recorder
+                        {countyAdapter.name} Recorder
                       </a>
                     </>
                   ) : (
@@ -451,7 +438,7 @@ export default async function PropertyDetailPage({
                         className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded text-sm text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors"
                       >
                         <ExternalLink size={14} />
-                        Utah County Land Records
+                        Land Records
                       </a>
                       <a
                         href={recorderUrl}
@@ -546,10 +533,10 @@ export default async function PropertyDetailPage({
             </CardHeader>
             <CardContent>
               {/* City Zoning Warning */}
-              {zoningProfile?.jurisdiction && zoningProfile.jurisdiction !== 'Unincorporated Utah County' && (
+              {zoningProfile?.jurisdiction && !zoningProfile.is_unincorporated && (
                 <PropertyAlert
                   type="city-zoning"
-                  message="This property is within city limits. Zoning rules are set by the city planning department, not Utah County."
+                  message="This property is within city limits. Zoning rules are set by the city planning department, not the county assessor."
                   details="Always verify directly with the city planning department before purchasing. Auto-fill data is for reference only."
                 />
               )}
@@ -600,7 +587,7 @@ export default async function PropertyDetailPage({
               ) : (
                 <div className="text-center py-6 text-gray-500">
                   <p>No zoning data yet for this property.</p>
-                  <p className="text-sm mt-1">Click below to auto-fetch from Utah County.</p>
+                  <p className="text-sm mt-1">Click below to auto-fill zoning data.</p>
                 </div>
               )}
 
@@ -622,6 +609,12 @@ export default async function PropertyDetailPage({
               </div>
             </CardContent>
           </Card>
+
+          {/* Recorder Signals - Pipeline-fetched title data */}
+          <TitleSignalsPanel
+            titleSignals={property.titleSignals ?? null}
+            parcelNumber={property.parcel_number}
+          />
 
           {/* Title Analysis - Automated Document Analysis */}
           <TitleAnalysisCard propertyId={property.id} parcelNumber={property.parcel_number} />
@@ -931,73 +924,12 @@ export default async function PropertyDetailPage({
           </Card>
 
           {/* County Links Panel - Direct access to research tools */}
-          {property.county === 'tooele' ? (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Building size={18} className="text-blue-600" />
-                  Tooele County Resources
-                </CardTitle>
-                <CardDescription>
-                  Direct links to Tooele County research tools
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <a
-                    href={`https://search.tooeleco.gov.mediciland.com/?q=${property.parcel_number}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-colors group"
-                  >
-                    <div className="p-2 bg-blue-100 rounded-md group-hover:bg-blue-200 transition-colors">
-                      <FileSearch size={18} className="text-blue-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-slate-700 group-hover:text-blue-700">Mediciland Parcel Search</span>
-                        <ExternalLink size={12} className="text-slate-400 group-hover:text-blue-500" />
-                      </div>
-                      <div className="text-xs text-slate-500">Search property records (Google Auth required)</div>
-                    </div>
-                  </a>
-                  <a
-                    href="https://tooeleco.gov/departments/administration/recorder_surveyor/property_records_search.php"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-300 transition-colors group"
-                  >
-                    <div className="p-2 bg-blue-100 rounded-md group-hover:bg-blue-200 transition-colors">
-                      <FileText size={18} className="text-blue-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium text-sm text-slate-700 group-hover:text-blue-700">Recorder Search</span>
-                        <ExternalLink size={12} className="text-slate-400 group-hover:text-blue-500" />
-                      </div>
-                      <div className="text-xs text-slate-500">Search recorded documents</div>
-                    </div>
-                  </a>
-                </div>
-                <div className="mt-4 pt-4 border-t border-slate-100">
-                  <a
-                    href="https://tooeleco.gov/departments/administration/auditor/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
-                  >
-                    Visit Tooele County Auditor website
-                    <ExternalLink size={12} />
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <CountyLinksPanel
-              ownerName={property.owner_name}
-              parcelNumber={property.parcel_number}
-            />
-          )}
+          <CountyLinksPanel
+            county={property.county}
+            parcelNumber={property.parcel_number}
+            ownerName={property.owner_name}
+            address={property.property_address}
+          />
 
           {/* Property Enrichment - CountyAdapter Auto-Fill */}
           <Card>

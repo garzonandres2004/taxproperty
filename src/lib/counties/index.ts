@@ -3,13 +3,25 @@
 
 import type { CountyId, CountyAdapter, EnrichableProperty, EnrichmentResult, CountyLinks, CountyRiskFactors } from './types'
 export type { CountyId, CountyAdapter, EnrichableProperty, EnrichmentResult, CountyLinks, CountyRiskFactors }
+import { defaultAdapter } from './types'
 import { tooeleAdapter } from './adapters/tooele'
+import { saltLakeAdapter } from './adapters/salt-lake'
+import { davisAdapter } from './adapters/davis'
+import { richAdapter } from './adapters/rich'
+import { weberAdapter } from './adapters/weber'
 
 // Utah County Adapter - wraps existing AGRC integration
 export const utahAdapter: CountyAdapter = {
   id: 'utah',
   name: 'Utah County',
   state: 'Utah',
+  readiness: {
+    status: 'LIVE',
+    propertyCount: 127,
+    adapterExists: true,
+    hasEnrichment: true,
+    dataGaps: []
+  },
 
   importConfig: {
     sourceType: 'csv',
@@ -110,6 +122,12 @@ export const utahAdapter: CountyAdapter = {
       result.confidence = 30
     }
 
+    // Set sensible risk defaults for tax sale properties
+    result.legal_risk = 'medium'
+    result.access_risk = 'medium'
+    result.title_risk = 'medium'
+    result.marketability_risk = 'medium'
+
     return result
   },
 
@@ -185,12 +203,16 @@ export const utahAdapter: CountyAdapter = {
 // Adapter registry
 const adapterRegistry: Record<CountyId, CountyAdapter> = {
   utah: utahAdapter,
-  tooele: tooeleAdapter
+  tooele: tooeleAdapter,
+  salt_lake: saltLakeAdapter,
+  davis: davisAdapter,
+  rich: richAdapter,
+  weber: weberAdapter
 }
 
 // Get adapter for a county
 export function getCountyAdapter(county: CountyId): CountyAdapter {
-  return adapterRegistry[county] || utahAdapter // Fallback to Utah
+  return adapterRegistry[county] || defaultAdapter
 }
 
 // Check if adapter exists for county
@@ -235,4 +257,4 @@ export function getRiskFactorsWithAdapter(
   return adapter.getRiskFactors(property)
 }
 
-export { tooeleAdapter }
+export { tooeleAdapter, richAdapter, weberAdapter }

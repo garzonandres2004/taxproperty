@@ -2,13 +2,107 @@
 
 ## Project Context
 - **Project**: TaxProperty Utah - Tax sale property investment intelligence platform
-- **Current Phase**: 
+- **Current Phase**:
+  - Agent A: County-Agnostic Architecture (COMPLETED - coder)
+  - Agent B: InvestorMemo Engine (COMPLETED - coder)
   - Workstream 1: Title Research Checklist (COMPLETED - coder)
   - Workstream A: Real Property Images (COMPLETED - coder)
   - Workstream C: Authentication & Multi-User (COMPLETED - arquitecto)
   - Workstream 6: Map Integration (COMPLETED - coder)
   - Workstream 7: Auction Calendar + OTC Detection (COMPLETED - coder)
 - **Location**: /Users/andres/Desktop/claude-projects/taxtpropertyidea/taxproperty-utah
+
+## Agent B: InvestorMemo Engine Enhancement
+**Status**: COMPLETED
+**Agent**: coder (Agent B - Memo/Recommendation Engine Owner)
+**Started**: 2026-05-05
+**Completed**: 2026-05-05
+
+### Tasks Completed
+- [x] Enhanced InvestorMemo types with CountyReadiness support (LIVE | NEAR_LIVE | PARTIAL | PLANNED)
+- [x] Added ReadinessCaveat interface with message, impact, data gaps, confidence adjustment
+- [x] Created MaxBidAnalysis interface with Dustin Hahn formula breakdown
+- [x] Implemented county readiness detection from CountyConfig.status
+- [x] Integrated Dustin Hahn max bid formula: (ARV × 80%) - Liens - $3,500 - Repairs - Profit
+- [x] Added max bid viability assessment (strong/good/marginal/poor)
+- [x] Implemented confidence score calculation with readiness multiplier
+- [x] Updated recommendation logic to consider readiness and max bid viability
+- [x] Enhanced markdown renderer with formula breakdown and data sources
+- [x] Created memo/index.ts exports file with batch processing helpers
+
+### Memo Output Fields (Required per Parcel)
+| Field | Type | Description |
+|-------|------|-------------|
+| recommendation | GO/CAUTION/RESEARCH/AVOID | Investment decision |
+| maxBid | MaxBidAnalysis | Full bid calculation with formula breakdown |
+| good | string[] | Positive investment signals |
+| bad | string[] | Risk signals and warnings |
+| titleSummary | MemoTitleSummary | Title research findings |
+| keyFacts | MemoKeyFacts | Essential property data |
+| nextActions | string[] | Recommended verification steps |
+| confidenceScore | number | 0-100, adjusted by readiness |
+| readinessCaveat | ReadinessCaveat/null | County status warning |
+
+### County Readiness Handling
+| Level | Confidence | Message | Impact |
+|-------|------------|---------|--------|
+| LIVE | 100% | None | None |
+| NEAR_LIVE | 85% | Beta - verify auction details | Minor |
+| PARTIAL | 60% | Verify key assumptions manually | Moderate |
+| PLANNED | 30% | Not onboarded - CSV only | Severe |
+
+### Files Created/Modified
+- `src/lib/memo/types.ts` — Enhanced with readiness types and max bid analysis
+- `src/lib/memo/generate.ts` — Added readiness detection and Dustin Hahn formula
+- `src/lib/memo/render.ts` — Enhanced markdown with formula breakdown
+- `src/lib/memo/index.ts` — New exports file
+
+### Active Entries
+- [2026-05-05] coder — Agent B: InvestorMemo Engine Enhancement complete
+
+---
+
+## Agent A: County-Agnostic Architecture + Readiness System
+**Status**: COMPLETED
+**Agent**: coder (Agent A - County/Core Data Owner)
+**Started**: 2026-05-05
+**Completed**: 2026-05-05
+
+### Tasks Completed
+- [x] Added `CountyReadinessStatus` enum: LIVE | NEAR_LIVE | PARTIAL | PLANNED
+- [x] Added `CountyReadiness` interface with metadata fields
+- [x] Added `NormalizedParcelOutput` interface for memo engine feeding
+- [x] Updated `CountyAdapter` interface with `readiness` field and `toNormalizedOutput()` method
+- [x] Updated Prisma schema: added `readiness` and `readiness_reason` to CountyConfig
+- [x] Updated COUNTY_REGISTRY.md with new status definitions
+- [x] Assigned statuses to all counties:
+  - LIVE: Utah (127), Tooele (29), Rich (4)
+  - NEAR_LIVE: Sanpete (0 properties, 52 discovered)
+  - PARTIAL: Weber (69), Davis (22)
+  - PLANNED: Salt Lake + 22 remaining counties
+- [x] Applied database updates with readiness values
+- [x] Added missing county entries: Davis, Weber, Salt Lake
+
+### Files Modified
+- `src/lib/counties/types.ts` — Added readiness types and normalized output schema
+- `prisma/schema.prisma` — Added readiness fields to CountyConfig
+- `docs/COUNTY_REGISTRY.md` — Updated all county statuses
+
+### County Status Summary
+| County | Status | Properties | Adapter | Data Gaps |
+|--------|--------|------------|---------|-----------|
+| Utah | LIVE | 127 | Yes | None (reference) |
+| Tooele | LIVE | 29 | Yes | None |
+| Rich | LIVE | 4 | Yes | No zoning API |
+| Weber | PARTIAL | 69 | Yes | Zoning incomplete |
+| Davis | PARTIAL | 22 | Yes | PDF extraction incomplete |
+| Sanpete | NEAR_LIVE | 0 | Yes | Import pending |
+| Salt Lake | PLANNED | 0 | Yes | Awaiting tax sale list |
+
+### Active Entries
+- [2026-05-05] coder — Agent A: County-Agnostic Architecture + Readiness System complete
+
+---
 
 ## Workstream 6: Map Integration (WS6)
 **Status**: COMPLETED
@@ -36,7 +130,11 @@
 
 ### Active Entries
 - [2026-04-29] coder — WS6: Map Integration complete
+- [2026-05-02] investigador — Tax Sale Programs for Salt Lake, Summit, and Weber Counties
 - [2026-04-29] coder — WS7: Auction Calendar + OTC Detection complete
+- [2026-05-04] investigador — Tooele County Recorder Portal Investigation (CivicCenter URL was incorrect)
+- [2026-05-05] coder — Tooele EagleWeb Integration: Full browser automation via Public Web Limited Viewer. 29 properties batch processed with title signals extracted. Auction triage updated.
+- [2026-05-05] coder — Sanpete County Triage Alpha: Public Surplus + EagleWeb automation complete. 52 parcels discovered. Recorder IS ONLINE via Public Web Limited Viewer (identical to Tooele). Title signals extracted for all test parcels. Indian Ridge Ranch recreational lot pattern identified.
 
 ---
 

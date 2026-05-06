@@ -36,9 +36,14 @@ export async function POST(request: Request) {
     // Get user settings for capital fit calculation (may be unconfigured)
     const settings = await getOrCreateSettings()
 
+    // Parse amount_due once — distinguishes null/'' from 0 from >0
+    const parsedAmountDue = (data.total_amount_due != null && data.total_amount_due !== '')
+      ? parseFloat(data.total_amount_due)
+      : null
+
     // Calculate data confidence and scores
     const dataConfidence = calculateDataConfidence({
-      total_amount_due: data.total_amount_due ? parseFloat(data.total_amount_due) : null,
+      total_amount_due: parsedAmountDue,
       estimated_market_value: data.estimated_market_value ? parseFloat(data.estimated_market_value) : null,
       property_type: data.property_type,
       occupancy_status: data.occupancy_status,
@@ -52,7 +57,7 @@ export async function POST(request: Request) {
     // Calculate scores with county context and user settings
     const scores = scoreProperty({
       county: data.county,
-      total_amount_due: data.total_amount_due ? parseFloat(data.total_amount_due) : null,
+      total_amount_due: parsedAmountDue,
       estimated_market_value: data.estimated_market_value ? parseFloat(data.estimated_market_value) : null,
       estimated_repair_cost: data.estimated_repair_cost ? parseFloat(data.estimated_repair_cost) : null,
       estimated_cleanup_cost: data.estimated_cleanup_cost ? parseFloat(data.estimated_cleanup_cost) : null,
@@ -88,7 +93,7 @@ export async function POST(request: Request) {
         owner_mailing_address: data.owner_mailing_address || null,
         property_address: data.property_address || null,
         legal_description: data.legal_description || null,
-        total_amount_due: data.total_amount_due ? parseFloat(data.total_amount_due) : null,
+        total_amount_due: parsedAmountDue,
         assessed_value: data.assessed_value ? parseFloat(data.assessed_value) : null,
         estimated_market_value: data.estimated_market_value ? parseFloat(data.estimated_market_value) : null,
         estimated_repair_cost: data.estimated_repair_cost ? parseFloat(data.estimated_repair_cost) : null,
@@ -113,6 +118,9 @@ export async function POST(request: Request) {
         final_score: scores.final_score,
         recommendation: scores.recommendation,
         status: 'new',
+        status_reason: parsedAmountDue === 0
+          ? 'Amount Due $0.00 on import — verify with county before bidding'
+          : (data.status_reason || null),
         // Source tracking fields
         county_source_url: data.county_source_url || null,
         source_last_checked_at: data.source_last_checked_at ? new Date(data.source_last_checked_at) : null,

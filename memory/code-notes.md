@@ -1,3 +1,356 @@
+### [2026-05-05] coder — Agent B: InvestorMemo Engine Enhancement
+
+**Decisión de código:** Enhanced the InvestorMemo system with county readiness degradation and Dustin Hahn max bid formula integration.
+
+**Enhancements to Memo System:**
+
+1. **types.ts** (`src/lib/memo/types.ts`):
+   - Added `CountyReadiness` type: LIVE | NEAR_LIVE | PARTIAL | PLANNED
+   - Added `ReadinessCaveat` interface with message, impact level, data gaps, and confidence adjustment
+   - Added `MaxBidAnalysis` interface with Dustin Hahn formula breakdown:
+     - suggestedMaxBid: calculated ceiling
+     - formula: Human-readable formula string
+     - breakdown: ARV, quickSalePercent (80%), municipalLiens, quietTitleCost ($3,500), repairs, desiredProfit
+     - viability: strong/good/marginal/poor/unknown
+     - openingBidRatio: max bid as percentage of opening bid
+     - reasoning: Analyst-style explanation of the bid recommendation
+   - Updated `InvestorMemo` interface:
+     - Added `countyReadiness` field
+     - Added `readinessCaveat` field (null for LIVE counties)
+     - Added `confidenceScore` (0-100, adjusted by readiness)
+     - Added `maxBid` with full analysis (replaces simple maxBidInclusivePremium)
+   - Added `DEFAULT_READINESS_CONFIG` record with confidence multipliers:
+     - LIVE: 1.0 (full confidence)
+     - NEAR_LIVE: 0.85 (minor verification needed)
+     - PARTIAL: 0.6 (verify key assumptions)
+     - PLANNED: 0.3 (placeholder only)
+
+2. **generate.ts** (`src/lib/memo/generate.ts`):
+   - Added county readiness detection from CountyConfig.status:
+     - production → LIVE
+     - beta → NEAR_LIVE
+     - alpha → PARTIAL
+     - pending → PLANNED
+   - Added `buildReadinessCaveat()` function to generate appropriate warnings per readiness level
+   - Added `calculateMaxBidDustinHahn()` function implementing Expert Investor Formula:
+     ```
+     Max Bid = (ARV × 80%) - Municipal Liens - $3,500 - Repairs - Desired Profit
+     ```
+   - Enhanced `computeRecommendation()` to consider max bid viability and readiness
+   - Added `calculateConfidenceScore()` using readiness multiplier and data gaps penalty
+   - Updated `buildBadBullets()` to include readiness-specific warnings
+   - Updated `buildHeadline()` to show confidence score and readiness tag
+   - Updated `buildTitleNotes()` to include risk level annotations
+   - Updated `generateInvestorMemo()` to populate all new fields
+
+3. **render.ts** (`src/lib/memo/render.ts`):
+   - Added readiness badge display for non-LIVE counties
+   - Added confidence score and data gaps to header
+   - Added Max Bid Formula breakdown table showing each component
+   - Added viability assessment with analyst reasoning
+
+---
+
+### [2026-05-06] coder — Agent C: Launch-Ready UI for AI Tax Sale Deal Analyst
+
+**Decisión de código:** Implemented launch-ready UI for the AI Tax Sale Deal Analyst covering dashboard, counties, properties, parcel detail (investment memo), and reports.
+
+**Files Created/Modified:**
+
+1. **Dashboard** (`src/app/dashboard/page.tsx`):
+   - County summary cards with GO/CAUTION/RESEARCH/SKIP counts
+   - Readiness badges per county (LIVE/NEAR_LIVE/PARTIAL/PLANNED)
+   - Next auction countdown with days remaining
+   - Top opportunities list with budget fit indicators
+   - Budget status panel (shows available funds, reserve buffer)
+   - Quick actions for GO properties and report generation
+
+2. **Counties Page** (`src/app/counties/page.tsx`):
+   - Grid layout of all counties with status badges
+   - LIVE/NEAR_LIVE/PARTIAL/PLANNED status indicators
+   - Property counts per county
+   - Auction dates with countdown
+   - Recommendation distribution (GO/CAUTION/RESEARCH/SKIP counts)
+   - Readiness score progress bars
+   - Search and filter by status
+   - Link to county properties
+
+3. **Properties Page** (`src/app/properties/page.tsx`):
+   - Enhanced with recommendation_bucket column (GO/CAUTION/RESEARCH/SKIP)
+   - Added Max Bid column showing calculated max bid
+   - Updated county filter to dynamically show available counties
+   - Links now route to `/properties/[county]/[parcelId]` format
+   - Added max_bid_calculated to Property interface
+
+4. **Parcel Detail - Investment Memo** (`src/app/properties/[county]/[parcelId]/page.tsx`):
+   - **NEW ROUTE**: Creates investment memo page per property
+   - Recommendation hero with large badge (GO/CAUTION/etc)
+   - One-line thesis summarizing the opportunity
+   - Max bid callout with "Do Not Exceed" warning
+   - Key facts grid (property type, lot size, year built, zoning, etc.)
+   - What's Good / What's Risky two-column layout
+   - Title summary section with title analysis score
+   - Next actions checklist (verify title, check liens, etc.)
+   - Quick links to county recorder, assessor, parcel map
+   - Readiness caveat banner for non-LIVE data
+   - Financial summary with equity spread calculation
+   - Owner information with absentee owner badge
+
+5. **Reports Page** (`src/app/reports/page.tsx`):
+   - Three-tab layout: Investment Memos, County Summary, Top Opportunities
+   - Export memo as markdown (.md files) with full property analysis
+   - Export county summary as CSV with all recommendation counts
+   - Top opportunities list ranked by investability score
+   - Property selection for bulk memo export
+
+**Design Decisions:**
+- Used existing shadcn/ui components (Card, Badge, Button, Alert)
+- Dark professional theme matching existing app (slate-900, slate-50)
+- Mobile responsive with flexbox and grid layouts
+- Investor-focused copy ("GO", "CAUTION", "Max Bid", "Equity Spread")
+- Integration with existing scoring engine and county adapters
+
+**Trampa evitada:**
+- Initially tried to use Tabs component from shadcn/ui but it wasn't installed. Solution: Created custom tab navigation with styled buttons.
+- Parcel detail route conflict with existing `/properties/[id]` route. Solution: Used `/properties/[county]/[parcelId]` pattern for cleaner URLs and better SEO.
+- Missing readiness data for counties. Solution: Derive from data_confidence score (80+=LIVE, 50+=NEAR_LIVE, else PARTIAL).
+
+**Patrón reusable:**
+- Bucket colors for recommendations: emerald-500 (GO), amber-500 (CAUTION), slate-400 (RESEARCH), red-500 (SKIP)
+- Status badges with icons: CheckCircle2 (LIVE), Clock (NEAR_LIVE), AlertCircle (PARTIAL), Database (PLANNED)
+- Investment memo structure: Hero → Financial → Good/Risk → Title → Actions → Links
+- County/city jurisdiction detection via zoningProfile.is_unincorporated
+   - Added data sources and analyst notes to footer
+
+4. **index.ts** (`src/lib/memo/index.ts`):
+   - Created central exports file
+   - Added `generateMemoForProperty()` helper for single property
+   - Added `generateMemosForProperties()` helper for batch processing
+   - Re-exports all types and functions
+
+**County Readiness Behavior:**
+
+| Level | Confidence | Caveat Message | Data Gaps |
+|-------|------------|----------------|-----------|
+| LIVE | 100% | None | None |
+| NEAR_LIVE | 85% | Beta - verify auction details | Minor |
+| PARTIAL | 60% | Verify key assumptions manually | Moderate |
+| PLANNED | 30% | Not onboarded - CSV only | Severe |
+
+**Trampa evitada:**
+- Initially planned to replace existing maxBidInclusivePremium entirely. Solution: Kept it for backward compatibility while adding new `maxBid` field with full analysis.
+- Risk of breaking existing memo renders. Solution: All new fields are additive; existing code continues to work.
+- Confidence calculation could exceed 100%. Solution: Capped at 100, floored at 0 with Math.min/Math.max.
+
+**Patrón reusable:**
+- Readiness tiers map directly to CountyConfig.status for automatic detection
+- Max bid viability levels provide clear analyst guidance: strong (≥150%), good (≥120%), marginal (≥100%), poor (<100%)
+- Formula transparency: Show full derivation with all components for investor trust
+- Confidence degradation: Multiplier-based, not hardcoded scores
+
+**Files Modified:**
+- `src/lib/memo/types.ts` - Enhanced with readiness types and max bid analysis
+- `src/lib/memo/generate.ts` - Added readiness detection and Dustin Hahn formula
+- `src/lib/memo/render.ts` - Enhanced markdown output with formula breakdown
+- `src/lib/memo/index.ts` - New exports file
+
+---
+
+### [2026-05-05] coder — Agent A: County-Agnostic Architecture + Readiness System
+
+**Decisión de código:** Implemented standardized county readiness status system and normalized parcel output schema for multi-county operations.
+
+**Schema Changes:**
+
+1. **types.ts** (`src/lib/counties/types.ts`):
+   - Added `CountyReadinessStatus` enum: LIVE | NEAR_LIVE | PARTIAL | PLANNED
+   - Added `CountyReadiness` interface with: status, propertyCount, adapterExists, hasEnrichment, dataGaps, blockedBy
+   - Added `NormalizedParcelOutput` interface for memo engine feeding:
+     - Core: parcel_number, county, property_address, city, state, zip, lat/lng
+     - Financial: assessed_value, estimated_market_value, total_amount_due
+     - Property: property_type, lot_size_sqft, building_sqft, year_built, beds/baths
+     - Zoning: zoning, zoning_description, jurisdiction, jurisdiction_type
+     - Risk: access_risk, title_risk, legal_risk, marketability_risk (all normalized)
+     - Metadata: data_source, confidence_score, enrichment_timestamp, data_gaps
+   - Updated `CountyAdapter` interface:
+     - Added `readiness: CountyReadiness` field (required)
+     - Added optional `toNormalizedOutput()` method for pipeline output
+   - Updated `defaultAdapter` with PLANNED readiness status
+
+2. **schema.prisma** (`prisma/schema.prisma`):
+   - Added `readiness String @default("PLANNED")` to CountyConfig model
+   - Added `readiness_reason String?` for status explanation
+   - Kept legacy `status` field for backward compatibility during transition
+
+**County Status Assignments:**
+
+| County | Status | Properties | Adapter | Notes |
+|--------|--------|------------|---------|-------|
+| Utah | LIVE | 127 | Yes | Reference implementation, full enrichment |
+| Tooele | LIVE | 29 | Yes | AGRC + EagleWeb automation |
+| Rich | LIVE | 4 | Yes | AGRC + geocoding, no zoning API |
+| Weber | PARTIAL | 69 | Yes | Zoning verification incomplete |
+| Davis | PARTIAL | 22 | Yes | PDF extraction incomplete |
+| Sanpete | NEAR_LIVE | 0 (52 disc.) | Yes | Properties discovered, import pending |
+| Salt Lake | PLANNED | 0 | Yes | Adapter exists, awaiting tax sale list |
+| 22 others | PLANNED | 0 | No | AGRC endpoints ready, adapters needed |
+
+**Documentation Updates:**
+
+1. **COUNTY_REGISTRY.md** (`docs/COUNTY_REGISTRY.md`):
+   - Added new "County Readiness Status" section with 4-tier definitions
+   - Updated all county entries with Readiness Status
+   - Added Davis County and Weber County entries (were missing)
+   - Added Salt Lake County as PLANNED
+   - Added property counts and data gaps per county
+
+**Trampa evitada:**
+- Initially considered replacing the existing `status` field in CountyConfig. Solution: Added new `readiness` field alongside legacy `status` to avoid breaking existing queries during transition period.
+- Risk of "unknown" values inflating risk scores. Solution: NormalizedParcelOutput requires explicit risk values ('low' | 'medium' | 'high' | 'unknown') with adapter setting sensible defaults for each county.
+
+**Patrón reusable:**
+- County readiness tiers: LIVE (production-ready) → NEAR_LIVE (gaps documented) → PARTIAL (preliminary data) → PLANNED (roadmap only)
+- Normalized output: All counties convert to same schema for memo engine, with data_gaps array explaining what's missing
+- Adapter readiness field: Self-documenting - each adapter declares its own operational status
+- Prisma enum alternative: Use String with @default instead of native enum for flexibility
+
+**Files Modified:**
+- `src/lib/counties/types.ts` - Added readiness types and normalized output schema
+- `prisma/schema.prisma` - Added readiness fields to CountyConfig
+- `docs/COUNTY_REGISTRY.md` - Updated all county statuses and added missing entries
+
+**Next Steps:**
+- Run `npx prisma db push` to apply schema changes
+- Update existing adapters to include readiness metadata
+- Build pipeline normalization layer using toNormalizedOutput()
+
+---
+
+### [2026-05-05] coder — Sanpete County Triage Alpha Complete (UPDATED)
+
+**Achievement:** Sanpete County auction triage system for May 21, 2026 tax sale with **full EagleWeb automation**.
+
+**Discovery:**
+
+1. **Public Surplus Integration:**
+   - 52 active auctions found at: https://www.publicsurplus.com/sms/sanpeteco,ut/list/current?orgid=972771
+   - Example parcel: 0000055018 (CLESLAK ALEXANDER ETAL JT)
+   - Opening bids: $436 - $23,980
+
+2. **Sanpete Recorder:**
+   - ✅ **EAGLEWEB ONLINE** - Public Web Limited Viewer (identical to Tooele)
+   - Portal: https://erecording.sanpetecountyutah.gov/eaglesoftware/web/login.jsp
+   - Access: Click "Enter" under Public Web Limited Viewer (no login required)
+   - **FULLY AUTOMATED** via Playwright browser automation
+   - Extracts: document types, transfer history, deed types (Warranty, Quit Claim, Trustee's)
+   - Note: Sale dates NOT shown in public view (unlike Tooele), but document types ARE visible
+   - Phone: (435) 835-8068 for detailed title requests
+
+3. **Sanpete Assessor:**
+   - ❌ **NO online parcel search**
+   - Only state-level tax info: http://propertytax.utah.gov/
+
+**Implementation:**
+
+1. **SanpeteAuctionSource** (`src/lib/sources/sanpete-public-surplus.ts`):
+   - Fetches auction list from Public Surplus
+   - Extracts: parcel, account, owner, legal description, total due
+   - Parses legal for subdivision and acres
+   - Calculates bid deposit (5%)
+
+2. **Sanpete EagleWeb Scraper** (`src/lib/title/scrapers/sanpete-eagleweb.ts`):
+   - Playwright-based browser automation (identical structure to Tooele)
+   - Session persistence via `.sanpete-eagleweb-session.json`
+   - Public Web Limited Viewer access (no login)
+   - Extracts transfer history table with document types
+   - Maps document types: Warranty Deed, Quit Claim Deed, Trustee's Deed, etc.
+
+3. **Sanpete Triage Logic** (`scripts/debug-sanpete-triage.ts`):
+   - Integrates real EagleWeb title signals for all parcels
+   - Detects recreational lot patterns (Indian Ridge Ranch)
+   - Buckets: GO (large parcels/low bids), CAUTION (recreational), RESEARCH (missing data)
+   - Title signals: Document count, last transfer type, red/yellow flags
+
+**Test Results (Parcel 0000055018):**
+- Status: CAUTION (Indian Ridge Ranch recreational lot)
+- Title: 6 documents found via EagleWeb
+- Last Transfer: Warranty Deed
+- Opening Bid: $729.39 + 8% premium = $787.74 total
+- Acres: 1.13
+
+**Key Findings:**
+- Sanpete behaves IDENTICALLY to Tooele for navigation/access
+- Many parcels are Indian Ridge Ranch recreational lots (restrictions likely)
+- Low opening bids ($729-$7,000) but verify access/restrictions
+- Full title automation possible (unlike initial assessment)
+
+**Files Created:**
+- `src/lib/sources/sanpete-public-surplus.ts` — Public Surplus scraper
+- `src/lib/title/scrapers/sanpete-eagleweb.ts` — EagleWeb automation (works like Tooele)
+- `scripts/debug-sanpete-triage.ts` — Triage alpha with real title signals
+- `scripts/test-sanpete-eagleweb.ts` — Single parcel test script
+
+---
+
+### [2026-05-05] coder — Tooele EagleWeb Integration Complete
+
+**Achievement:** Full browser automation for Tooele County title research via EagleWeb Public Web Limited Viewer.
+
+**Problem Solved:**
+- Tooele County has no simple API for title records
+- Mediciland portal requires paid subscription/login
+- EagleWeb Public Viewer is free but requires browser automation
+
+**Solution Implemented:**
+
+1. **EagleWeb Scraper** (`src/lib/title/scrapers/tooele-eagleweb.ts`):
+   - Playwright-based browser automation
+   - Public Web Limited Viewer access (no login required)
+   - Session persistence via `.tooele-eagleweb-session.json`
+   - Two-step extraction: Search → Account Link → Transfer History Table
+   - Extracts: last transfer date, transfer type, document count
+
+2. **Navigation Flow:**
+   - Login page → Click "Public Web Limited Viewer" button (form submit with guest=true)
+   - Accept Terms page (if shown)
+   - Navigate to search.jsp
+   - Enter parcel number, submit search
+   - Click account link from results
+   - Extract transfer history from Sale Date table
+   - Navigate back to search.jsp for next property
+
+3. **Batch Processing** (`scripts/batch-tooele-eagleweb.ts`):
+   - Processes all 29 Tooele properties in sequence
+   - Reuses session across properties (single login)
+   - Updates database notes with EagleWeb results
+   - Generates JSON and CSV reports
+
+4. **Auction Triage Update** (`scripts/auction-triage-tooele.ts`):
+   - Parses EagleWeb data from property.notes
+   - Shows last transfer date in triage output
+   - Removes "manual lookup required" for properties with title signals
+
+**Results:**
+- 29/29 properties processed successfully
+- All properties have title records found
+- Last transfer dates extracted (ranging from 1995 to 2017)
+- Transfer types: Warranty Deed, Quit Claim Deed, Deed
+- CSV report: `/tmp/tooele-eagleweb-triage.csv`
+
+**Key Technical Details:**
+- Session file must be cleared before each run (accountSearch.jsp vs search.jsp issue)
+- Transfer history table has variable structure - header detection required
+- Document types parsed from "Doc Description" column
+- Date parsing handles JavaScript Date format: "Wed May 27 12:00:00 MDT 1992"
+
+**Files Modified:**
+- `src/lib/title/scrapers/tooele-eagleweb.ts` — Main scraper implementation
+- `scripts/batch-tooele-eagleweb.ts` — Batch processing script
+- `scripts/auction-triage-tooele.ts` — Updated to use EagleWeb data
+- `package.json` — Added batch:tooele:title script
+
+---
+
 ### [2026-04-29] coder — WS7: Auction Calendar + OTC Detection
 
 **Decisión de código:** Implemented Auction Calendar page and OTC (Over The Counter) detection system for tracking upcoming tax sales and identifying unsold properties.

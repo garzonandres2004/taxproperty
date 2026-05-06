@@ -30,7 +30,7 @@ export const getRecommendationStyle = (rec: string | null) => {
 };
 
 export const formatCurrency = (value: number | null) => {
-  if (!value) return 'N/A';
+  if (value == null) return '—';
   return new Intl.NumberFormat('en-US', {
     style: 'currency', currency: 'USD', maximumFractionDigits: 0
   }).format(value);

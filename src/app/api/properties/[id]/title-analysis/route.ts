@@ -2,6 +2,82 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { scrapeDocumentList, scrapeDocumentDetail } from '@/lib/title/utah-county-scraper'
 import { analyzeTitleChain } from '@/lib/title/title-analyzer'
+import { scrapeTooeleEagleWeb, type EagleWebResult } from '@/lib/title/scrapers/tooele-eagleweb'
+import { scrapeRichCounty, saveRichTitleSignals, type RichCountyResult } from '@/lib/title/scrapers/rich-county'
+
+// Supported counties and their scraper types
+const TITLE_SCRAPER_SUPPORTED = ['utah', 'tooele', 'rich']
+
+// Convert EagleWeb/Rich result to a TitleAnalysis-compatible record
+function synthesizeTitleAnalysis(result: EagleWebResult | RichCountyResult, county: string) {
+  const netLiens = result.lienDocsFound - result.releaseDocsFound
+  const hasActiveMortgage = result.mortgageDocsFound > result.releaseDocsFound
+
+  let score = 75
+  let recommendation: 'clean' | 'caution' | 'danger' | 'avoid' = 'clean'
+
+  if (result.redFlags.length > 0) { score -= 30; recommendation = 'danger' }
+  else if (netLiens > 1) { score -= 25; recommendation = 'danger' }
+  else if (netLiens > 0 || hasActiveMortgage) { score -= 15; recommendation = 'caution' }
+  else if (!result.hasRecords) { score += 15; recommendation = 'clean' }
+
+  const yellowPenalty = Math.min(result.yellowFlags.length * 5, 15)
+  score = Math.max(0, Math.min(100, score - yellowPenalty))
+
+  if (score >= 70) recommendation = 'clean'
+  else if (score >= 50) recommendation = 'caution'
+  else if (score >= 30) recommendation = 'danger'
+  else recommendation = 'avoid'
+
+  const mortgageStatus: 'paid_off' | 'active' | 'unclear' =
+    result.mortgageDocsFound === 0 ? 'paid_off'
+    : result.mortgageDocsFound <= result.releaseDocsFound ? 'paid_off'
+    : 'active'
+
+  const titleComplexity: 'simple' | 'moderate' | 'complex' =
+    result.rawDocuments.length === 0 ? 'simple'
+    : result.rawDocuments.length <= 3 ? 'simple'
+    : result.rawDocuments.length <= 8 ? 'moderate'
+    : 'complex'
+
+  const summaryParts: string[] = []
+  if (!result.hasRecords) {
+    summaryParts.push(`No recorded documents found in ${county} County index — title appears clean by absence of record.`)
+  } else {
+    summaryParts.push(`${result.rawDocuments.length} document(s) found in recorder index.`)
+    if (result.lastTransferType) summaryParts.push(`Last recorded instrument: ${result.lastTransferType}.`)
+    if (netLiens > 0) summaryParts.push(`${netLiens} potentially unreleased lien(s).`)
+    if (mortgageStatus === 'paid_off' && result.mortgageDocsFound > 0) summaryParts.push('Mortgage/deed of trust appears paid off.')
+  }
+  if (result.redFlags.length > 0) summaryParts.push(`Red flags: ${result.redFlags.join('; ')}.`)
+
+  return {
+    score,
+    recommendation,
+    summary: summaryParts.join(' '),
+    redFlags: result.redFlags.map(f => ({ description: f, severity: 'high' })),
+    yellowFlags: result.yellowFlags.map(f => ({ description: f })),
+    greenFlags: !result.hasRecords ? [{ description: 'No encumbrances found in recorder index' }]
+      : result.lienDocsFound <= result.releaseDocsFound ? [{ description: 'Liens appear released' }] : [],
+    ownershipChain: result.rawDocuments.map(d => ({
+      date: d.date,
+      docType: d.docType,
+      grantor: d.grantor || '',
+      grantee: d.grantee || '',
+    })),
+    activeLiens: netLiens > 0 ? [{ description: `${netLiens} unreleased lien(s) in recorder index` }] : [],
+    mortgageStatus,
+    yearsSameOwner: null,
+    titleComplexity,
+    estimatedQuietTitleCost: null,
+    recommendedActions: result.redFlags.length > 0
+      ? ['Obtain full title search before bidding', 'Consult title company about identified red flags']
+      : ['Confirm no off-index encumbrances with county recorder'],
+    hasPDFCriticalIssues: false,
+    pdfAnalyses: null,
+    pdfWarnings: null,
+  }
+}
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -31,14 +107,60 @@ export async function POST(request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: 'Property not found' }, { status: 404 })
     }
 
-    // Only support Utah County for now
+    // ── Non-Utah counties: dispatch to county-specific scrapers ─────────────
+    if (property.county === 'tooele') {
+      const result = await scrapeTooeleEagleWeb(property.parcel_number)
+      if (!result) {
+        return NextResponse.json({ error: 'Tooele EagleWeb scraper returned no data' }, { status: 502 })
+      }
+      const analysis = synthesizeTitleAnalysis(result, 'Tooele')
+      const saved = await prisma.titleAnalysis.upsert({
+        where: { property_id: id },
+        create: { property_id: id, ...analysis,
+          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+        update: { ...analysis,
+          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+      })
+      return NextResponse.json({ success: true, analysis: { ...analysis, id: saved.id, propertyId: id }, documentsScraped: result.rawDocuments.length })
+    }
+
+    if (property.county === 'rich') {
+      const result = await scrapeRichCounty(property.parcel_number)
+      if (!result) {
+        return NextResponse.json({ error: 'Rich County recorder scraper returned no data' }, { status: 502 })
+      }
+      await saveRichTitleSignals(prisma, id, result)
+      const analysis = synthesizeTitleAnalysis(result, 'Rich')
+      const saved = await prisma.titleAnalysis.upsert({
+        where: { property_id: id },
+        create: { property_id: id, ...analysis,
+          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+        update: { ...analysis,
+          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+      })
+      return NextResponse.json({ success: true, analysis: { ...analysis, id: saved.id, propertyId: id }, documentsScraped: result.rawDocuments.length })
+    }
+
     if (property.county !== 'utah') {
       return NextResponse.json(
-        { error: 'Title analysis currently only supports Utah County' },
+        { error: `Title analysis is not yet configured for ${property.county} county. Supported: ${TITLE_SCRAPER_SUPPORTED.join(', ')}.` },
         { status: 400 }
       )
     }
 
+    // ── Utah County: existing recorder scraper ───────────────────────────────
     // Scrape documents
     const documents = await scrapeDocumentList(property.parcel_number)
 

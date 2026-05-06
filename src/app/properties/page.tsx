@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import {
   Search,
@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   Clock,
   FileSearch,
+  Zap,
 } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { PropertyImage, ParcelMapImage } from '@/components/PropertyImage'
@@ -34,12 +35,17 @@ interface Property {
   risk_score: number | null
   final_score: number | null
   recommendation: string | null
+  // V2 scoring
+  investability_score: number | null
+  recommendation_bucket: string | null
+  score_version: string | null
   status: string
   source_last_checked_at: string | null
   sale_date: string | null
   photo_url: string | null
   is_otc: boolean
   notes: string | null
+  max_bid_calculated: number | null
   titleAnalysis?: {
     score: number
     recommendation: string
@@ -77,8 +83,29 @@ export default function PropertiesPage() {
   const [titleAnalysisProgress, setTitleAnalysisProgress] = useState({ current: 0, total: 0 })
   const [titleAnalysisSummary, setTitleAnalysisSummary] = useState<{clean: number, caution: number, danger: number, avoid: number} | null>(null)
   const [syncResult, setSyncResult] = useState<{ redeemed: number; amountChanged: number } | null>(null)
+  const [enrichResult, setEnrichResult] = useState<{ done: number; errors: number } | null>(null)
   const [sortMode, setSortMode] = useState<'bestOverall' | 'bestForMyBudget' | 'lowestAmount' | 'highestScore'>('bestOverall')
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null)
+
+  // Derived from fetched data — automatically includes any county that has properties
+  const availableCounties = useMemo(() => {
+    const seen = new Set<string>()
+    const out: string[] = []
+    for (const p of properties) {
+      if (!seen.has(p.county)) { seen.add(p.county); out.push(p.county) }
+    }
+    return out.sort()
+  }, [properties])
+
+  const mountedRef = useRef(true)
+  useEffect(() => {
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
+
+  function formatCountyName(county: string): string {
+    return county.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' County'
+  }
 
   useEffect(() => {
     fetchProperties()
@@ -101,9 +128,18 @@ export default function PropertiesPage() {
     try {
       const res = await fetch('/api/properties')
       const data = await res.json()
-      setProperties(data)
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setProperties(data)
+      } else if (data && Array.isArray(data.properties)) {
+        setProperties(data.properties)
+      } else {
+        console.error('Unexpected API response format:', data)
+        setProperties([])
+      }
     } catch (error) {
       console.error('Failed to fetch properties:', error)
+      setProperties([])
     } finally {
       setLoading(false)
     }
@@ -113,9 +149,11 @@ export default function PropertiesPage() {
     try {
       const res = await fetch('/api/properties?recommendation=bid')
       const data = await res.json()
-      setBidCount(data.length || 0)
+      const count = Array.isArray(data) ? data.length : (data.properties?.length || 0)
+      setBidCount(count)
     } catch (error) {
       console.error('Failed to fetch bid count:', error)
+      setBidCount(0)
     }
   }
 
@@ -211,22 +249,73 @@ export default function PropertiesPage() {
     }
   }
 
+  const ENRICH_BATCH_LIMIT = 20
+  const ENRICH_TIMEOUT_MS = 25000
+
+  const handleEnrichSelected = async () => {
+    if (selectedProperties.length === 0 || selectedProperties.length > ENRICH_BATCH_LIMIT) return
+
+    const ids = [...selectedProperties]  // snapshot — immune to selection changes mid-run
+
+    setIsBulkActionRunning(true)
+    setBulkActionProgress({ current: 0, total: ids.length })
+    setEnrichResult(null)
+
+    let done = 0
+    let errors = 0
+
+    for (let i = 0; i < ids.length; i++) {
+      if (!mountedRef.current) break
+
+      const id = ids[i]
+      if (mountedRef.current) setBulkActionProgress({ current: i + 1, total: ids.length })
+
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), ENRICH_TIMEOUT_MS)
+
+      try {
+        const res = await fetch(`/api/properties/${id}/enrich`, {
+          method: 'POST',
+          signal: controller.signal
+        })
+        if (res.ok) {
+          done++
+        } else {
+          errors++
+        }
+      } catch {
+        errors++
+      } finally {
+        clearTimeout(timeoutId)
+      }
+    }
+
+    if (!mountedRef.current) return
+
+    setEnrichResult({ done, errors })
+    await fetchProperties()
+    setSelectedProperties([])
+    setIsBulkActionRunning(false)
+    setBulkActionProgress({ current: 0, total: 0 })
+  }
+
   const handleAnalyzeAllTitles = async () => {
-    if (!confirm('Run title analysis on all properties? This scrapes Utah County records for each property. ~3-4 minutes.')) return
+    if (!confirm('Run title analysis on all properties? This scrapes recorder records for each supported county. ~3-5 minutes.')) return
 
     setIsAnalyzingTitles(true)
-    setTitleAnalysisProgress({ current: 0, total: properties.length })
+    const totalProps = Array.isArray(properties) ? properties.length : 0
+    setTitleAnalysisProgress({ current: 0, total: totalProps })
     setTitleAnalysisSummary(null)
 
     const summary = { clean: 0, caution: 0, danger: 0, avoid: 0 }
 
     try {
-      for (let i = 0; i < properties.length; i++) {
+      for (let i = 0; i < totalProps; i++) {
         const property = properties[i]
-        setTitleAnalysisProgress({ current: i + 1, total: properties.length })
+        setTitleAnalysisProgress({ current: i + 1, total: totalProps })
 
-        // Only analyze Utah County properties for now
-        if (property.county === 'utah') {
+        const SUPPORTED_TITLE_COUNTIES = ['utah', 'tooele', 'rich']
+        if (SUPPORTED_TITLE_COUNTIES.includes(property.county)) {
           try {
             const res = await fetch(`/api/properties/${property.id}/title-analysis`, {
               method: 'POST'
@@ -257,7 +346,7 @@ export default function PropertiesPage() {
     }
   }
 
-  const filteredProperties = properties.filter((p) => {
+  const filteredProperties = Array.isArray(properties) ? properties.filter((p) => {
     const searchLower = searchTerm.toLowerCase()
     const matchesSearch =
       !searchTerm ||
@@ -274,17 +363,20 @@ export default function PropertiesPage() {
     return matchesSearch && matchesType && matchesCounty && matchesStatus && matchesOTC && matchesRecommendation
   }).sort((a, b) => {
     // Sort logic based on sortMode
+    // Use investability_score (V2) when available, fall back to final_score (V1)
+    const scoreA = a.investability_score ?? a.final_score
+    const scoreB = b.investability_score ?? b.final_score
+
     if (sortMode === 'bestOverall') {
-      // Default: by finalScore DESC, then amountDue ASC
-      const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
+      // Default: by primary score DESC, then amountDue ASC
+      const scoreDiff = (scoreB ?? -Infinity) - (scoreA ?? -Infinity)
       if (scoreDiff !== 0) return scoreDiff
       return (a.total_amount_due || 0) - (b.total_amount_due || 0)
     }
 
     if (sortMode === 'bestForMyBudget') {
       if (!userSettings) {
-        // Fallback to bestOverall if no settings
-        const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
+        const scoreDiff = (scoreB ?? -Infinity) - (scoreA ?? -Infinity)
         if (scoreDiff !== 0) return scoreDiff
         return (a.total_amount_due || 0) - (b.total_amount_due || 0)
       }
@@ -303,8 +395,8 @@ export default function PropertiesPage() {
       if (aAffordable && !bAffordable) return -1
       if (!aAffordable && bAffordable) return 1
 
-      // Within affordable group, sort by finalScore DESC, then amountDue ASC
-      const scoreDiff = (b.final_score || 0) - (a.final_score || 0)
+      // Within affordable group, sort by primary score DESC, then amountDue ASC
+      const scoreDiff = (scoreB ?? -Infinity) - (scoreA ?? -Infinity)
       if (scoreDiff !== 0) return scoreDiff
       return (a.total_amount_due || 0) - (b.total_amount_due || 0)
     }
@@ -314,11 +406,11 @@ export default function PropertiesPage() {
     }
 
     if (sortMode === 'highestScore') {
-      return (b.final_score || 0) - (a.final_score || 0)
+      return (scoreB ?? -Infinity) - (scoreA ?? -Infinity)
     }
 
     return 0
-  })
+  }) : []
 
   const clearFilters = () => {
     setSearchTerm('')
@@ -363,12 +455,14 @@ export default function PropertiesPage() {
   }
 
   const generateBidReportLink = () => {
-    const bidIds = properties.filter((p) => p.recommendation === 'bid').map((p) => p.id)
+    const bidIds = Array.isArray(properties)
+      ? properties.filter((p) => p.recommendation === 'bid').map((p) => p.id)
+      : []
     return `/reports?ids=${bidIds.join(',')}`
   }
 
   const propertyTypes = ['All', 'single_family', 'condo', 'vacant_land', 'commercial', 'multifamily', 'mobile_home']
-  const counties = ['All', 'utah', 'salt_lake', 'tooele']
+  const counties = ['All', 'utah', 'salt_lake', 'tooele', 'davis']
   const statuses = ['All', 'new', 'researching', 'ready', 'redeemed', 'removed', 'sold', 'passed', 'struck_off']
 
   const formatPropertyType = (type: string) => {
@@ -379,6 +473,21 @@ export default function PropertiesPage() {
     if (!rec) return 'Pending'
     if (rec === 'research_more') return 'Research'
     return rec.charAt(0).toUpperCase() + rec.slice(1)
+  }
+
+  const bucketLabel: Record<string, string> = {
+    TOP_TARGET: 'Top Target',
+    BID_CANDIDATE: 'Bid',
+    WATCHLIST: 'Watchlist',
+    RESEARCH: 'Research',
+    AVOID: 'Avoid'
+  }
+  const bucketStyle: Record<string, string> = {
+    TOP_TARGET: 'bg-emerald-600 text-white',
+    BID_CANDIDATE: 'bg-blue-500 text-white',
+    WATCHLIST: 'bg-amber-400 text-white',
+    RESEARCH: 'bg-slate-400 text-white',
+    AVOID: 'bg-red-500 text-white'
   }
 
   const formatStatus = (status: string) => {
@@ -488,6 +597,33 @@ export default function PropertiesPage() {
           </div>
         )}
 
+        {/* Enrich Result Toast */}
+        {enrichResult && (
+          <div className={cn(
+            'p-4 border rounded-xl',
+            enrichResult.errors > 0
+              ? 'bg-amber-50 border-amber-200'
+              : 'bg-emerald-50 border-emerald-200'
+          )}>
+            <div className={cn(
+              'flex items-center gap-2 font-medium',
+              enrichResult.errors > 0 ? 'text-amber-700' : 'text-emerald-700'
+            )}>
+              <Zap size={18} />
+              <span>
+                Done: {enrichResult.done}/{enrichResult.done + enrichResult.errors} enriched
+                {enrichResult.errors > 0 && `, ${enrichResult.errors} error${enrichResult.errors > 1 ? 's' : ''}`}
+              </span>
+              <button
+                onClick={() => setEnrichResult(null)}
+                className="ml-auto text-xs opacity-60 hover:opacity-100"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Sale Date Warning */}
         {syncStatus && syncStatus.daysUntilSale <= 7 && syncStatus.daysUntilSale >= 0 && (
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
@@ -533,9 +669,9 @@ export default function PropertiesPage() {
               onChange={(e) => setFilterCounty(e.target.value)}
             >
               <option value="All">All Counties</option>
-              <option value="utah">Utah County</option>
-              <option value="salt_lake">Salt Lake County</option>
-              <option value="tooele">Tooele County</option>
+              {availableCounties.map(c => (
+                <option key={c} value={c}>{formatCountyName(c)}</option>
+              ))}
             </select>
             <select
               className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-200 min-w-[140px]"
@@ -583,7 +719,7 @@ export default function PropertiesPage() {
               onClick={handleAnalyzeAllTitles}
               disabled={isAnalyzingTitles}
               className="btn btn-secondary gap-2 text-sm"
-              title="Analyze titles for all Utah County properties"
+              title="Analyze titles for all supported counties (Utah, Tooele, Rich)"
             >
               <FileSearch size={16} className={cn(isAnalyzingTitles && 'animate-spin')} />
               {isAnalyzingTitles ? `Analyzing ${titleAnalysisProgress.current}/${titleAnalysisProgress.total}` : 'Analyze All Titles'}
@@ -631,6 +767,21 @@ export default function PropertiesPage() {
                 )}
               </div>
               <div className="flex flex-wrap gap-2">
+                <div className="flex flex-col items-start gap-0.5">
+                  <button
+                    onClick={handleEnrichSelected}
+                    disabled={isBulkActionRunning || selectedProperties.length > ENRICH_BATCH_LIMIT}
+                    className="btn btn-secondary gap-2 text-sm"
+                  >
+                    <Zap size={16} className={cn(isBulkActionRunning && 'animate-pulse')} />
+                    Enrich Selected
+                  </button>
+                  {selectedProperties.length > ENRICH_BATCH_LIMIT ? (
+                    <span className="text-[10px] text-red-600 font-medium">Max {ENRICH_BATCH_LIMIT} per batch</span>
+                  ) : (
+                    <span className="text-[10px] text-slate-400 font-medium">Up to {ENRICH_BATCH_LIMIT} per batch</span>
+                  )}
+                </div>
                 <button
                   onClick={handleRecheckStatus}
                   disabled={isBulkActionRunning}
@@ -709,19 +860,16 @@ export default function PropertiesPage() {
                     <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Verified</div>
                   </th>
                   <th className="px-6 py-4">
-                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Opp Score</div>
-                  </th>
-                  <th className="px-6 py-4">
-                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Risk Score</div>
-                  </th>
-                  <th className="px-6 py-4">
-                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Final Score</div>
+                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Score</div>
                   </th>
                   <th className="px-6 py-4">
                     <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Title</div>
                   </th>
                   <th className="px-6 py-4">
-                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Recommendation</div>
+                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">AI Recommendation</div>
+                  </th>
+                  <th className="px-6 py-4">
+                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest">Max Bid</div>
                   </th>
                   <th className="px-6 py-4"></th>
                 </tr>
@@ -769,7 +917,7 @@ export default function PropertiesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <Link href={`/properties/${property.id}`} className="flex flex-col">
+                      <Link href={`/properties/${property.county}/${property.parcel_number}`} className="flex flex-col">
                         <span className="text-xs font-mono font-bold text-slate-500 mb-0.5">
                           {property.parcel_number}
                         </span>
@@ -852,38 +1000,45 @@ export default function PropertiesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div
-                        className={cn(
-                          'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border',
-                          getScoreColor(property.opportunity_score)
-                        )}
-                      >
-                        {Math.round(property.opportunity_score || 0)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div
-                        className={cn(
-                          'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border',
-                          getRiskColor(property.risk_score)
-                        )}
-                      >
-                        {Math.round(property.risk_score || 0)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div
-                        className={cn(
-                          'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border',
-                          getScoreColor(property.final_score)
-                        )}
-                      >
-                        {Math.round(property.final_score || 0)}
-                      </div>
+                      {property.investability_score != null ? (
+                        <div
+                          className="flex flex-col gap-1"
+                          title={`Investability V2: ${Math.round(property.investability_score)} | V1 Final: ${property.final_score != null ? Math.round(property.final_score) : '—'}`}
+                        >
+                          <div
+                            className={cn(
+                              'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border',
+                              getScoreColor(property.investability_score)
+                            )}
+                          >
+                            {Math.round(property.investability_score)}
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">
+                            v2
+                          </span>
+                        </div>
+                      ) : (
+                        <div
+                          className="flex flex-col gap-1"
+                          title={`Final: ${property.final_score != null ? Math.round(property.final_score) : '—'} | Opp: ${property.opportunity_score != null ? Math.round(property.opportunity_score) : '—'} | Risk: ${property.risk_score != null ? Math.round(property.risk_score) : '—'}`}
+                        >
+                          <div
+                            className={cn(
+                              'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border',
+                              getScoreColor(property.final_score)
+                            )}
+                          >
+                            {property.final_score != null ? Math.round(property.final_score) : '—'}
+                          </div>
+                          <span className="text-[10px] text-slate-400 font-medium whitespace-nowrap">
+                            Opp: {property.opportunity_score != null ? Math.round(property.opportunity_score) : '—'} | Risk: {property.risk_score != null ? Math.round(property.risk_score) : '—'}
+                          </span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       {property.titleAnalysis ? (
-                        <Link href={`/properties/${property.id}`}>
+                        <Link href={`/properties/${property.county}/${property.parcel_number}`}>
                           <div
                             className={cn(
                               'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border text-xs cursor-pointer',
@@ -899,7 +1054,7 @@ export default function PropertiesPage() {
                         </Link>
                       ) : (
                         <Link
-                          href={`/properties/${property.id}`}
+                          href={`/properties/${property.county}/${property.parcel_number}`}
                           className="text-xs text-slate-400 hover:text-blue-600 underline"
                         >
                           Analyze
@@ -907,19 +1062,49 @@ export default function PropertiesPage() {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <span
-                        className={cn(
-                          'px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase',
-                          getRecommendationStyle(property.recommendation)
+                      <div className="flex flex-col gap-1.5">
+                        {property.recommendation_bucket ? (
+                          <span
+                            className={cn(
+                              'px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase',
+                              bucketStyle[property.recommendation_bucket] ?? 'bg-slate-200 text-slate-600'
+                            )}
+                          >
+                            {bucketLabel[property.recommendation_bucket] ?? property.recommendation_bucket}
+                          </span>
+                        ) : (
+                          <span
+                            className={cn(
+                              'px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase',
+                              getRecommendationStyle(property.recommendation)
+                            )}
+                          >
+                            {formatRecommendation(property.recommendation)}
+                          </span>
                         )}
-                      >
-                        {formatRecommendation(property.recommendation)}
-                      </span>
+                        {property.total_amount_due === 0 && (
+                          <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-black uppercase tracking-tight w-fit">
+                            Verify
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        {property.max_bid_calculated ? (
+                          <span className="text-sm font-bold text-emerald-600">
+                            {formatCurrency(property.max_bid_calculated)}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-slate-400">—</span>
+                        )}
+                        <span className="text-[10px] text-slate-400">Max Bid</span>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right action-button">
                       <div className="flex items-center justify-end gap-2">
                         <Link
-                          href={`/properties/${property.id}`}
+                          href={`/properties/${property.county}/${property.parcel_number}`}
                           className="p-2 text-slate-300 hover:text-slate-900 transition-colors"
                         >
                           <ChevronRight size={20} />
@@ -938,7 +1123,7 @@ export default function PropertiesPage() {
           {/* Pagination/Status */}
           <div className="p-4 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              Showing {filteredProperties.length} of {properties.length} properties
+              Showing {filteredProperties.length} of {Array.isArray(properties) ? properties.length : 0} properties
             </span>
             <div className="flex items-center gap-1">
               <button className="btn btn-secondary px-3 py-1.5 text-xs opacity-50">Previous</button>

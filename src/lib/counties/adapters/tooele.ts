@@ -22,6 +22,13 @@ export const tooeleAdapter: CountyAdapter = {
   id: 'tooele',
   name: 'Tooele County',
   state: 'Utah',
+  readiness: {
+    status: 'LIVE',
+    propertyCount: 29,
+    adapterExists: true,
+    hasEnrichment: true,
+    dataGaps: []
+  },
 
   importConfig: {
     sourceType: 'csv',
@@ -198,6 +205,13 @@ export const tooeleAdapter: CountyAdapter = {
     // Tooele CSV has: "Commercial Land", "Lot", "House", etc.
     // Already normalized during import
 
+    // 7. Set sensible risk defaults for tax sale properties
+    // These prevent "unknown" from inflating the risk score
+    result.legal_risk = 'medium'      // Tax deed sales have known legal process
+    result.access_risk = 'medium'     // Standard access unless known issues
+    result.title_risk = 'medium'    // Title search required but not assumed risky
+    result.marketability_risk = 'medium'  // Depends on property condition
+
     return result
   },
 
@@ -206,8 +220,9 @@ export const tooeleAdapter: CountyAdapter = {
     const normalizedParcel = parcel.replace(/:/g, '').trim()
 
     return {
-      // Mediciland - primary source for Tooele records (requires Google Auth)
-      recorderUrl: `https://search.tooeleco.gov.mediciland.com/?q=${encodeURIComponent(normalizedParcel)}`,
+      // Recorder - official Tooele County recorder page
+      recorderUrl: 'https://tooeleco.gov/departments/administration/recorder_surveyor/property_records_search.php',
+      // Mediciland - parcel-specific search (requires Google Auth)
       medicilandUrl: `https://search.tooeleco.gov.mediciland.com/?q=${encodeURIComponent(normalizedParcel)}`,
 
       // County websites

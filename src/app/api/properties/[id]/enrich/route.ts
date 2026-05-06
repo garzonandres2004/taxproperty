@@ -6,6 +6,8 @@ import { prisma } from '@/lib/db'
 import { getCountyAdapter, CountyId } from '@/lib/counties'
 import { geocodeAddress, generateStreetViewUrl, generateAerialUrl } from '@/lib/geocoding'
 import { scoreProperty, calculateDataConfidence, getDefaultSettings } from '@/lib/scoring'
+import { scoreAndSaveV2 } from '@/lib/scoring/scoring-v2'
+import { scanAndRecordDataGaps } from '@/lib/pipeline/data-gaps'
 
 export async function POST(
   request: Request,
@@ -229,6 +231,43 @@ export async function POST(
       } catch (error) {
         results.errors.push(`Could not update property fields: ${(error as Error).message}`)
       }
+    }
+
+    // Run V2 scoring after V1 updates are written (so DB has the enriched values)
+    try {
+      await scoreAndSaveV2(prisma, id)
+      results.stepsCompleted.push('V2 scores calculated')
+    } catch (v2Err) {
+      results.warnings.push(`V2 scoring failed: ${(v2Err as Error).message}`)
+    }
+
+    // Step 6c: Scan and record data gaps
+    try {
+      const propertySnapshot = {
+        estimated_market_value: propertyUpdates.estimated_market_value ?? property.estimated_market_value,
+        assessed_value: property.assessed_value,
+        year_built: propertyUpdates.year_built ?? property.year_built,
+        building_sqft: propertyUpdates.building_sqft ?? property.building_sqft,
+        lot_size_sqft: propertyUpdates.lot_size_sqft ?? property.lot_size_sqft,
+        property_type: property.property_type || 'unknown',
+        occupancy_status: property.occupancy_status || 'unknown',
+        latitude: coordinates?.latitude ?? property.latitude,
+        longitude: coordinates?.longitude ?? property.longitude,
+        property_address: property.property_address,
+        zoning: property.zoning,
+        title_risk: property.title_risk || 'unknown',
+        county: property.county
+      }
+
+      const gaps = await scanAndRecordDataGaps(prisma, id, propertySnapshot)
+      if (gaps.length > 0) {
+        results.stepsCompleted.push(`Recorded ${gaps.length} data gaps`)
+        results.data.dataGaps = gaps.map(g => ({ phase: g.phase, field: g.field, reason: g.reason, level: g.level }))
+      } else {
+        results.stepsCompleted.push('No data gaps found')
+      }
+    } catch (gapError) {
+      results.warnings.push(`Data gap scan failed: ${(gapError as Error).message}`)
     }
 
     // Step 7: Create or update ZoningProfile

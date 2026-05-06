@@ -1,54 +1,44 @@
 'use client'
 
-import { ExternalLink, UserSearch, FileText, FolderOpen, Scale, Map, Building } from 'lucide-react'
+import { ExternalLink, UserSearch, FileText, FolderOpen, Scale, Map, Building, CreditCard, Gavel } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { generateAllCountyLinks, CountyLinks, COUNTY_LINK_METADATA } from '@/lib/utah-county-links'
+import { makeExternalLinksWithAdapter } from '@/lib/counties'
+import type { CountyLinks } from '@/lib/counties/types'
+import { generateOwnerSearchUrl } from '@/lib/utah-county-links'
 
 interface CountyLinksPanelProps {
-  ownerName?: string | null
+  county: string
   parcelNumber: string
+  ownerName?: string | null
+  address?: string | null
 }
 
-// Icon mapping
-const iconMap = {
-  UserSearch,
-  FileText,
-  FolderOpen,
-  Scale,
-  Map,
-  Building
-}
-
-interface LinkButtonProps {
-  href: string | null
+type LinkDef = {
+  href: string
   label: string
   description: string
-  iconName: keyof typeof iconMap
-  disabled?: boolean
-  disabledReason?: string
+  Icon: React.ComponentType<{ size?: number; className?: string }>
 }
 
-function LinkButton({ href, label, description, iconName, disabled, disabledReason }: LinkButtonProps) {
-  const Icon = iconMap[iconName]
+// Ordered map from CountyLinks keys to display config
+const LINK_DISPLAY: Array<{
+  key: keyof CountyLinks
+  label: string
+  description: string
+  Icon: React.ComponentType<{ size?: number; className?: string }>
+}> = [
+  { key: 'recorderUrl',   label: 'Recorder / Land Records', description: 'Search recorded deeds and documents',               Icon: FileText   },
+  { key: 'medicilandUrl', label: 'Mediciland Parcel Search', description: 'Search property records (Google Auth required)',     Icon: FolderOpen },
+  { key: 'assessorUrl',   label: 'Assessor',                 description: 'Property valuations and assessments',               Icon: Building   },
+  { key: 'taxHistoryUrl', label: 'Tax / Auditor',            description: 'Tax history and auditor records',                   Icon: CreditCard },
+  { key: 'auditorUrl',    label: 'Auditor',                  description: 'County auditor and tax records',                    Icon: CreditCard },
+  { key: 'treasurerUrl',  label: 'Treasurer',                description: 'Tax payment and treasurer records',                 Icon: CreditCard },
+  { key: 'auctionInfoUrl',label: 'Tax Sale Info',            description: 'Current tax sale information and procedures',       Icon: Gavel      },
+  { key: 'parcelMapUrl',  label: 'Parcel Map',               description: 'GIS parcel viewer with boundaries',                 Icon: Map        },
+  { key: 'planningUrl',   label: 'Planning / Zoning',        description: 'Zoning and planning department',                    Icon: Scale      },
+]
 
-  if (disabled || !href) {
-    return (
-      <div
-        className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 opacity-60"
-        title={disabledReason || 'Link unavailable'}
-      >
-        <div className="p-2 bg-slate-200 rounded-md">
-          <Icon size={18} className="text-slate-400" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-medium text-sm text-slate-500">{label}</div>
-          <div className="text-xs text-slate-400">{disabledReason || description}</div>
-        </div>
-      </div>
-    )
-  }
-
+function LinkButton({ href, label, description, Icon }: LinkDef) {
   return (
     <a
       href={href}
@@ -70,8 +60,47 @@ function LinkButton({ href, label, description, iconName, disabled, disabledReas
   )
 }
 
-export function CountyLinksPanel({ ownerName, parcelNumber }: CountyLinksPanelProps) {
-  const links: CountyLinks = generateAllCountyLinks(parcelNumber, ownerName)
+function DisabledLinkButton({ label, description, Icon }: Omit<LinkDef, 'href'>) {
+  return (
+    <div
+      className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50 opacity-60"
+      title="Link unavailable"
+    >
+      <div className="p-2 bg-slate-200 rounded-md">
+        <Icon size={18} className="text-slate-400" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-sm text-slate-500">{label}</div>
+        <div className="text-xs text-slate-400">{description}</div>
+      </div>
+    </div>
+  )
+}
+
+export function CountyLinksPanel({ county, parcelNumber, ownerName, address }: CountyLinksPanelProps) {
+  const links = makeExternalLinksWithAdapter(county, parcelNumber, address || '', null)
+
+  // Build ordered list of links to display (skip streetViewUrl — that's for the map panel)
+  const visibleLinks: LinkDef[] = []
+
+  // Utah-only: owner search by name (before the standard recorder link)
+  if (county === 'utah' && ownerName) {
+    visibleLinks.push({
+      href: generateOwnerSearchUrl(ownerName),
+      label: 'Deed Search by Owner',
+      description: 'Search property records by owner name',
+      Icon: UserSearch,
+    })
+  }
+
+  for (const def of LINK_DISPLAY) {
+    const href = links[def.key]
+    if (href) {
+      visibleLinks.push({ href, label: def.label, description: def.description, Icon: def.Icon })
+    }
+  }
+
+  const countyName = county.charAt(0).toUpperCase() + county.slice(1).replace(/_/g, ' ')
 
   return (
     <Card>
@@ -81,65 +110,23 @@ export function CountyLinksPanel({ ownerName, parcelNumber }: CountyLinksPanelPr
           County Resources
         </CardTitle>
         <CardDescription>
-          Direct links to Utah County research tools
+          Direct links to {countyName} County research tools
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {/* Owner Search - disabled if no owner name */}
-          <LinkButton
-            href={links.ownerSearch}
-            label={COUNTY_LINK_METADATA.ownerSearch.label}
-            description={COUNTY_LINK_METADATA.ownerSearch.description}
-            iconName="UserSearch"
-            disabled={!ownerName}
-            disabledReason="Owner name required"
+        {visibleLinks.length > 0 ? (
+          <div className="space-y-3">
+            {visibleLinks.map((link) => (
+              <LinkButton key={link.href} {...link} />
+            ))}
+          </div>
+        ) : (
+          <DisabledLinkButton
+            label="Research links unavailable"
+            description="No automated links configured for this county"
+            Icon={Building}
           />
-
-          {/* Parcel Records */}
-          <LinkButton
-            href={links.parcelLookup}
-            label={COUNTY_LINK_METADATA.parcelLookup.label}
-            description={COUNTY_LINK_METADATA.parcelLookup.description}
-            iconName="FileText"
-          />
-
-          {/* Document Index */}
-          <LinkButton
-            href={links.documentIndex}
-            label={COUNTY_LINK_METADATA.documentIndex.label}
-            description={COUNTY_LINK_METADATA.documentIndex.description}
-            iconName="FolderOpen"
-          />
-
-          {/* Court Records */}
-          <LinkButton
-            href={links.courtRecords}
-            label={COUNTY_LINK_METADATA.courtRecords.label}
-            description={COUNTY_LINK_METADATA.courtRecords.description}
-            iconName="Scale"
-          />
-
-          {/* GIS Map */}
-          <LinkButton
-            href={links.gisMap}
-            label={COUNTY_LINK_METADATA.gisMap.label}
-            description={COUNTY_LINK_METADATA.gisMap.description}
-            iconName="Map"
-          />
-        </div>
-
-        <div className="mt-4 pt-4 border-t border-slate-100">
-          <a
-            href={links.recordersOffice}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
-          >
-            Visit Utah County Recorder's Office website
-            <ExternalLink size={12} />
-          </a>
-        </div>
+        )}
       </CardContent>
     </Card>
   )

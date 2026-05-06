@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { scoreProperty, calculateDataConfidence, getDefaultSettings } from '@/lib/scoring'
+import { scoreAndSaveV2 } from '@/lib/scoring/scoring-v2'
 
 /**
  * POST /api/rescore
@@ -106,6 +107,13 @@ export async function POST() {
           assemblage_opportunity: scores.assemblageOpportunity
         }
       })
+
+      // Run V2 scoring alongside V1
+      try {
+        await scoreAndSaveV2(prisma, prop.id)
+      } catch (v2Err) {
+        console.error(`V2 scoring failed for ${prop.parcel_number}:`, (v2Err as Error).message)
+      }
 
       results.push({
         id: prop.id,
