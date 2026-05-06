@@ -1,0 +1,25 @@
+{
+  "cookies": [
+    {
+      "name": "JSESSIONID",
+      "value": "2A709A62CDE1DB2DF67B851EA9B94F81",
+      "domain": "erecording.sanpetecountyutah.gov",
+      "path": "/eaglesoftware",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "isLoggedInAsPublic",
+      "value": "true",
+      "domain": "erecording.sanpetecountyutah.gov",
+      "path": "/eaglesoftware",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    }
+  ],
+  "origins": []
+}

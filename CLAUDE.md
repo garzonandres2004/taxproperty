@@ -1,14 +1,30 @@
 # TaxProperty - CLAUDE.md
 
 ## What This Is
-Tax sale property investment intelligence platform.
-Currently supports Utah County. Expanding to all USA counties.
+Tax sale property research and scoring platform.
+Utah County is the reference implementation. Goal: full Utah coverage, then multi-state.
 
-## Docs to Read First
+## Mission
+County-specific input, standard output. Every county publishes data differently but the final property experience must feel consistent and trustworthy.
+
+## Docs to Read First (in order)
+- /docs/MASTER_BLUEPRINT.md - Full product vision, architecture, phases
+- /docs/CLAUDE_WORKFLOW.md - How to work in this repo (session types, prompts, safety)
+- /docs/COUNTY_REGISTRY.md - County onboarding status and sources
+- /docs/COUNTY_STANDARD.md - What "complete" means for a county
+- /docs/COUNTY_COMPLETENESS_CHECKLIST.md - QA checklist per county
 - /docs/PROJECT_SPEC.md - Full product vision and milestones
 - /docs/ARCHITECTURE.md - System design and data flow
 - /docs/PROJECT_STATUS.md - Current status and what to build next
 - /docs/COUNTY_EXPANSION.md - How to add new counties
+
+## First Response Behavior
+When starting a new major session:
+1. Read CLAUDE.md and docs/MASTER_BLUEPRINT.md
+2. Audit current project structure
+3. State the current priority
+4. Propose the safest next step
+5. Wait for approval before large refactors — do not start coding immediately
 
 ## Tech Stack
 - Next.js 14 App Router + TypeScript

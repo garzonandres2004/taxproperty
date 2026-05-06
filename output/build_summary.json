@@ -1,0 +1,30 @@
+{
+  "run_id": "b6a22f44-ef68-4e5c-b690-5c0537ff7fc1",
+  "generated_at": "2026-05-06T12:23:07.405Z",
+  "csv_source": "/Users/andres/Desktop/claude-projects/taxtpropertyidea/taxproperty-utah/output/utah_auctions.csv",
+  "total_listings": 15,
+  "enriched": 15,
+  "agrc_hits": 0,
+  "memos_generated": 15,
+  "by_county": [
+    {
+      "county": "box_elder",
+      "county_display": "Box Elder",
+      "readiness": "PLANNED",
+      "listings": 15,
+      "agrc_hits": 0,
+      "with_market_value": 0,
+      "rec_counts": {
+        "RESEARCH": 15
+      },
+      "earliest_end": "2026-05-22T00:00:00.000Z",
+      "price_range": "$363 – $959"
+    }
+  ],
+  "memo_breakdown": {
+    "live": 0,
+    "near_live": 0,
+    "partial": 0,
+    "planned": 15
+  }
+}

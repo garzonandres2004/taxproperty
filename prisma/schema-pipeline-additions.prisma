@@ -1,0 +1,95 @@
+// Phase 1: Pipeline Infrastructure Additions
+// These models are ADDITIVE - no changes to existing models
+// Run: npx prisma migrate dev --create-only --name add_pipeline_run_completeness_titlesignals
+
+// Pipeline Run Tracking - One record per property pipeline execution
+model PipelineRun {
+  id                    String   @id @default(uuid())
+  property_id           String
+  property              Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  // Pipeline identification
+  pipeline_version      String   // e.g., "1.0.0" - allows versioning
+  county                String   // Denormalized for querying
+
+  // Phase tracking - Json type for atomic updates
+  // phases_completed initialized in application code (nullable in DB)
+  phases_requested      Json     // Array of PipelinePhase strings
+  phases_completed      Json?    // Array of completed phase strings
+  current_phase         String?  // Currently executing phase
+
+  // Status
+  status                String   @default("running") // "running" | "completed" | "failed"
+  started_at            DateTime @default(now())
+  completed_at          DateTime?
+  duration_ms           Int?
+
+  // Results
+  investability_score   Float?
+  recommendation_bucket String?
+
+  // Error tracking
+  error_message         String?
+
+  // Metadata
+  created_at            DateTime @default(now())
+
+  // Indexes only - no unique constraint (allows historical reruns)
+  @@index([property_id])
+  @@index([status])
+  @@index([county])
+  @@index([pipeline_version])
+  @@index([property_id, pipeline_version])
+  @@index([started_at])
+}
+
+// Title Signals - Automated title research data
+model TitleSignals {
+  id                    String   @id @default(uuid())
+  property_id           String   @unique
+  property              Property @relation(fields: [property_id], references: [id], onDelete: Cascade)
+
+  // Basic signals (automated scraping)
+  has_deed_records      Boolean?
+  document_count_5yr    Int?
+  last_transfer_date    DateTime?  // Normalized from source
+  last_transfer_type    String?    // "sale" | "inheritance" | "court_order" | "gift" | "other"
+  mortgage_docs_found   Int?
+  lien_docs_found       Int?
+  release_docs_found    Int?
+
+  // Risk signals
+  red_flags_count       Int      @default(0)
+  yellow_flags_count    Int      @default(0)
+
+  // Source tracking
+  data_source           String   // e.g., "utah_county_recorder"
+  source_url            String?  // URL where data was scraped
+  scraped_at            DateTime @default(now())
+
+  @@index([property_id])
+  @@index([data_source])
+}
+
+// County Config Extensions (ADDITIVE FIELDS ONLY)
+// These fields are added to EXISTING CountyConfig model:
+//
+// model CountyConfig {
+//   ... existing fields ...
+//
+//   // Completeness tracking (NEW)
+//   total_properties          Int       @default(0)
+//   completeness_score        Float?
+//   physical_completeness     Float?
+//   valuation_completeness    Float?
+//   location_completeness     Float?
+//   title_completeness        Float?
+//
+//   // Automation metadata (NEW)
+//   automation_potential      String    @default("unknown")
+//   manual_playbook_required  Boolean   @default(false)
+//
+//   // Status (NEW)
+//   status                    String    @default("pending")
+//   last_completeness_check   DateTime?
+// }

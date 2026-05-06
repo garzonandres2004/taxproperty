@@ -1,0 +1,55 @@
+[
+  {
+    "county": "rich",
+    "parcelId": "41-30-090-0106",
+    "headline": "Rich – 41-30-090-0106 – unknown — 42.3× opening bid vs market value – Recommendation: GO",
+    "recommendation": "GO",
+    "maxBidInclusivePremium": 56500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 3,
+      "recency": 3,
+      "propertyQuality": 2,
+      "dataCompleteness": 3,
+      "total": 15
+    },
+    "keyFacts": {
+      "owner": "TOONE, JAMES AVARD",
+      "subdivision": "EAGLE FEATHER AT SHUNDAHAI SUB",
+      "acres": 1.55,
+      "class": "unknown",
+      "openingBid": 4374.15,
+      "buyersPremiumPercent": 5,
+      "estMarketValue": 185000,
+      "locationSummary": "Rich County — Bear Lake / Garden City area (remote recreational)",
+      "titleSummary": {
+        "hasDeedRecords": false,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": "No records in index since coverage start — clean by absence"
+      }
+    },
+    "good": [
+      "Total opening cost ($4,593 with 5% premium) is ~98% below estimated market value of $185,000 — strong paper equity of $180,407.",
+      "No recorded documents in county index since 2019-01-01 — property appears clean by absence of encumbrances.",
+      "1.55-acre unknown parcel — meaningful land size with development or hold potential.",
+      "Data coverage is strong: auction bid, assessor/market value, and title index all present."
+    ],
+    "bad": [
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Rich County parcels are often remote recreational land — verify year-round road access, power availability, and buildability before bidding.",
+      "7 unresolved data gap(s) in pipeline: year_built, building_sqft, property_type."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Enter the auction with a firm cap of $56,500 all-in (including 5% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:28:57.525Z",
+      "propertyId": "47ba6f47-fe91-4f34-9739-a6c6c548ac35",
+      "investability_v2": 50.5,
+      "confidence_pct": 40
+    }
+  }
+]

@@ -2,14 +2,26 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { scrapeDocumentList, scrapeDocumentDetail } from '@/lib/title/utah-county-scraper'
 import { analyzeTitleChain } from '@/lib/title/title-analyzer'
-import { scrapeTooeleEagleWeb, type EagleWebResult } from '@/lib/title/scrapers/tooele-eagleweb'
-import { scrapeRichCounty, saveRichTitleSignals, type RichCountyResult } from '@/lib/title/scrapers/rich-county'
 
 // Supported counties and their scraper types
 const TITLE_SCRAPER_SUPPORTED = ['utah', 'tooele', 'rich']
 
-// Convert EagleWeb/Rich result to a TitleAnalysis-compatible record
-function synthesizeTitleAnalysis(result: EagleWebResult | RichCountyResult, county: string) {
+// Type for scraper results
+type ScraperResult = {
+  hasRecords: boolean
+  documentCount5yr: number
+  lastTransferDate?: string
+  lastTransferType?: string
+  mortgageDocsFound: number
+  lienDocsFound: number
+  releaseDocsFound: number
+  redFlags: string[]
+  yellowFlags: string[]
+  rawDocuments: any[]
+}
+
+// Convert scraper result to a TitleAnalysis-compatible record
+function synthesizeTitleAnalysis(result: ScraperResult, county: string) {
   const netLiens = result.lienDocsFound - result.releaseDocsFound
   const hasActiveMortgage = result.mortgageDocsFound > result.releaseDocsFound
 
@@ -83,6 +95,23 @@ interface RouteParams {
   params: Promise<{ id: string }>
 }
 
+// Load scrapers dynamically (server-only, playwright not available in production)
+async function loadScrapers() {
+  if (process.env.NODE_ENV === 'production') {
+    return null
+  }
+  try {
+    const [{ scrapeTooeleEagleWeb }, { scrapeRichCounty, saveRichTitleSignals }] = await Promise.all([
+      import('@/lib/title/scrapers/tooele-eagleweb'),
+      import('@/lib/title/scrapers/rich-county')
+    ])
+    return { scrapeTooeleEagleWeb, scrapeRichCounty, saveRichTitleSignals }
+  } catch (error) {
+    console.error('Failed to load scrapers:', error)
+    return null
+  }
+}
+
 /**
  * POST /api/properties/[id]/title-analysis
  * Run automated title analysis on a property
@@ -108,49 +137,58 @@ export async function POST(request: Request, { params }: RouteParams) {
     }
 
     // ── Non-Utah counties: dispatch to county-specific scrapers ─────────────
-    if (property.county === 'tooele') {
-      const result = await scrapeTooeleEagleWeb(property.parcel_number)
-      if (!result) {
-        return NextResponse.json({ error: 'Tooele EagleWeb scraper returned no data' }, { status: 502 })
+    if (property.county === 'tooele' || property.county === 'rich') {
+      const scrapers = await loadScrapers()
+      if (!scrapers) {
+        return NextResponse.json({
+          error: `${property.county} scraper not available in production. Use local development for title scraping.`
+        }, { status: 503 })
       }
-      const analysis = synthesizeTitleAnalysis(result, 'Tooele')
-      const saved = await prisma.titleAnalysis.upsert({
-        where: { property_id: id },
-        create: { property_id: id, ...analysis,
-          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
-          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
-          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
-          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
-        update: { ...analysis,
-          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
-          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
-          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
-          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
-      })
-      return NextResponse.json({ success: true, analysis: { ...analysis, id: saved.id, propertyId: id }, documentsScraped: result.rawDocuments.length })
-    }
 
-    if (property.county === 'rich') {
-      const result = await scrapeRichCounty(property.parcel_number)
-      if (!result) {
-        return NextResponse.json({ error: 'Rich County recorder scraper returned no data' }, { status: 502 })
+      if (property.county === 'tooele') {
+        const result = await scrapers.scrapeTooeleEagleWeb(property.parcel_number)
+        if (!result) {
+          return NextResponse.json({ error: 'Tooele EagleWeb scraper returned no data' }, { status: 502 })
+        }
+        const analysis = synthesizeTitleAnalysis(result, 'Tooele')
+        const saved = await prisma.titleAnalysis.upsert({
+          where: { property_id: id },
+          create: { property_id: id, ...analysis,
+            redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+            greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+            activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+            rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+          update: { ...analysis,
+            redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+            greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+            activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+            rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+        })
+        return NextResponse.json({ success: true, analysis: { ...analysis, id: saved.id, propertyId: id }, documentsScraped: result.rawDocuments.length })
       }
-      await saveRichTitleSignals(prisma, id, result)
-      const analysis = synthesizeTitleAnalysis(result, 'Rich')
-      const saved = await prisma.titleAnalysis.upsert({
-        where: { property_id: id },
-        create: { property_id: id, ...analysis,
-          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
-          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
-          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
-          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
-        update: { ...analysis,
-          redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
-          greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
-          activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
-          rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
-      })
-      return NextResponse.json({ success: true, analysis: { ...analysis, id: saved.id, propertyId: id }, documentsScraped: result.rawDocuments.length })
+
+      if (property.county === 'rich') {
+        const result = await scrapers.scrapeRichCounty(property.parcel_number)
+        if (!result) {
+          return NextResponse.json({ error: 'Rich County recorder scraper returned no data' }, { status: 502 })
+        }
+        await scrapers.saveRichTitleSignals(prisma, id, result)
+        const analysis = synthesizeTitleAnalysis(result, 'Rich')
+        const saved = await prisma.titleAnalysis.upsert({
+          where: { property_id: id },
+          create: { property_id: id, ...analysis,
+            redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+            greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+            activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+            rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+          update: { ...analysis,
+            redFlags: JSON.stringify(analysis.redFlags), yellowFlags: JSON.stringify(analysis.yellowFlags),
+            greenFlags: JSON.stringify(analysis.greenFlags), ownershipChain: JSON.stringify(analysis.ownershipChain),
+            activeLiens: JSON.stringify(analysis.activeLiens), recommendedActions: JSON.stringify(analysis.recommendedActions),
+            rawDocuments: JSON.stringify(result.rawDocuments.slice(0, 20)), analyzedAt: new Date() },
+        })
+        return NextResponse.json({ success: true, analysis: { ...analysis, id: saved.id, propertyId: id }, documentsScraped: result.rawDocuments.length })
+      }
     }
 
     if (property.county !== 'utah') {

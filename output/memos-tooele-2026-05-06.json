@@ -1,0 +1,1520 @@
+[
+  {
+    "county": "tooele",
+    "parcelId": "1509700062",
+    "headline": "Tooele – 1509700062 – House — 22.9× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 37500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 4,
+      "dataCompleteness": 2,
+      "total": 13
+    },
+    "keyFacts": {
+      "owner": "SOUTHERN IMPORTS LLC",
+      "subdivision": "CANYON RIM ESTATES",
+      "acres": 0.34,
+      "class": "House",
+      "openingBid": 5520.93,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 126434,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($5,963 with 8% premium) is ~95% below estimated market value of $126,434 — strong paper equity of $120,471.",
+      "Existing 2,371 sq ft structure (built 2022) — improvements likely reduce time-to-use and utility setup costs."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "2 unresolved data gap(s) in pipeline: assessed_value, zoning."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $37,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.203Z",
+      "propertyId": "6a2d670c-fcdd-4ba3-9ee3-65426e0afe38",
+      "investability_v2": 63.5,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "2009000337",
+    "headline": "Tooele – 2009000337 – House — 24.9× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 131000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 4,
+      "dataCompleteness": 2,
+      "total": 13
+    },
+    "keyFacts": {
+      "owner": "HOUGHTON MARK JT",
+      "subdivision": "PROVIDENCE AT OVERLAKE SUB",
+      "acres": 0.18,
+      "class": "House",
+      "openingBid": 17789.82,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 442118,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($19,213 with 8% premium) is ~96% below estimated market value of $442,118 — strong paper equity of $422,905.",
+      "Existing 1,805 sq ft structure (built 2020) — improvements likely reduce time-to-use and utility setup costs."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $131,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "fbcc990e-13fe-4bf4-9db3-cc6b4eb6780a",
+      "investability_v2": 62,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "2009900001",
+    "headline": "Tooele – 2009900001 – Lot — 13.4× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 80000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "VOWLES MATT R JT",
+      "subdivision": "VOWLES ESTATES MINOR SUB",
+      "acres": 1.55,
+      "class": "Lot",
+      "openingBid": 20163.77,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 270629,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($21,777 with 8% premium) is ~92% below estimated market value of $270,629 — strong paper equity of $248,852.",
+      "1.55-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $80,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "e932a45d-bdad-4246-a522-58625e8d237f",
+      "investability_v2": 63.5,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0610100015",
+    "headline": "Tooele – 0610100015 – House — 21.1× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 24500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "JUNE OSBAHR JT",
+      "subdivision": null,
+      "acres": 1,
+      "class": "House",
+      "openingBid": 3892.64,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 82131,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($4,204 with 8% premium) is ~95% below estimated market value of $82,131 — strong paper equity of $77,927.",
+      "1.00-acre house parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $24,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "0cd8f749-17be-4546-bebd-ebd8171af7f0",
+      "investability_v2": 60,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0302300018",
+    "headline": "Tooele – 0302300018 – House — 34.9× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 115500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "HOWARD E HAMMOND JT 1/4 INT",
+      "subdivision": null,
+      "acres": 1.5,
+      "class": "House",
+      "openingBid": 11156,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 389285,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($12,048 with 8% premium) is ~97% below estimated market value of $389,285 — strong paper equity of $377,237.",
+      "1.50-acre house parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $115,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "34c46fb5-c7f7-4188-82a6-0523652cd339",
+      "investability_v2": 58.5,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0109400041",
+    "headline": "Tooele – 0109400041 – House — 62.3× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 179000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "SUNLAND HOLDINGS, LLC",
+      "subdivision": null,
+      "acres": 0.17,
+      "class": "House",
+      "openingBid": 9703.91,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 604171,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($10,480 with 8% premium) is ~98% below estimated market value of $604,171 — strong paper equity of $593,691.",
+      "Existing 1,770 sq ft structure (built 1950) — improvements likely reduce time-to-use and utility setup costs."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $179,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "201e7a3c-29f6-4d13-9830-18ce299201bc",
+      "investability_v2": 58.5,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0205400028",
+    "headline": "Tooele – 0205400028 – House — 26.9× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 98000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "COLLEDGE SHELBE",
+      "subdivision": null,
+      "acres": 0.23,
+      "class": "House",
+      "openingBid": 12298.8,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 331376,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($13,283 with 8% premium) is ~96% below estimated market value of $331,376 — strong paper equity of $318,093."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $98,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "cd894a27-126c-4d76-b4b0-b959c07a2c91",
+      "investability_v2": 57.5,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0123300013",
+    "headline": "Tooele – 0123300013 – House — 15.9× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 20500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "DAVID W CASTAGNO",
+      "subdivision": null,
+      "acres": 0.69,
+      "class": "House",
+      "openingBid": 4399.24,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 69855,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($4,751 with 8% premium) is ~93% below estimated market value of $69,855 — strong paper equity of $65,104."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $20,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "834d69b4-78c1-4efa-a6ee-bac7d6a8493f",
+      "investability_v2": 56.5,
+      "confidence_pct": 70
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "1109500031",
+    "headline": "Tooele – 1109500031 – House — 20.0× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 2000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "HOWARD MICHAEL D",
+      "subdivision": "WESTLAND COVE SUB",
+      "acres": 0.09,
+      "class": "House",
+      "openingBid": 319.44,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 6388,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($345 with 8% premium) is ~95% below estimated market value of $6,388 — strong paper equity of $6,043."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $2,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "8cfdd7e0-e19f-476d-a137-41a8f5a191c7",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0112900003",
+    "headline": "Tooele – 0112900003 – Lot — 12.3× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 49000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "LOS ANGELES & SALT LAKE RAILROAD CO",
+      "subdivision": null,
+      "acres": 11.52,
+      "class": "Lot",
+      "openingBid": 13453.73,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 165440,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($14,530 with 8% premium) is ~91% below estimated market value of $165,440 — strong paper equity of $150,910.",
+      "11.52-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $49,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "30fce903-76e3-4bb4-beb6-936da4ac7126",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0112800008",
+    "headline": "Tooele – 0112800008 – Lot — 22.1× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 572000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "LOS ANGELES & SL RAILROAD CO",
+      "subdivision": null,
+      "acres": 24.48,
+      "class": "Lot",
+      "openingBid": 87230.92,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 1930240,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($94,209 with 8% premium) is ~95% below estimated market value of $1,930,240 — strong paper equity of $1,836,031.",
+      "24.48-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $572,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "c7bb76e4-bc2e-4b46-a7c2-886e3304cc05",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0111700002",
+    "headline": "Tooele – 0111700002 – Lot — 14.8× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 355000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "OMAN PROPERTIES LLC 30% INT",
+      "subdivision": null,
+      "acres": 119.34,
+      "class": "Lot",
+      "openingBid": 81225.36,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 1198264,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($87,723 with 8% premium) is ~93% below estimated market value of $1,198,264 — strong paper equity of $1,110,541.",
+      "119.34-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $355,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "3de5a503-ef04-4b77-a44d-97e42e1d6c6d",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0510900002",
+    "headline": "Tooele – 0510900002 – Lot — 15.0× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 9000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "QUDSIA ROSTON TRUSTEE",
+      "subdivision": null,
+      "acres": 320,
+      "class": "Lot",
+      "openingBid": 1990.83,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 29790,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($2,150 with 8% premium) is ~93% below estimated market value of $29,790 — strong paper equity of $27,640.",
+      "320.00-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $9,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "28117d7c-86c5-4909-aa23-0e9c1b2f0f65",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0113000012",
+    "headline": "Tooele – 0113000012 – Lot — 23141.6× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 622000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "RACEWAY 112 LLC",
+      "subdivision": null,
+      "acres": 86.83,
+      "class": "Lot",
+      "openingBid": 90.71,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 2099174,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($98 with 8% premium) is ~100% below estimated market value of $2,099,174 — strong paper equity of $2,099,076.",
+      "86.83-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $622,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "e470d69a-c89c-4afb-91da-a771bbb6ad2d",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0113000013",
+    "headline": "Tooele – 0113000013 – Lot — 18725.7× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 442500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "RACEWAY 112 LLC",
+      "subdivision": null,
+      "acres": 55.27,
+      "class": "Lot",
+      "openingBid": 79.74,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 1493184,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($86 with 8% premium) is ~100% below estimated market value of $1,493,184 — strong paper equity of $1,493,098.",
+      "55.27-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $442,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "bc0f787e-196d-4f70-950e-d4ca31c8bfbb",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "1305000014",
+    "headline": "Tooele – 1305000014 – Commerical Land — 13.2× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 92500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 2,
+      "dataCompleteness": 2,
+      "total": 11
+    },
+    "keyFacts": {
+      "owner": "ANDERSON RYAN K",
+      "subdivision": "TOOELE GATEWAY COMMERCIAL SUB",
+      "acres": 0.95,
+      "class": "Commerical Land",
+      "openingBid": 23649.86,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 312750,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($25,542 with 8% premium) is ~92% below estimated market value of $312,750 — strong paper equity of $287,208."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $92,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "14e64e59-c267-4142-8719-b2060941b196",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0123100027",
+    "headline": "Tooele – 0123100027 – Lot — 22.0× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 1500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 2,
+      "dataCompleteness": 2,
+      "total": 11
+    },
+    "keyFacts": {
+      "owner": "KENNETH J GILL JT",
+      "subdivision": null,
+      "acres": 0.27,
+      "class": "Lot",
+      "openingBid": 196.4,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 4320,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($212 with 8% premium) is ~95% below estimated market value of $4,320 — strong paper equity of $4,108."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $1,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "8fba6b78-a040-4dd6-95e5-cb99cdb896e5",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0207900057",
+    "headline": "Tooele – 0207900057 – Lot — 4.0× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 45000,
+    "scores": {
+      "equity": 3,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 11
+    },
+    "keyFacts": {
+      "owner": "BROWN CHERYL L SUCC TRUSTEE",
+      "subdivision": null,
+      "acres": 23.84,
+      "class": "Lot",
+      "openingBid": 37655.95,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 151930,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($40,668 with 8% premium) is ~73% below estimated market value of $151,930 — strong paper equity of $111,262.",
+      "23.84-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $45,000 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "37f8d6bb-ffe8-440c-8a6d-8ee3ecad5998",
+      "investability_v2": 47.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0129200011",
+    "headline": "Tooele – 0129200011 – Lot — 43.7× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 19500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 1,
+      "dataCompleteness": 2,
+      "total": 10
+    },
+    "keyFacts": {
+      "owner": "ANDERTON ALAN D JT",
+      "subdivision": null,
+      "acres": 0.13,
+      "class": "Lot",
+      "openingBid": 1488.61,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 65000,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($1,608 with 8% premium) is ~98% below estimated market value of $65,000 — strong paper equity of $63,392."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $19,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "e332179c-9073-4203-a64b-1bb86ba50ee1",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0101300005",
+    "headline": "Tooele – 0101300005 – Lot — 14.9× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 2500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 1,
+      "dataCompleteness": 2,
+      "total": 10
+    },
+    "keyFacts": {
+      "owner": "WILLIE A MONTOYA",
+      "subdivision": null,
+      "acres": 0.17,
+      "class": "Lot",
+      "openingBid": 569.31,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 8500,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($615 with 8% premium) is ~93% below estimated market value of $8,500 — strong paper equity of $7,885."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Enter the auction with a firm cap of $2,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "548adfcc-02ce-4167-aa77-d2a1c22fc76e",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0102400012",
+    "headline": "Tooele – 0102400012 – Lot — 9.7× opening bid vs market value – Recommendation: RESEARCH",
+    "recommendation": "RESEARCH",
+    "maxBidInclusivePremium": 500,
+    "scores": {
+      "equity": 3,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 1,
+      "dataCompleteness": 2,
+      "total": 9
+    },
+    "keyFacts": {
+      "owner": "O K ADCOCK",
+      "subdivision": null,
+      "acres": 0.1,
+      "class": "Lot",
+      "openingBid": 128.47,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 1250,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($139 with 8% premium) is ~89% below estimated market value of $1,250 — strong paper equity of $1,111."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Resolve 5 data gap(s) before making a bid decision: year_built, building_sqft, assessed_value."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "b5487b9c-f5f4-4432-acb6-c03750bf38d8",
+      "investability_v2": 51.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0102400009",
+    "headline": "Tooele – 0102400009 – Lot — 2.4× opening bid vs market value – Recommendation: RESEARCH",
+    "recommendation": "RESEARCH",
+    "maxBidInclusivePremium": 1000,
+    "scores": {
+      "equity": 2,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 1,
+      "dataCompleteness": 2,
+      "total": 8
+    },
+    "keyFacts": {
+      "owner": "EMMA E LATIMER",
+      "subdivision": null,
+      "acres": 0.1,
+      "class": "Lot",
+      "openingBid": 937.46,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 2250,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($1,012 with 8% premium) is ~55% below estimated market value of $2,250 — strong paper equity of $1,238."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Resolve 5 data gap(s) before making a bid decision: year_built, building_sqft, assessed_value."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "ce6ec17c-700e-4492-b3e2-47c529365479",
+      "investability_v2": 42.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0144500001",
+    "headline": "Tooele – 0144500001 – Lot – Recommendation: SKIP",
+    "recommendation": "SKIP",
+    "scores": {
+      "equity": 0,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 8
+    },
+    "keyFacts": {
+      "owner": "HARMAN DEANE H JT 11/11% INT",
+      "subdivision": null,
+      "acres": 9.96,
+      "class": "Lot",
+      "openingBid": 13381.14,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 8987,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "9.96-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "19f86673-9310-4032-b468-e700573c5665",
+      "investability_v2": 31.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "10019H0308",
+    "headline": "Tooele – 10019H0308 – House – Recommendation: RESEARCH",
+    "recommendation": "RESEARCH",
+    "scores": {
+      "equity": 0,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 1,
+      "total": 7
+    },
+    "keyFacts": {
+      "owner": "JERRY ENTZE TRUSTEE",
+      "subdivision": "RANCHO TOOELE SUB",
+      "acres": 0.18,
+      "class": "House",
+      "openingBid": 16713.71,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": null,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [],
+    "bad": [
+      "No market value available — equity potential cannot be calculated without this data point.",
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "6 unresolved data gap(s) in pipeline: year_built, building_sqft, estimated_market_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Resolve 6 data gap(s) before making a bid decision: year_built, building_sqft, estimated_market_value."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "c52c8727-3cf2-41d3-abd1-36ad5d363444",
+      "investability_v2": 30,
+      "confidence_pct": 35
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "210310000B",
+    "headline": "Tooele – 210310000B – Lot – Recommendation: RESEARCH",
+    "recommendation": "RESEARCH",
+    "scores": {
+      "equity": 0,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 1,
+      "total": 7
+    },
+    "keyFacts": {
+      "owner": "SRT DEVELOPMENT, LLC",
+      "subdivision": "SKYLINE RIDGE SUB",
+      "acres": 6.53,
+      "class": "Lot",
+      "openingBid": 8977.06,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": null,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "6.53-acre lot parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No market value available — equity potential cannot be calculated without this data point.",
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "6 unresolved data gap(s) in pipeline: year_built, building_sqft, estimated_market_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Resolve 6 data gap(s) before making a bid decision: year_built, building_sqft, estimated_market_value."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "1ab44d40-992c-4184-956b-74c7c2bfe64f",
+      "investability_v2": 30,
+      "confidence_pct": 35
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "0211400018",
+    "headline": "Tooele – 0211400018 – Lot — 1.5× opening bid vs market value – Recommendation: SKIP",
+    "recommendation": "SKIP",
+    "scores": {
+      "equity": 1,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 0,
+      "dataCompleteness": 2,
+      "total": 6
+    },
+    "keyFacts": {
+      "owner": "JOHN N HORNE",
+      "subdivision": null,
+      "acres": 0.01,
+      "class": "Lot",
+      "openingBid": 68.75,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 100,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($74 with 8% premium) is ~26% below estimated market value of $100 — strong paper equity of $26."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "5 unresolved data gap(s) in pipeline: year_built, building_sqft, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "1a01f0da-e028-45b5-99d0-752abcc410f0",
+      "investability_v2": 37.5,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "200690000A",
+    "headline": "Tooele – 200690000A – Lot – Recommendation: RESEARCH",
+    "recommendation": "RESEARCH",
+    "scores": {
+      "equity": 0,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 2,
+      "dataCompleteness": 1,
+      "total": 6
+    },
+    "keyFacts": {
+      "owner": "CANYON VILLAGE RUST LLC",
+      "subdivision": "A SUB",
+      "acres": 0.31,
+      "class": "Lot",
+      "openingBid": 2491.32,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": null,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [],
+    "bad": [
+      "No market value available — equity potential cannot be calculated without this data point.",
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "6 unresolved data gap(s) in pipeline: year_built, building_sqft, estimated_market_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Resolve 6 data gap(s) before making a bid decision: year_built, building_sqft, estimated_market_value."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.205Z",
+      "propertyId": "55a0813f-51ef-4200-8c5b-7e805f26bcd2",
+      "investability_v2": 30,
+      "confidence_pct": 35
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "150920002B",
+    "headline": "Tooele – 150920002B – Lot – Recommendation: RESEARCH",
+    "recommendation": "RESEARCH",
+    "scores": {
+      "equity": 0,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 2,
+      "dataCompleteness": 1,
+      "total": 6
+    },
+    "keyFacts": {
+      "owner": "SUN LAKE LLC",
+      "subdivision": "SOUTH ADMIN MINOR SUB",
+      "acres": 0.75,
+      "class": "Lot",
+      "openingBid": 8964,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": null,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [],
+    "bad": [
+      "No market value available — equity potential cannot be calculated without this data point.",
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "6 unresolved data gap(s) in pipeline: year_built, building_sqft, estimated_market_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose.",
+      "Resolve 6 data gap(s) before making a bid decision: year_built, building_sqft, estimated_market_value."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.206Z",
+      "propertyId": "8958788f-ce24-4ea5-ba48-63f5292e1ccf",
+      "investability_v2": 30,
+      "confidence_pct": 35
+    }
+  },
+  {
+    "county": "tooele",
+    "parcelId": "9800000716",
+    "headline": "Tooele – 9800000716 – Lot – Recommendation: SKIP",
+    "recommendation": "SKIP",
+    "scores": {
+      "equity": 0,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 1,
+      "dataCompleteness": 1,
+      "total": 5
+    },
+    "keyFacts": {
+      "owner": "BURGESS DAVID JT",
+      "subdivision": null,
+      "acres": null,
+      "class": "Lot",
+      "openingBid": 1147.53,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": null,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [],
+    "bad": [
+      "No market value available — equity potential cannot be calculated without this data point.",
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Parcel size and physical characteristics are unknown — check assessor or GIS records.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Zoning not confirmed — check county planning department to verify permitted uses and minimum lot size requirements.",
+      "7 unresolved data gap(s) in pipeline: year_built, building_sqft, lot_size_sqft."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Confirm zoning and permitted uses with Tooele County planning to ensure the parcel is buildable for your intended purpose."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:26:05.206Z",
+      "propertyId": "fe795012-e173-4031-af5c-b0c5c815fa06",
+      "investability_v2": 29,
+      "confidence_pct": 25
+    }
+  }
+]

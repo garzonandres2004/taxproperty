@@ -1,0 +1,15 @@
+{
+  "cookies": [
+    {
+      "name": "ASP.NET_SessionId",
+      "value": "2cc541tmhxmwmjpmwwcwkush",
+      "domain": "search.richcounty.gov",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

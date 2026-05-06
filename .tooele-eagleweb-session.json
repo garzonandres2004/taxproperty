@@ -1,0 +1,55 @@
+{
+  "cookies": [
+    {
+      "name": "tyler.empire.webaccess.usercontract.UserContract.version",
+      "value": "2.00",
+      "domain": "erecording.tooeleco.gov",
+      "path": "/eaglesoftware/web",
+      "expires": 1780607900.945282,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "tyler.empire.webaccess.usercontract.UserContract.date",
+      "value": "20260505",
+      "domain": "erecording.tooeleco.gov",
+      "path": "/eaglesoftware/web",
+      "expires": 1780607900.945313,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "isLoggedInAsPublic",
+      "value": "true",
+      "domain": "erecording.tooeleco.gov",
+      "path": "/eaglesoftware",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "JSESSIONID",
+      "value": "8AA529A3A896370623F0DA00FBB26AB9",
+      "domain": "erecording.tooeleco.gov",
+      "path": "/eaglesoftware",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "isLoggedInAsPublic",
+      "value": "true",
+      "domain": "erecording.tooeleco.gov",
+      "path": "/",
+      "expires": 1780638467.610007,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

@@ -1,0 +1,15 @@
+{
+  "cookies": [
+    {
+      "name": "JSESSIONID",
+      "value": "84CCD782954A331C66B7759C06EA4282",
+      "domain": "erecording.tooeleco.gov",
+      "path": "/eaglesoftware",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}

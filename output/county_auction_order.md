@@ -1,0 +1,3360 @@
+# Utah County Auction Order — PublicSurplus
+
+**Generated:** 5/6/2026, 5:57:30 AM
+**Total Listings:** 469
+**Total Counties Found:** 10
+
+## Priority Order (Auction Ending Soonest First)
+
+| Priority | County | # Listings | Earliest Auction End | Price Range | Status |
+|----------|--------|-----------|---------------------|-------------|--------|
+| 1 | Sanpete | 24 | 5/21/2026 | $436.24 – $23,980.64 | Has Not Started |
+| 2 | Juab | 3 | 5/21/2026 | $1,678.51 – $3,888.67 | Has Not Started |
+| 3 | Box Elder | 91 | 5/21/2026 | $327.05 – $10,906.62 | Has Not Started |
+| 4 | Salt Lake | 174 | 5/28/2026 | $14.38 – $197,273.56 | Has Not Started |
+| 5 | Sevier | 4 | 5/28/2026 | $622.22 – $26,778.72 | Has Not Started |
+| 6 | Iron County | 76 | 5/28/2026 | $520.21 – $13,301.49 | Has Not Started |
+| 7 | Wasatch County | 14 | 5/28/2026 | $1,994.49 – $69,497.1 | Has Not Started |
+| 8 | Washington | 13 | 5/28/2026 | $234.93 – $14,987.04 | Has Not Started |
+| 9 | Beaver | 3 | 5/28/2026 | $649.68 – $2,233.17 | Has Not Started |
+| 10 | Duchesne County | 67 | 5/28/2026 | $395.67 – $22,421.39 | Has Not Started |
+
+## County Details
+
+### Sanpete County — 24 listing(s)
+
+- **3990732**: Sanpete County Parcel 3540X
+  - Price: $3,894.09
+  - End Date: May 21, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 3540X
+  - Address: 70 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990732
+- **3990661**: Sanpete County Parcel 18072
+  - Price: $21,077.59
+  - End Date: May 21, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 18072
+  - Address: 88 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990661
+- **3990787**: Sanpete County Parcel 40409
+  - Price: $1,570.35
+  - End Date: May 21, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 40409
+  - Acres: 5.12
+  - Address: 52 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990787
+- **3990785**: Sanpete County Parcel 20070X57
+  - Price: $1,916.55
+  - End Date: May 21, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 20070X57
+  - Address: 83 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990785
+- **3990776**: Sanpete County Parcel 55035
+  - Price: $729.39
+  - End Date: May 21, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 55035
+  - Address: 47 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990776
+- **3990772**: Sanpete County Parcel 4546X1
+  - Price: $2,845.82
+  - End Date: May 21, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 4546X1
+  - Address: 30 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990772
+- **3990902**: Sanpete County Parcel 28240
+  - Price: $3,991.56
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 28240
+  - Address: 58 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990902
+- **3990891**: Sanpete County Parcel 20069X11
+  - Price: $604.99
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 20069X11
+  - Address: 25 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990891
+- **3990887**: Sanpete County Parcel 24737
+  - Price: $436.24
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 24737
+  - Address: 82 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990887
+- **3990866**: Sanpete County Parcel 21637X
+  - Price: $1,264.08
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 21637X
+  - Address: 20 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990866
+- **3990808**: Sanpete County Parcel 54805
+  - Price: $729.39
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 54805
+  - Address: 47 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990808
+- **3990798**: Sanpete County Parcel 2544X
+  - Price: $2,424.53
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 2544X
+  - Address: 23 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990798
+- **3990797**: Sanpete County Parcel 15914
+  - Price: $7,168.37
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 15914
+  - Address: 42 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990797
+- **3990994**: Sanpete County Parcel 20070X56
+  - Price: $570.38
+  - End Date: May 21, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 20070X56
+  - Address: 52 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990994
+- **3990987**: Sanpete County Parcel 33383
+  - Price: $980.79
+  - End Date: May 21, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 33383
+  - Address: 04 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990987
+- **3990985**: Sanpete County Parcel 16684
+  - Price: $23,980.64
+  - End Date: May 21, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 16684
+  - Address: 03 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990985
+- **3990982**: Sanpete County Parcel 3328X3
+  - Price: $7,707.35
+  - End Date: May 21, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: 3328X3
+  - Address: 37 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990982
+- **3991006**: Sanpete County Parcel 5015
+  - Price: $1,972.24
+  - End Date: May 21, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 5015
+  - Address: 61 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3991006
+- **3991005**: Sanpete County Parcel 27011X3
+  - Price: $7,663.62
+  - End Date: May 21, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 27011X3
+  - Address: 18 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3991005
+- **3991002**: Sanpete County Parcel 27015
+  - Price: $3,235.48
+  - End Date: May 21, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 27015
+  - Address: 77 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3991002
+- **3991001**: Sanpete County Parcel 27022
+  - Price: $10,172.53
+  - End Date: May 21, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 27022
+  - Address: 63 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3991001
+- **3991000**: Sanpete County Parcel 27023
+  - Price: $1,156.92
+  - End Date: May 21, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 27023
+  - Address: 85 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3991000
+- **3990999**: Sanpete County Parcel 5011
+  - Price: $1,829.14
+  - End Date: May 21, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 5011
+  - Address: 46 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990999
+- **3990996**: Sanpete County Parcel SA9801380
+  - Price: $656.54
+  - End Date: May 21, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: SA9801380
+  - Address: 83 and will be collected at the time of placing bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3990996
+
+### Juab County — 3 listing(s)
+
+- **3989033**: Real Property in Juab; Parcel XE00-5298
+  - Price: $3,888.67
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: XE00-5298
+  - Address: 00 am MDT
+
+
+
+Jon Wayne Goodman
+
+Last Known Mailing Address: PO Box 124 Eureka, UT 84628
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989033
+- **3989004**: Real Property in Juab; Parcel XD00-4481-48
+  - Price: $2,677.88
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: XD00-4481-48
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989004
+- **3988981**: Real Property in Juab; Parcel XE00-4713-1
+  - Price: $1,678.51
+  - End Date: May 21, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: XE00-4713-1
+  - Address: 55 S Professional Way Payson, UT 84651
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3988981
+
+### Box Elder County — 91 listing(s)
+
+- **3994084**: Real Property in Box Elder 01-150-0012 (Non-Compliant)
+  - Price: $370.48
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994084
+- **3994083**: Real Property in Box Elder 01-150-0014 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994083
+- **3994082**: Real Property in Box Elder 02-082-0140 (Non-Compliant)
+  - Price: $362.66
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994082
+- **3994081**: Real Property in Box Elder 01-140-0482 (Non-Compliant)
+  - Price: $362.89
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994081
+- **3994079**: Real Property in Box Elder 02-082-0244 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994079
+- **3994077**: Real Property in Box Elder 01-057-0051 (Non-Compliant)
+  - Price: $385.34
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994077
+- **3994075**: Real Property in Box Elder 01-059-0064 (Non-Compliant)
+  - Price: $535.97
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994075
+- **3994074**: Real Property in Box Elder 08-067-0051 (Compliant)
+  - Price: $381.34
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994074
+- **3994065**: Real Property in Box Elder 01-057-0029 (Non-Compliant)
+  - Price: $385.34
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994065
+- **3994064**: Real Property in Box Elder 01-057-0032 (Non-Compliant)
+  - Price: $427.18
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994064
+- **3994063**: Real Property in Box Elder 01-088-0004 (Non-Compliant)
+  - Price: $694.44
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994063
+- **3994059**: Real Property in Box Elder 01-088-0006 (Compliant)
+  - Price: $958.83
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994059
+- **3994057**: Real Property in Box Elder 08-074-0009 (Compliant)
+  - Price: $385.34
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994057
+- **3994053**: Real Property in Box Elder 02-086-0328 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994053
+- **3994049**: Real Property in Box Elder 01-063-0020 (Non-Compliant)
+  - Price: $494.46
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994049
+- **3994048**: Real Property in Box Elder 01-147-0237 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994048
+- **3994047**: Real Property in Box Elder 01-147-0306 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994047
+- **3994043**: Real Property in Box Elder 01-120-0015 (Non-Compliant)
+  - Price: $484.40
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994043
+- **3994038**: Real Property in Box Elder 01-140-0343 (Non-Compliant)
+  - Price: $374.27
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994038
+- **3994034**: Real Property in Box Elder 02-082-0034 (Non-Compliant)
+  - Price: $374.27
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994034
+- **3994033**: Real Property in Box Elder 01-068-0057 (Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994033
+- **3994031**: Real Property in Box Elder 02-018-0045 (Compliant)
+  - Price: $958.83
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994031
+- **3994030**: Real Property in Box Elder 02-082-0320 (Non-Compliant)
+  - Price: $376.66
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994030
+- **3994028**: Real Property in Box Elder 04-010-0093 (Non-Compliant)
+  - Price: $491.51
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994028
+- **3994026**: Real Property in Box Elder 04-010-0092 (Non-Compliant)
+  - Price: $491.51
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994026
+- **3994024**: Real Property in Box Elder 04-010-0095 (Non-Compliant)
+  - Price: $491.51
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994024
+- **3994023**: Real Property in Box Elder 04-010-0094 (Non-Compliant)
+  - Price: $491.51
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994023
+- **3994021**: Real Property in Box Elder 02-085-0024 (Non-Compliant)
+  - Price: $327.05
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994021
+- **3994020**: Real Property in Box Elder 01-144-0080 (Non-Compliant)
+  - Price: $401.81
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994020
+- **3994016**: Real Property in Box Elder 01-143-0103 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994016
+- **3994013**: Real Property in Box Elder 01-143-0217 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994013
+- **3994011**: Real Property in Box Elder 01-143-0216 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994011
+- **3994008**: Real Property in Box Elder 01-143-0219 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994008
+- **3993955**: Real Property in Box Elder 01-143-0218 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993955
+- **3994183**: Real Property in Box Elder 01-086-0002 (Compliant)
+  - Price: $694.44
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994183
+- **3994169**: Real Property in Box Elder 01-147-0199 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994169
+- **3994168**: Real Property in Box Elder 01-063-0013 (Compliant)
+  - Price: $385.67
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994168
+- **3994167**: Real Property in Box Elder 01-060-0167 (Non-Compliant)
+  - Price: $559.22
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994167
+- **3994166**: Real Property in Box Elder 05-117-0021 (Non-Compliant)
+  - Price: $410.56
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994166
+- **3994164**: Real Property in Box Elder 08-065-0012 (Compliant)
+  - Price: $417.25
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994164
+- **3994162**: Real Property in Box Elder 02-082-0083 (Non-Compliant)
+  - Price: $380.11
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994162
+- **3994160**: Real Property in Box Elder 01-147-0269 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994160
+- **3994158**: Real Property in Box Elder 03-137-0032 (Compliant)
+  - Price: $9,254.63
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994158
+- **3994154**: Real Property in Box Elder 02-086-0237 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994154
+- **3994153**: Real Property in Box Elder 02-086-0236 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994153
+- **3994151**: Real Property in Box Elder 02-086-0238 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994151
+- **3994150**: Real Property in Box Elder 02-086-0616 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994150
+- **3994149**: Real Property in Box Elder 02-086-0615 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994149
+- **3994146**: Real Property in Box Elder 01-139-0049 (Non-Compliant)
+  - Price: $381.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994146
+- **3994145**: Real Property in Box Elder 01-060-0118 (Non-Compliant)
+  - Price: $362.30
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994145
+- **3994141**: Real Property in Box Elder 01-140-0574 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994141
+- **3994140**: Real Property in Box Elder 01-140-0062 (Non-Compliant)
+  - Price: $381.90
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994140
+- **3994139**: Real Property in Box Elder 05-150-0051 (Compliant)
+  - Price: $10,144.68
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994139
+- **3994137**: Real Property in Box Elder 06-086-0007 (Compliant)
+  - Price: $699.78
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994137
+- **3994135**: Real Property in Box Elder 02-086-0329 (Non-Compliant)
+  - Price: $365.04
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994135
+- **3994132**: Real Property in Box Elder 06-104-0001 (Compliant)
+  - Price: $494.00
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994132
+- **3994128**: Real Property in Box Elder 01-150-0123 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994128
+- **3994125**: Real Property in Box Elder 08-065-0010 (Compliant)
+  - Price: $590.98
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994125
+- **3994122**: Real Property in Box Elder 01-033-0121 (Non-Compliant)
+  - Price: $491.51
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994122
+- **3994121**: Real Property in Box Elder 05-197-0009 (Compliant)
+  - Price: $10,906.62
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994121
+- **3994120**: Real Property in Box Elder 01-139-0167 (Non-Compliant)
+  - Price: $369.86
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994120
+- **3994118**: Real Property in Box Elder 01-109-0009 (Non-Compliant)
+  - Price: $385.67
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994118
+- **3994117**: Real Property in Box Elder 02-090-0005 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - Address: 4 LAND LLC
+
+The web address below is to an interactive map that will show where the parcel is located within Box Elder C
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994117
+- **3994116**: Real Property in Box Elder 01-140-0486 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994116
+- **3994115**: Real Property in Box Elder 01-109-0004 (Non-Compliant)
+  - Price: $385.52
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994115
+- **3994111**: Real Property in Box Elder 01-057-0006 (Non-Compliant)
+  - Price: $385.34
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994111
+- **3994108**: Real Property in Box Elder 01-150-0137 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994108
+- **3994100**: Real Property in Box Elder 02-090-0091 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994100
+- **3994097**: Real Property in Box Elder 02-090-0092 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994097
+- **3994090**: Real Property in Box Elder 01-120-0005 (Non-Compliant)
+  - Price: $484.40
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994090
+- **3994087**: Real Property in Box Elder 04-099-0008 (Non-Compliant)
+  - Price: $577.92
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994087
+- **3994085**: Real Property in Box Elder 06-129-0008 (Compliant)
+  - Price: $413.99
+  - End Date: May 21, 2026 06:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994085
+- **3994221**: Real Property in Box Elder 01-070-0106 (Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994221
+- **3994220**: Real Property in Box Elder 01-143-0086 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994220
+- **3994219**: Real Property in Box Elder 01-051-0076 (Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994219
+- **3994211**: Real Property in Box Elder 05-116-0070 (Non-Compliant)
+  - Price: $382.13
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994211
+- **3994210**: Real Property in Box Elder 06-073-0025 (Compliant)
+  - Price: $403.24
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994210
+- **3994209**: Real Property in Box Elder 02-085-0001 (Non-Compliant)
+  - Price: $372.02
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994209
+- **3994208**: Real Property in Box Elder 08-086-0076 (Compliant)
+  - Price: $1,436.58
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994208
+- **3994207**: Real Property in Box Elder 08-086-0073 (Compliant)
+  - Price: $604.60
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994207
+- **3994206**: Real Property in Box Elder 08-086-0078 (Compliant)
+  - Price: $370.05
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994206
+- **3994205**: Real Property in Box Elder 08-086-0077 (Compliant)
+  - Price: $5,765.83
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994205
+- **3994203**: Real Property in Box Elder 01-052-0060 (Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994203
+- **3994202**: Real Property in Box Elder 02-083-0014 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994202
+- **3994200**: Real Property in Box Elder 01-140-0004 (Non-Compliant)
+  - Price: $536.53
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994200
+- **3994199**: Real Property in Box Elder 01-059-0056 (Non-Compliant)
+  - Price: $535.97
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994199
+- **3994197**: Real Property in Box Elder 01-071-0018 (Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994197
+- **3994196**: Real Property in Box Elder 01-151-0128 (Non-Compliant)
+  - Price: $370.48
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994196
+- **3994195**: Real Property in Box Elder 01-115-0006 (Non-Compliant)
+  - Price: $491.51
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994195
+- **3994194**: Real Property in Box Elder 01-139-0105 (Non-Compliant)
+  - Price: $381.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994194
+- **3994193**: Real Property in Box Elder 02-086-0618 (Non-Compliant)
+  - Price: $367.45
+  - End Date: May 21, 2026 07:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: has
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3994193
+
+### Salt Lake County — 174 listing(s)
+
+- **3989715**: CONDO 22-05-333-013-0000
+  - Price: $12,759.04
+  - End Date: May 28, 2026 05:30 AM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989715
+- **3989896**: VACANT 16-23-251-023-0000 104
+  - Price: $31,420.97
+  - End Date: May 28, 2026 05:30 AM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989896
+- **3989882**: STRIP 34-05-110-002-0000
+  - Price: $66.77
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989882
+- **3989881**: STRIP 33-10-327-014-0000
+  - Price: $402.03
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989881
+- **3989876**: STRIP 22-26-477-035-1004
+  - Price: $65.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989876
+- **3989762**: RESIDENTIAL 15-15-201-052-0000
+  - Price: $185.48
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989762
+- **3998335**: RESIDENTIAL 27-33-128-024-0000
+  - Price: $21,056.00
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3998335
+- **3997161**: STREET 22-34-130-001-0000
+  - Price: $67.32
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997161
+- **3997350**: RESIDENTIAL 08-34-231-008-0000
+  - Price: $9,332.57
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997350
+- **3997353**: RESIDENTIAL 22-33-153-006-0000
+  - Price: $19,529.16
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997353
+- **3989722**: ENVIRONMENTAL 14-16-101-001-0000
+  - Price: $337.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989722
+- **3989723**: ENVIRONMENTAL 14-16-101-004-0000
+  - Price: $318.21
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989723
+- **3989724**: ENVIRONMENTAL 14-16-102-002-0000
+  - Price: $2,005.04
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989724
+- **3989725**: ENVIRONMENTAL 14-16-103-002-0000
+  - Price: $325.76
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989725
+- **3989726**: ENVIRONMENTAL 14-16-103-003-0000
+  - Price: $377.74
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989726
+- **3989727**: ENVIRONMENTAL 14-16-103-004-0000
+  - Price: $352.54
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989727
+- **3989728**: ENVIRONMENTAL 14-16-103-005-0000
+  - Price: $351.00
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989728
+- **3989729**: ENVIRONMENTAL 14-16-104-001-0000
+  - Price: $352.54
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989729
+- **3989730**: ENVIRONMENTAL 14-16-104-002-0000
+  - Price: $489.70
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989730
+- **3989731**: ENVIRONMENTAL 14-16-105-001-0000
+  - Price: $337.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989731
+- **3989691**: COMMERCIAL 21-13-403-031-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989691
+- **3989692**: COMMERCIAL 21-13-403-045-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989692
+- **3989744**: RESIDENTIAL 08-26-301-028-0000
+  - Price: $13,419.91
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989744
+- **3989743**: RESIDENTIAL 08-26-101-010-0000
+  - Price: $12,848.98
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989743
+- **3989693**: COMMERCIAL 21-13-403-051-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989693
+- **3989747**: RESIDENTIAL 14-25-429-024-0000
+  - Price: $20,807.02
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989747
+- **3989694**: COMMERCIAL 21-13-403-052-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989694
+- **3989749**: RESIDENTIAL 14-28-478-066-0000
+  - Price: $12,502.00
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989749
+- **3989695**: COMMERCIAL 21-13-403-053-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989695
+- **3989696**: COMMERCIAL 21-13-403-054-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989696
+- **3989750**: RESIDENTIAL 14-30-202-001-0000
+  - Price: $9,501.79
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989750
+- **3989697**: COMMERCIAL 21-13-403-055-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989697
+- **3989698**: COMMERCIAL 21-13-403-060-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989698
+- **3989752**: RESIDENTIAL 14-30-427-019-0000
+  - Price: $11,190.59
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989752
+- **3989699**: COMMERCIAL 21-13-403-061-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989699
+- **3989753**: RESIDENTIAL 14-34-130-020-0000
+  - Price: $14,207.66
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989753
+- **3989700**: COMMERCIAL 21-13-403-063-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989700
+- **3989754**: RESIDENTIAL 14-34-304-007-0000
+  - Price: $15,259.11
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989754
+- **3989701**: COMMERCIAL 21-13-403-064-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989701
+- **3989755**: RESIDENTIAL 14-36-281-011-0000
+  - Price: $24,013.11
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989755
+- **3989702**: COMMERCIAL 21-13-403-065-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989702
+- **3989757**: RESIDENTIAL 15-10-280-005-0000
+  - Price: $6,401.14
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989757
+- **3989703**: COMMERCIAL 21-13-403-066-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989703
+- **3989759**: RESIDENTIAL 15-13-231-011-0000
+  - Price: $11,758.21
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989759
+- **3989704**: COMMERCIAL 21-13-403-068-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989704
+- **3989760**: RESIDENTIAL 15-13-231-012-0000
+  - Price: $7,805.79
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989760
+- **3989705**: COMMERCIAL 21-13-403-069-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989705
+- **3989761**: RESIDENTIAL 15-13-231-013-0000
+  - Price: $16,685.05
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989761
+- **3989706**: COMMERCIAL 21-13-403-071-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989706
+- **3989708**: CONDO 15-01-261-019-0000
+  - Price: $14,819.41
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989708
+- **3989711**: CONDO 15-01-407-036-0000
+  - Price: $10,088.56
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989711
+- **3989712**: CONDO 15-24-238-097-0000
+  - Price: $348.62
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989712
+- **3989713**: CONDO 16-20-404-086-0000
+  - Price: $11,398.05
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989713
+- **3989714**: CONDO 21-36-104-023-0000
+  - Price: $7,032.31
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989714
+- **3989718**: CONDO 22-09-432-017-0000
+  - Price: $14,916.32
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989718
+- **3989763**: RESIDENTIAL 15-15-201-053-0000
+  - Price: $13,568.88
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989763
+- **3989720**: CONDO 22-30-492-004-0000
+  - Price: $11,017.50
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989720
+- **3989764**: RESIDENTIAL 15-27-327-033-0000
+  - Price: $2,492.28
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989764
+- **3989765**: RESIDENTIAL 15-28-104-005-0000
+  - Price: $19,110.89
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989765
+- **3989766**: RESIDENTIAL 15-28-156-006-0000
+  - Price: $14,416.64
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989766
+- **3989767**: RESIDENTIAL 16-06-281-018-0000
+  - Price: $23,722.98
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989767
+- **3989769**: RESIDENTIAL 16-16-180-014-0000
+  - Price: $4,945.40
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989769
+- **3989770**: RESIDENTIAL 16-17-306-026-0000
+  - Price: $15,409.81
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989770
+- **3989773**: RESIDENTIAL 16-17-332-020-0000
+  - Price: $18,648.04
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989773
+- **3989776**: RESIDENTIAL 16-19-406-001-0000
+  - Price: $13,680.51
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989776
+- **3989779**: RESIDENTIAL 16-21-329-017-0000
+  - Price: $16,201.50
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989779
+- **3989780**: RESIDENTIAL 16-21-376-015-0000
+  - Price: $16,607.61
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989780
+- **3989782**: RESIDENTIAL 16-21-453-003-0000
+  - Price: $17,600.26
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989782
+- **3989783**: RESIDENTIAL 16-21-480-006-0000
+  - Price: $17,415.36
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989783
+- **3989784**: RESIDENTIAL 16-29-251-008-0000
+  - Price: $9,498.74
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989784
+- **3989741**: MOBILE HOME 21-32-377-013-0000
+  - Price: $3,490.67
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989741
+- **3989883**: VACANT 10-27-351-019-0000
+  - Price: $435.66
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989883
+- **3989884**: VACANT 10-27-351-021-0000
+  - Price: $588.86
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989884
+- **3989885**: VACANT 10-27-351-023-0000
+  - Price: $444.95
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989885
+- **3989732**: ENVIRONMENTAL 14-16-105-003-0000
+  - Price: $489.70
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989732
+- **3989733**: ENVIRONMENTAL 14-16-105-005-0000
+  - Price: $684.89
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989733
+- **3989734**: ENVIRONMENTAL 14-16-105-006-0000
+  - Price: $776.09
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989734
+- **3989735**: ENVIRONMENTAL 14-16-106-001-0000
+  - Price: $337.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989735
+- **3989736**: ENVIRONMENTAL 14-16-106-002-0000
+  - Price: $894.09
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989736
+- **3989737**: ENVIRONMENTAL 14-16-107-004-0000
+  - Price: $495.12
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989737
+- **3989738**: ENVIRONMENTAL 14-16-107-007-0000
+  - Price: $1,362.11
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989738
+- **3989739**: ENVIRONMENTAL 14-16-107-008-0000
+  - Price: $522.49
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989739
+- **3989740**: ENVIRONMENTAL 14-16-107-009-0000
+  - Price: $1,409.97
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989740
+- **3997868**: VACANT 26-25-400-071 PS106 & 26-25-476-001 PS104 (sold together)
+  - Price: $3,521.24
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997868
+- **3997970**: VACANT 26-25-400-071 PS104 & 26-25-476-001 PS103 (sold together)
+  - Price: $3,948.65
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997970
+- **3989686**: COMMERCIAL 09-32-381-004-0000
+  - Price: $15,123.53
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989686
+- **3989687**: COMMERCIAL 15-03-154-012-0000
+  - Price: $97,870.17
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989687
+- **3989689**: COMMERCIAL 21-13-403-029-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989689
+- **3989690**: COMMERCIAL 21-13-403-030-0000
+  - Price: $1,313.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989690
+- **3989745**: RESIDENTIAL 08-27-301-025-0000
+  - Price: $19,063.42
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989745
+- **3989799**: RESIDENTIAL 21-10-328-020-0000
+  - Price: $16,321.67
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989799
+- **3989800**: RESIDENTIAL 21-10-377-025-0000
+  - Price: $17,779.29
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989800
+- **3989801**: RESIDENTIAL 21-10-377-041-0000
+  - Price: $1,691.51
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989801
+- **3989802**: RESIDENTIAL 21-13-227-021-0000
+  - Price: $10,125.69
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989802
+- **3989803**: RESIDENTIAL 21-13-404-005-0000
+  - Price: $11,510.40
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989803
+- **3989804**: RESIDENTIAL 21-17-180-040-0000
+  - Price: $15,191.56
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989804
+- **3989805**: RESIDENTIAL 21-17-278-014-0000
+  - Price: $14,448.51
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989805
+- **3989894**: VACANT 16-23-251-023-0000 101
+  - Price: $47,925.95
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989894
+- **3989895**: VACANT 16-23-251-023-0000 102
+  - Price: $43,054.88
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989895
+- **3989898**: VACANT 17-15-354-004-0000
+  - Price: $499.41
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989898
+- **3989806**: RESIDENTIAL 21-18-153-005-0000
+  - Price: $18,111.23
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989806
+- **3989899**: VACANT 21-10-201-037-0000
+  - Price: $953.98
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989899
+- **3989900**: VACANT 22-04-207-011-0000
+  - Price: $2,151.05
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989900
+- **3989807**: RESIDENTIAL 21-20-378-018-0000
+  - Price: $11,152.73
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989807
+- **3989809**: RESIDENTIAL 21-24-226-001-0000
+  - Price: $7,774.52
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989809
+- **3989903**: VACANT 22-35-479-029-0000
+  - Price: $17,161.56
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989903
+- **3989904**: VACANT 22-35-479-032-0000
+  - Price: $14,849.53
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989904
+- **3989905**: VACANT 22-35-479-033-0000
+  - Price: $14,092.01
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989905
+- **3989906**: VACANT 26-25-400-038-0000 102
+  - Price: $82,203.67
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989906
+- **3989907**: VACANT 26-25-400-071-0000 101
+  - Price: $197,273.56
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989907
+- **3989912**: VACANT 27-02-177-005-0000
+  - Price: $86,562.96
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989912
+- **3989811**: RESIDENTIAL 21-27-126-027-0000
+  - Price: $16,974.26
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989811
+- **3989913**: VACANT 27-14-152-071-0000
+  - Price: $12,709.58
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989913
+- **3989914**: VACANT 27-14-204-011-0000
+  - Price: $21,431.12
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989914
+- **3989813**: RESIDENTIAL 21-28-427-007-0000
+  - Price: $13,937.32
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989813
+- **3989815**: RESIDENTIAL 21-32-130-038-0000
+  - Price: $11,170.30
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989815
+- **3989915**: VACANT 28-01-177-004-0000
+  - Price: $6,627.44
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989915
+- **3989816**: RESIDENTIAL 21-32-131-004-0000
+  - Price: $7,238.62
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989816
+- **3989916**: VACANT 28-15-401-035-0000
+  - Price: $12,420.43
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989916
+- **3989917**: VACANT 28-28-326-024-0000
+  - Price: $3,765.13
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989917
+- **3989817**: RESIDENTIAL 21-32-352-009-0000
+  - Price: $7,692.68
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989817
+- **3989918**: VACANT 32-10-300-030-0000
+  - Price: $11,761.34
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Acres: 5
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989918
+- **3989820**: RESIDENTIAL 22-02-205-029-0000
+  - Price: $20,331.81
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989820
+- **3989919**: VACANT 32-16-100-003-0000
+  - Price: $14,346.98
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989919
+- **3989821**: RESIDENTIAL 22-02-354-061-0000
+  - Price: $16,776.35
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Acres: 0.1491
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989821
+- **3989823**: RESIDENTIAL 22-06-479-018-0000
+  - Price: $397.35
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989823
+- **3989920**: VACANT 33-10-179-017-0000
+  - Price: $2,362.11
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989920
+- **3989824**: RESIDENTIAL 22-11-152-002-0000
+  - Price: $54,374.29
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989824
+- **3989825**: RESIDENTIAL 22-14-327-011-0000
+  - Price: $60,052.34
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989825
+- **3989827**: RESIDENTIAL 22-18-479-003-0000
+  - Price: $15,787.90
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989827
+- **3989828**: RESIDENTIAL 22-19-302-011-0000
+  - Price: $13,927.54
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989828
+- **3989829**: RESIDENTIAL 22-22-304-002-0000
+  - Price: $19,158.58
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989829
+- **3989831**: RESIDENTIAL 22-28-476-009-0000
+  - Price: $60,857.84
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Acres: 1.1
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989831
+- **3989833**: RESIDENTIAL 22-30-152-039-0000
+  - Price: $4,124.49
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989833
+- **3989834**: RESIDENTIAL 22-30-328-033-0000
+  - Price: $11,733.69
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989834
+- **3989835**: RESIDENTIAL 22-30-453-047-0000
+  - Price: $411.14
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989835
+- **3989836**: RESIDENTIAL 22-32-352-013-0000
+  - Price: $22,743.01
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989836
+- **3989837**: RESIDENTIAL 22-32-430-010-0000
+  - Price: $20,154.76
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989837
+- **3989838**: RESIDENTIAL 22-33-126-024-0000
+  - Price: $36,561.32
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989838
+- **3989840**: RESIDENTIAL 22-33-353-018-0000
+  - Price: $16,553.19
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989840
+- **3989842**: RESIDENTIAL 27-23-378-013-0000
+  - Price: $23,245.75
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989842
+- **3989845**: RESIDENTIAL 27-34-101-032-0000
+  - Price: $6,661.47
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989845
+- **3989846**: RESIDENTIAL 28-01-177-005-0000
+  - Price: $25,548.14
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989846
+- **3989847**: RESIDENTIAL 28-10-102-025-0000
+  - Price: $38,760.36
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989847
+- **3989848**: RESIDENTIAL 28-10-181-007-0000
+  - Price: $20,031.68
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989848
+- **3989849**: RESIDENTIAL 28-15-401-034-0000
+  - Price: $27,814.77
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989849
+- **3989853**: RESIDENTIAL 32-03-100-074-0000
+  - Price: $1,327.51
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989853
+- **3989855**: RESIDENTIAL 32-12-432-003-0000
+  - Price: $20,021.75
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989855
+- **3989786**: RESIDENTIAL 16-31-276-017-0000
+  - Price: $23,951.92
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989786
+- **3989788**: RESIDENTIAL 16-31-426-014-0000
+  - Price: $23,195.09
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989788
+- **3989887**: VACANT 14-28-226-086-0000 103
+  - Price: $1,111.19
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989887
+- **3989888**: VACANT 14-28-230-028-0000 103
+  - Price: $1,821.61
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989888
+- **3989791**: RESIDENTIAL 20-01-328-029-0000
+  - Price: $4,412.47
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989791
+- **3989890**: VACANT 14-33-151-023-0000
+  - Price: $13,078.52
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989890
+- **3989891**: VACANT 15-17-200-017-0000
+  - Price: $11,309.71
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Acres: 0.67
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989891
+- **3989795**: RESIDENTIAL 21-04-215-044-0000
+  - Price: $14,261.64
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989795
+- **3989796**: RESIDENTIAL 21-07-106-003-0000
+  - Price: $16,879.74
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989796
+- **3989798**: RESIDENTIAL 21-08-403-015-0000
+  - Price: $18,257.27
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989798
+- **3989858**: RIGHT OF WAY 14-35-126-057-0000
+  - Price: $62.41
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989858
+- **3989859**: RIGHT OF WAY 22-18-451-002-0000
+  - Price: $1,416.12
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989859
+- **3989860**: RIGHT OF WAY 22-18-451-003-0000
+  - Price: $641.37
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989860
+- **3989862**: STRIP 14-33-152-023-0000
+  - Price: $65.47
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989862
+- **3989863**: STRIP 14-34-227-013-0000
+  - Price: $72.36
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989863
+- **3989866**: STRIP 15-34-101-021-0000
+  - Price: $68.25
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989866
+- **3989868**: STRIP 16-33-432-047-0000
+  - Price: $448.85
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Acres: 0.04
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989868
+- **3989869**: STRIP 20-26-279-009-0000
+  - Price: $78.96
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989869
+- **3989870**: STRIP 21-10-179-046-0000
+  - Price: $138.21
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989870
+- **3989871**: STRIP 21-26-483-005-0000
+  - Price: $123.06
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989871
+- **3989872**: STRIP 21-32-401-008-0000
+  - Price: $97.76
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989872
+- **3989873**: STRIP 22-08-158-002-0000
+  - Price: $66.05
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989873
+- **3989874**: STRIP 22-10-206-063-0000
+  - Price: $1,506.40
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989874
+- **3989879**: STRIP 27-28-201-007-0000 101
+  - Price: $14.38
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989879
+- **3989880**: STRIP 33-03-129-032-0000
+  - Price: $461.37
+  - End Date: May 28, 2026 12:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989880
+- **3989897**: VACANT 16-29-326-003-0000
+  - Price: $3,011.97
+  - End Date: May 28, 2026 08:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: Number:
+  - Address: 500 deposit must be wired to Public Surplus by 5:00 pm MDT on May 22nd. See Rules & Procedures for payment information. 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3989897
+
+### Sevier County — 4 listing(s)
+
+- **3970477**: Real Property Sevier County Utah: 4-201-23
+  - Price: $26,778.72
+  - End Date: May 28, 2026 01:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - Acres: 40.00
+  - Address: 339 and will be collected at the time of placing the bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3970477
+- **3970475**: Real Property Sevier County Utah: 3-192A-51
+  - Price: $622.22
+  - End Date: May 28, 2026 01:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - Acres: 0.115
+  - Address: 50 and will be collected at the time of placing the bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3970475
+- **3970471**: Real Property Sevier County Utah: 3-192H-26 and 3-192H-25
+  - Price: $1,244.44
+  - End Date: May 28, 2026 01:00 PM MDT
+  - Status: Has Not Started
+  - Acres: 0.115
+  - Address: 62 and will be collected at the time of placing the bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3970471
+- **3970470**: Real Property Sevier County Utah: 3-192D-74
+  - Price: $622.22
+  - End Date: May 28, 2026 01:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: is
+  - Acres: 0.115
+  - Address: 50 and will be collected at the time of placing the bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3970470
+
+### Iron County County — 76 listing(s)
+
+- **3997889**: Real Property in Iron County #15 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0023
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997889
+- **3997888**: Real Property in Iron County #14 - Tier 1
+  - Price: $633.59
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1004-0017-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997888
+- **3997887**: Real Property in Iron County #13 - Tier 2
+  - Price: $1,247.81
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-0929-0011-0000
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997887
+- **3997886**: Real Property in Iron County #12- Tier 1
+  - Price: $613.14
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-0868-0001-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997886
+- **3997885**: Real Property in Iron County #11 - Tier 1
+  - Price: $689.83
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-0737-0074-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997885
+- **3997884**: Real Property in Iron County #10 - Tier 1
+  - Price: $613.94
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-0737-0007-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997884
+- **3997883**: Real Property in Iron County #9 - Tier 1
+  - Price: $919.05
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-0474-0001-0006
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997883
+- **3997882**: Real Property in Iron County #8 - Tier 1
+  - Price: $664.11
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: D-0492-0006-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997882
+- **3997881**: Real Property in Iron County #7 - Tier 2
+  - Price: $1,582.76
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: D-0456-0958-0000
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997881
+- **3997880**: Real Property in Iron County #6 - Tier 2
+  - Price: $2,269.31
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: D-0456-0375-0000
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997880
+- **3997879**: Real Property in Iron County #5 - Tier 2
+  - Price: $1,412.57
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: D-0456-0048-0000
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997879
+- **3997878**: Real Property in Iron County #4 - Tier 2
+  - Price: $2,166.10
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: C-0638-0108-0000
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997878
+- **3997877**: Real Property in Iron County #3 - Tier 2
+  - Price: $1,020.56
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: C-0162-0002-0000
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997877
+- **3997876**: Real Property in Iron County #2 - Tier 2
+  - Price: $13,301.49
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: A-1148-0001-0003-228
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997876
+- **3997875**: Real Property in Iron County #1 - Tier 2
+  - Price: $7,871.62
+  - End Date: May 28, 2026 02:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: A-0878-0009-0008
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997875
+- **3997900**: Real Property in Iron County #26 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0862-10
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997900
+- **3997899**: Real Property in Iron County #25 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0746-10
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997899
+- **3997898**: Real Property in Iron County #24 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0614
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997898
+- **3997897**: Real Property in Iron County #23 - Tier 1
+  - Price: $732.54
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0602
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997897
+- **3997896**: Real Property in Iron County #22 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0560
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997896
+- **3997895**: Real Property in Iron County #21 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0501
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997895
+- **3997894**: Real Property in Iron County #20 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0384
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997894
+- **3997893**: Real Property in Iron County #19 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0317
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997893
+- **3997892**: Real Property in Iron County #18 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0250
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997892
+- **3997891**: Real Property in Iron County #17 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0216
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997891
+- **3997890**: Real Property in Iron County #16 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 02:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0119
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997890
+- **3997910**: Real Property in Iron County #36 - Tier 1
+  - Price: $702.13
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1372-0141-0000
+  - Acres: 3.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997910
+- **3997909**: Real Property in Iron County #35 - Tier1
+  - Price: $624.01
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1315-0004-0001-01
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997909
+- **3997908**: Real Property in Iron County #34 - Tier 1
+  - Price: $901.83
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1258-0003-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997908
+- **3997907**: Real Property in Iron County #33 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0364-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997907
+- **3997906**: Real Property in Iron County #32 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0362-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997906
+- **3997905**: Real Property in Iron County #31 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0312-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997905
+- **3997904**: Real Property in Iron County #30 - Tier 1
+  - Price: $614.75
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0311-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997904
+- **3997903**: Real Property in Iron County #29 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0874-05
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997903
+- **3997902**: Real Property in Iron County #28 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0874-01
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997902
+- **3997901**: Real Property in Iron County #27 - Tier 1
+  - Price: $673.64
+  - End Date: May 28, 2026 03:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1229-0003-0864
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997901
+- **3997920**: Real Property in Iron County #46 - Tier 1
+  - Price: $520.21
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1601-0065-0000
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997920
+- **3997919**: Real Property in Iron County #45 - Tier 1
+  - Price: $706.64
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1601-0048-0039
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997919
+- **3997918**: Real Property in Iron County #44 - Tier 2
+  - Price: $1,115.41
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1562-0018-0000
+  - Acres: 2.
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997918
+- **3997917**: Real Property in Iron County #43 - Tier 1
+  - Price: $591.28
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1409-0007-0021
+  - Acres: 737.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997917
+- **3997916**: Real Property in Iron County #42 - Tier 1
+  - Price: $591.28
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1409-0007-0011
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997916
+- **3997915**: Real Property in Iron County #41 - Tier 1
+  - Price: $702.13
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1390-0153-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997915
+- **3997914**: Real Property in Iron County #40 - Tier 1
+  - Price: $809.18
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1390-0143-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997914
+- **3997913**: Real Property in Iron County #39 - Tier 1
+  - Price: $817.54
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1390-0055-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997913
+- **3997912**: Real Property in Iron County #38 - Tier 1
+  - Price: $675.70
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1388-0043-0000
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997912
+- **3997911**: Real Property in Iron County #37- Tier 1
+  - Price: $702.13
+  - End Date: May 28, 2026 03:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1373-0008-0000
+  - Acres: 2.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997911
+- **3997930**: Real Property in Iron County #56 - Tier 1
+  - Price: $619.61
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1699-0012-0001
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997930
+- **3997929**: Real Property in Iron County #55 - Tier 1
+  - Price: $621.89
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1699-0005-0005
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997929
+- **3997928**: Real Property in Iron County #54 - Tier 1
+  - Price: $619.01
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1699-0004-0000
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997928
+- **3997927**: Real Property in Iron County #53 - Tier 1
+  - Price: $621.89
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1695-0013-0043
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997927
+- **3997926**: Real Property in Iron County #52 - Tier 1
+  - Price: $747.28
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1694-0010-0002-34
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997926
+- **3997925**: Real Property in Iron County #51 - Tier 1
+  - Price: $612.34
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1694-0008-0001-10
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997925
+- **3997924**: Real Property in Iron County #50 - Tier 1
+  - Price: $612.34
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1694-0006-0013
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997924
+- **3997923**: Real Property in Iron County #49 - Tier 2
+  - Price: $1,482.02
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1690-0001-0002
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997923
+- **3997922**: Real Property in Iron County #48 - Tier 1
+  - Price: $620.08
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1687-0005-0005-113
+  - Acres: 6.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997922
+- **3997921**: Real Property in Iron County #47 - Tier 2
+  - Price: $1,248.81
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1618-0015-0001-02
+  - Acres: 455.
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997921
+- **3997940**: Real Property in Iron County #66 - Tier 1
+  - Price: $689.23
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1708-0162-0000
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997940
+- **3997939**: Real Property in Iron County #65 - Tier 1
+  - Price: $688.58
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1707-0138-0000
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997939
+- **3997938**: Real Property in Iron County #64 - Tier 1
+  - Price: $616.04
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1702-0003-0034-43
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997938
+- **3997937**: Real Property in Iron County #63 - Tier 1
+  - Price: $623.03
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1702-0003-0030-09
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997937
+- **3997936**: Real Property in Iron County #62 - Tier 1
+  - Price: $624.84
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1701-0121-0000
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997936
+- **3997935**: Real Property in Iron County #61 - Tier 1
+  - Price: $624.51
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1701-0117-0000
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997935
+- **3997934**: Real Property in Iron County #60 - Tier 1
+  - Price: $621.89
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1701-0061-00R1
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997934
+- **3997933**: Real Property in Iron County #59 - Tier 1
+  - Price: $620.08
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1700-0033-0000
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997933
+- **3997932**: Real Property in Iron County #58 - Tier 1
+  - Price: $621.89
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1700-0027-0038-0R1
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997932
+- **3997931**: Real Property in Iron County #57 - Tier 1
+  - Price: $619.61
+  - End Date: May 28, 2026 04:30 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1699-0024-0000
+  - Acres: 5.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997931
+- **3997950**: Real Property in Iron County #76- Tier 1
+  - Price: $642.26
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1859-0006-0001-022
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997950
+- **3997949**: Real Property in Iron County #75 - Tier 2
+  - Price: $1,894.86
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1776-0001-0012
+  - Acres: 801.
+  - Address: 100 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997949
+- **3997948**: Real Property in Iron County #74 - Tier 1
+  - Price: $932.92
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1769-0001-0017
+  - Acres: 2.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997948
+- **3997947**: Real Property in Iron County #73 - Tier 1
+  - Price: $728.78
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1743-0005-0005
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997947
+- **3997946**: Real Property in Iron County #72 - Tier 1
+  - Price: $881.99
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1733-0044-0000
+  - Acres: 15.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997946
+- **3997945**: Real Property in Iron County #71 - Tier 1
+  - Price: $878.18
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1733-0005-0000
+  - Acres: 15.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997945
+- **3997944**: Real Property in Iron County #70 - Tier 1
+  - Price: $689.23
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1714-0133-0000
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997944
+- **3997943**: Real Property in Iron County #69- Tier 1
+  - Price: $702.13
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1714-0062-0000
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997943
+- **3997942**: Real Property in Iron County #68 - Tier 1
+  - Price: $702.13
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1709-0104-0000
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997942
+- **3997941**: Real Property in Iron County #67 - Tier 1
+  - Price: $685.71
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: E-1709-0058-0000
+  - Acres: 1.
+  - Address: 50 BID DEPOSIT VIA CREDIT CARD WILL BE REQUIRED AT THE TIME OF YOUR FIRST BID.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3997941
+
+### Wasatch County County — 14 listing(s)
+
+- **3993719**: Real Property in Wasatch County Parcel #00-0015-1238
+  - Price: $3,172.44
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0015-1238
+  - Acres: 0.0367
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993719
+- **3993707**: Real Property in Wasatch County Parcel #00-0000-9923
+  - Price: $22,163.89
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0000-9923
+  - Acres: 2.09
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993707
+- **3993695**: Real Property in Wasatch County Parcel #00-0021-2825
+  - Price: $69,497.10
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0021-2825
+  - Acres: 5.53
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993695
+- **3993692**: Real Property in Wasatch County Parcel #00-0021-4433
+  - Price: $13,129.52
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0021-4433
+  - Acres: 0.977
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993692
+- **3993686**: Real Property in Wasatch County Parcel #00-0020-8168
+  - Price: $48,236.12
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0020-8168
+  - Acres: 15.83
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993686
+- **3993680**: Real Property in Wasatch County Parcel #00-0009-3042
+  - Price: $29,864.07
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0009-3042
+  - Acres: 1.91
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993680
+- **3993677**: Real Property in Wasatch County Parcel #00-0020-3224
+  - Price: $10,826.12
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0020-3224
+  - Acres: 99
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993677
+- **3993674**: Real Property in Wasatch County Parcel #00-0020-3223
+  - Price: $15,986.53
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0020-3223
+  - Acres: 1.48
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993674
+- **3993671**: Real Property in Wasatch County Parcel #00-0013-1099
+  - Price: $14,599.22
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0013-1099
+  - Acres: 1.244
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993671
+- **3993668**: Real Property in Wasatch County Parcel #00-0001-2489
+  - Price: $18,809.92
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0001-2489
+  - Acres: 0.25
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993668
+- **3993658**: Real Property in Wasatch County Parcel #00-0007-5890
+  - Price: $1,994.49
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0007-5890
+  - Acres: 1
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993658
+- **3993654**: Real Property in Wasatch County Parcel #00-0014-7509
+  - Price: $14,805.56
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0014-7509
+  - Acres: 0.38
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993654
+- **3993648**: Real Property in Wasatch County Parcel #00-0020-9395
+  - Price: $9,956.35
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0020-9395
+  - Acres: 0.21
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993648
+- **3993618**: Real Property in Wasatch County Parcel #00-0002-2199
+  - Price: $3,272.88
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: 00-0002-2199
+  - Acres: 0.75
+  - Address: 250 credit card bid deposit will be due at the time of placing your bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993618
+
+### Washington County — 13 listing(s)
+
+- **3992795**: H-3-1-33-142
+  - Price: $14,987.04
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: H-3-1-33-142
+  - Address: 500 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992795
+- **3992788**: ZP-2-7-HV
+  - Price: $1,492.23
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: ZP-2-7-HV
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992788
+- **3992739**: LV-114-A-7
+  - Price: $4,298.64
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: LV-114-A-7
+  - Address: 500 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992739
+- **3988206**: SG-BOU-4-108
+  - Price: $14,740.36
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: SG-BOU-4-108
+  - Address: 000 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3988206
+- **3988205**: AV-1317-D
+  - Price: $6,966.89
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: AV-1317-D
+  - Address: 000 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3988205
+- **3988203**: W-NS-7-A
+  - Price: $10,568.94
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: W-NS-7-A
+  - Address: 500 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3988203
+- **3988166**: WSP-1-13-HV
+  - Price: $5,293.63
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: WSP-1-13-HV
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3988166
+- **3988161**: AV-1365-Q
+  - Price: $3,486.05
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: AV-1365-Q
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3988161
+- **3987888**: R-1308-C
+  - Price: $1,030.52
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: R-1308-C
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3987888
+- **3987882**: R-1305-A-13
+  - Price: $1,338.96
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: R-1305-A-13
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3987882
+- **3987849**: H-3-2-3-1416
+  - Price: $310.26
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: H-3-2-3-1416
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3987849
+- **3987834**: H-311-E
+  - Price: $234.93
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: H-311-E
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3987834
+- **3987838**: SC-220-A-1-A-1
+  - Price: $305.74
+  - End Date: May 28, 2026 04:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: SC-220-A-1-A-1
+  - Address: 100 bid deposit will be collected via credit card upon placing a bid. If you don't win the auction, the deposit will be 
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3987838
+
+### Beaver County — 3 listing(s)
+
+- **3976204**: 02-0110-0006 Beaver County
+  - Price: $971.06
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Address: 50
+
+Last known owner: ALFRED ORTIZ & CAROLYN RODRIGUEZ 20980 RAMBLING RD APPLE VALLEY, CA 92308
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3976204
+- **3976200**: 01-0210-0015 Beaver County
+  - Price: $649.68
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Address: 50
+
+Last known owner: JOE AND MARGO TOMASZEWSKI
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3976200
+- **3976194**: 01-0099-0017 Beaver County
+  - Price: $2,233.17
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Address: 50
+
+Last known owner: MARK LESTELL 6311 W ELDORADO LN LAS VEGAS, NV 89139
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3976194
+
+### Duchesne County County — 67 listing(s)
+
+- **3993082**: Real Property in Duchesne County 00-0035-2203
+  - Price: $463.70
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.02
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993082
+- **3993078**: Real Property in Duchesne County 00-0035-2161
+  - Price: $3,420.24
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.50
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993078
+- **3993073**: Real Property in Duchesne County 00-0035-1979
+  - Price: $2,612.83
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 6.73
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993073
+- **3993069**: Real Property in Duchesne County 00-0035-1538
+  - Price: $3,624.07
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.06
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993069
+- **3993067**: Real Property in Duchesne County 00-0035-1119
+  - Price: $2,488.15
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.03
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993067
+- **3993066**: Real Property in Duchesne County 00-0035-1106
+  - Price: $3,173.88
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993066
+- **3993057**: Real Property in Duchesne County 00-0034-9180
+  - Price: $1,219.62
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 2.50
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993057
+- **3993052**: Real Property in Duchesne County 00-0034-8768
+  - Price: $1,263.80
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 3.57
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993052
+- **3993046**: Real Property in Duchesne County 00-0034-8691
+  - Price: $2,436.80
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 40.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993046
+- **3993037**: Real Property in Duchesne County 00-0033-6578
+  - Price: $6,821.22
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 6.65
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993037
+- **3993035**: Real Property in Duchesne County 00-0032-9560
+  - Price: $3,023.16
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 40.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993035
+- **3993034**: Real Property in Duchesne County 00-0032-7440
+  - Price: $1,166.02
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.12
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993034
+- **3993031**: Real Property in Duchesne County 00-0031-9290
+  - Price: $9,588.36
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993031
+- **3993029**: Real Property in Duchesne County 00-0031-9230
+  - Price: $1,990.84
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993029
+- **3993026**: Real Property in Duchesne County 00-0030-3747
+  - Price: $1,893.88
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993026
+- **3993025**: Real Property in Duchesne County 00-0029-6214
+  - Price: $755.35
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993025
+- **3993021**: Real Property in Duchesne County 00-0028-2271
+  - Price: $1,907.60
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993021
+- **3993018**: Real Property in Duchesne County 00-0027-8568
+  - Price: $1,097.37
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993018
+- **3993014**: Real Property in Duchesne County 00-0026-4378
+  - Price: $3,819.67
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 4.58
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993014
+- **3993013**: Real Property in Duchesne County 00-0026-3925 & 00-0026-3933
+  - Price: $1,305.36
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.92
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993013
+- **3993011**: Real Property in Duchesne County 00-0021-6204
+  - Price: $1,084.94
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993011
+- **3993008**: Real Property in Duchesne County 00-0020-8326
+  - Price: $576.64
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.31
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993008
+- **3993005**: Real Property in Duchesne County 00-0020-5348, 5355, 5363, 5371 & 5389
+  - Price: $2,619.65
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.95
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993005
+- **3993000**: Real Property in Duchesne County 00-0020-2204 & 00-0020-2212
+  - Price: $1,047.86
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.38
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3993000
+- **3992994**: Real Property in Duchesne County 00-0020-1883
+  - Price: $523.93
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.19
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992994
+- **3992992**: Real Property in Duchesne County 00-0019-9590
+  - Price: $519.40
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.18
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992992
+- **3992988**: Real Property in Duchesne County 00-0019-7768
+  - Price: $516.17
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.17
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992988
+- **3992986**: Real Property in Duchesne County 00-0019-1753
+  - Price: $523.93
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.19
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992986
+- **3992982**: Real Property in Duchesne County 00-0019-9590
+  - Price: $519.40
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.18
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992982
+- **3992977**: Real Property in Duchesne County 00-0019-7768
+  - Price: $516.17
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.17
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992977
+- **3992973**: Real Property in Duchesne County 00-0019-1753
+  - Price: $523.93
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.19
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992973
+- **3992970**: Real Property in Duchesne County 00-0018-6688 & 00-0018-6696
+  - Price: $1,019.52
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.32
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992970
+- **3992963**: Real Property in Duchesne County 00-0018-3081
+  - Price: $1,562.91
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.16
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992963
+- **3992961**: Real Property in Duchesne County 00-0018-2265
+  - Price: $1,410.04
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992961
+- **3992956**: Real Property in Duchesne County 00-0018-2257
+  - Price: $1,411.75
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.03
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992956
+- **3992952**: Real Property in Duchesne County 00-0018-0228
+  - Price: $7,057.38
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992952
+- **3992948**: Real Property in Duchesne County 00-0017-5335
+  - Price: $1,676.82
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.26
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992948
+- **3992947**: Real Property in Duchesne County 00-0017-1300
+  - Price: $1,907.60
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992947
+- **3992945**: Real Property in Duchesne County 00-0016-0535
+  - Price: $563.73
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.22
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992945
+- **3992939**: Real Property in Duchesne County 00-0015-6152 & 00-0015-6418
+  - Price: $1,164.53
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.52
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992939
+- **3992922**: Real Property in Duchesne County 00-0015-2433
+  - Price: $574.86
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.25
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992922
+- **3992914**: Real Property in Duchesne County 00-0015-0486
+  - Price: $2,157.78
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.48
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992914
+- **3992910**: Real Property in Duchesne County 00-0015-0288
+  - Price: $2,157.78
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.32
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992910
+- **3992908**: Real Property in Duchesne County 00-0014-9389
+  - Price: $2,176.85
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.53
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992908
+- **3992904**: Real Property in Duchesne County 00-0014-6229
+  - Price: $3,323.63
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.02
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992904
+- **3992897**: Real Property in Duchesne County 00-0014-1550
+  - Price: $3,154.46
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 9.80
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992897
+- **3992893**: Real Property in Duchesne County 00-0014-1360
+  - Price: $3,188.42
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 9.80
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992893
+- **3992892**: Real Property in Duchesne County 00-00013-5321
+  - Price: $1,500.99
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.10
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992892
+- **3992889**: Real Property in Duchesne County 00-0013-4845
+  - Price: $1,490.68
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992889
+- **3992887**: Real Property in Duchesne County 00-0013-0579
+  - Price: $459.18
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.50
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992887
+- **3992884**: Real Property in Duchesne County 00-0012-8961 & 00-0012-8979
+  - Price: $918.04
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 1.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992884
+- **3992881**: Real Property in Duchesne County 00-0012-3467 & 00-0012-3475
+  - Price: $918.36
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 1.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992881
+- **3992878**: Real Property in Duchesne County 00-0012-3103
+  - Price: $459.18
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.50
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992878
+- **3992874**: Real Property in Duchesne County 00-0010-9250
+  - Price: $1,298.19
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 12.50
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992874
+- **3992868**: Real Property in Duchesne County 00-0010-8302
+  - Price: $768.61
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992868
+- **3992863**: Real Property in Duchesne County 00-0009-6127
+  - Price: $3,875.92
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 80.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992863
+- **3992758**: Real Property in Duchesne County 00-0009-2035
+  - Price: $823.66
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 1.68
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992758
+- **3992742**: Real Property in Duchesne County 00-0008-7613
+  - Price: $2,145.05
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 6.60
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992742
+- **3992740**: Real Property in Duchesne County 00-0008-7274
+  - Price: $3,563.64
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 6.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992740
+- **3992738**: Real Property in Duchesne County 00-0008-5484
+  - Price: $1,572.70
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 10.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992738
+- **3992736**: Real Property in Duchesne County 00-0008-4669
+  - Price: $1,034.66
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992736
+- **3992734**: Real Property in Duchesne County 00-0008-2432
+  - Price: $2,866.66
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.01
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992734
+- **3992729**: Real Property in Duchesne County 00-0008-2077
+  - Price: $3,592.15
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 5.00
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992729
+- **3992726**: Real Property in Duchesne County 00-0007-9628
+  - Price: $1,757.42
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 13.73
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992726
+- **3992722**: Real Property in Duchesne County 00-0003-3898
+  - Price: $395.67
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.17
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992722
+- **3992719**: Real Property in Duchesne County 00-0001-9541
+  - Price: $22,421.39
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.18
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992719
+- **3992676**: Real Property in Duchesne County 00-0000-5441
+  - Price: $562.56
+  - End Date: May 28, 2026 05:00 PM MDT
+  - Status: Has Not Started
+  - Parcel: Viewer
+  - Acres: 0.21
+  - Address: 300 Bid Deposit via Credit Card will be due at the time of placing your first bid.
+  - URL: https://www.publicsurplus.com/sms/all,ut/auction/view?auc=3992676

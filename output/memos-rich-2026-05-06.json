@@ -1,0 +1,213 @@
+[
+  {
+    "county": "rich",
+    "parcelId": "36-05-130-0004",
+    "headline": "Rich – 36-05-130-0004 – unknown — 71.9× opening bid vs market value – Recommendation: GO",
+    "recommendation": "GO",
+    "maxBidInclusivePremium": 127000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 3,
+      "recency": 3,
+      "propertyQuality": 2,
+      "dataCompleteness": 3,
+      "total": 15
+    },
+    "keyFacts": {
+      "owner": "TAYLOR, SHERRY & ALLEN",
+      "subdivision": "OMEGA SUB",
+      "acres": 0.28,
+      "class": "unknown",
+      "openingBid": 9274.29,
+      "buyersPremiumPercent": 5,
+      "estMarketValue": 666926,
+      "locationSummary": "Rich County — Bear Lake / Garden City area (remote recreational)",
+      "titleSummary": {
+        "hasDeedRecords": false,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": "No records in index since coverage start — clean by absence"
+      }
+    },
+    "good": [
+      "Total opening cost ($9,738 with 5% premium) is ~99% below estimated market value of $666,926 — strong paper equity of $657,188.",
+      "No recorded documents in county index since 2019-01-01 — property appears clean by absence of encumbrances.",
+      "Existing 1,702 sq ft structure (built 2002) — improvements likely reduce time-to-use and utility setup costs.",
+      "Data coverage is strong: auction bid, assessor/market value, and title index all present."
+    ],
+    "bad": [
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Rich County parcels are often remote recreational land — verify year-round road access, power availability, and buildability before bidding.",
+      "5 unresolved data gap(s) in pipeline: property_type, assessed_value, property_address."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Enter the auction with a firm cap of $127,000 all-in (including 5% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:29:26.068Z",
+      "propertyId": "07a73f5f-c788-49b1-89d7-8bfde4c2ad87",
+      "investability_v2": 61,
+      "confidence_pct": 60
+    }
+  },
+  {
+    "county": "rich",
+    "parcelId": "37-17-010-0028",
+    "headline": "Rich – 37-17-010-0028 – unknown — 32.7× opening bid vs market value – Recommendation: GO",
+    "recommendation": "GO",
+    "maxBidInclusivePremium": 51500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 3,
+      "recency": 3,
+      "propertyQuality": 2,
+      "dataCompleteness": 3,
+      "total": 15
+    },
+    "keyFacts": {
+      "owner": "HUMBERT, STEVEN T & JEPPSON, LISA",
+      "subdivision": "VISTA GRANDE ESTATES SUB",
+      "acres": null,
+      "class": "unknown",
+      "openingBid": 8269.05,
+      "buyersPremiumPercent": 5,
+      "estMarketValue": 270290,
+      "locationSummary": "Rich County — Bear Lake / Garden City area (remote recreational)",
+      "titleSummary": {
+        "hasDeedRecords": false,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": "No records in index since coverage start — clean by absence"
+      }
+    },
+    "good": [
+      "Total opening cost ($8,683 with 5% premium) is ~97% below estimated market value of $270,290 — strong paper equity of $261,607.",
+      "No recorded documents in county index since 2019-01-01 — property appears clean by absence of encumbrances.",
+      "Existing 1,026 sq ft structure (built 1973) — improvements likely reduce time-to-use and utility setup costs.",
+      "Data coverage is strong: auction bid, assessor/market value, and title index all present."
+    ],
+    "bad": [
+      "Parcel size and physical characteristics are unknown — check assessor or GIS records.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Rich County parcels are often remote recreational land — verify year-round road access, power availability, and buildability before bidding.",
+      "6 unresolved data gap(s) in pipeline: lot_size_sqft, property_type, assessed_value."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Enter the auction with a firm cap of $51,500 all-in (including 5% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:29:26.068Z",
+      "propertyId": "9d74b0c2-bbef-4f2a-a056-8cb7883e0bbb",
+      "investability_v2": 57,
+      "confidence_pct": 50
+    }
+  },
+  {
+    "county": "rich",
+    "parcelId": "36-04-050-0022",
+    "headline": "Rich – 36-04-050-0022 – unknown — 56.6× opening bid vs market value – Recommendation: GO",
+    "recommendation": "GO",
+    "maxBidInclusivePremium": 20000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 3,
+      "recency": 3,
+      "propertyQuality": 2,
+      "dataCompleteness": 3,
+      "total": 15
+    },
+    "keyFacts": {
+      "owner": "SEALE, HENRY & CATHERINE",
+      "subdivision": "SWEETWATER GOLF COURSE SUB",
+      "acres": 0.3,
+      "class": "unknown",
+      "openingBid": 1856.02,
+      "buyersPremiumPercent": 5,
+      "estMarketValue": 105000,
+      "locationSummary": "Rich County — Bear Lake / Garden City area (remote recreational)",
+      "titleSummary": {
+        "hasDeedRecords": false,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": "No records in index since coverage start — clean by absence"
+      }
+    },
+    "good": [
+      "Total opening cost ($1,949 with 5% premium) is ~98% below estimated market value of $105,000 — strong paper equity of $103,051.",
+      "No recorded documents in county index since 2019-01-01 — property appears clean by absence of encumbrances.",
+      "Data coverage is strong: auction bid, assessor/market value, and title index all present."
+    ],
+    "bad": [
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Rich County parcels are often remote recreational land — verify year-round road access, power availability, and buildability before bidding.",
+      "7 unresolved data gap(s) in pipeline: year_built, building_sqft, property_type."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Enter the auction with a firm cap of $20,000 all-in (including 5% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:29:26.068Z",
+      "propertyId": "0deb8292-477b-4fe3-9b9d-5ee39378b2d3",
+      "investability_v2": 50.5,
+      "confidence_pct": 40
+    }
+  },
+  {
+    "county": "rich",
+    "parcelId": "41-30-090-0106",
+    "headline": "Rich – 41-30-090-0106 – unknown — 42.3× opening bid vs market value – Recommendation: GO",
+    "recommendation": "GO",
+    "maxBidInclusivePremium": 35000,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 3,
+      "recency": 3,
+      "propertyQuality": 2,
+      "dataCompleteness": 3,
+      "total": 15
+    },
+    "keyFacts": {
+      "owner": "TOONE, JAMES AVARD",
+      "subdivision": "EAGLE FEATHER AT SHUNDAHAI SUB",
+      "acres": 1.55,
+      "class": "unknown",
+      "openingBid": 4374.15,
+      "buyersPremiumPercent": 5,
+      "estMarketValue": 185000,
+      "locationSummary": "Rich County — Bear Lake / Garden City area (remote recreational)",
+      "titleSummary": {
+        "hasDeedRecords": false,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": "No records in index since coverage start — clean by absence"
+      }
+    },
+    "good": [
+      "Total opening cost ($4,593 with 5% premium) is ~98% below estimated market value of $185,000 — strong paper equity of $180,407.",
+      "No recorded documents in county index since 2019-01-01 — property appears clean by absence of encumbrances.",
+      "1.55-acre unknown parcel — meaningful land size with development or hold potential.",
+      "Data coverage is strong: auction bid, assessor/market value, and title index all present."
+    ],
+    "bad": [
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "Rich County parcels are often remote recreational land — verify year-round road access, power availability, and buildability before bidding.",
+      "7 unresolved data gap(s) in pipeline: year_built, building_sqft, property_type."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Enter the auction with a firm cap of $35,000 all-in (including 5% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:29:26.068Z",
+      "propertyId": "47ba6f47-fe91-4f34-9739-a6c6c548ac35",
+      "investability_v2": 50.5,
+      "confidence_pct": 40
+    }
+  }
+]

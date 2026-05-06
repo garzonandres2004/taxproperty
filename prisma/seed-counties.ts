@@ -56,7 +56,7 @@ async function main() {
     update: {}
   })
 
-  // Rich County (placeholder for future)
+  // Rich County
   await prisma.countyConfig.upsert({
     where: { county_name: 'rich' },
     create: {
@@ -68,15 +68,21 @@ async function main() {
       auction_url: 'https://www.richcountyut.org/',
       auction_format: 'bid_up',
       sale_type: 'deed',
-      parcel_api_url: null,
+      parcel_api_url: 'https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/Parcels_Rich_LIR/FeatureServer/0/query',
+      parcel_api_layer: 'Parcels_Rich_LIR',
       zoning_api_url: null,
-      land_records_url: null,
+      land_records_url: 'https://www.richcountyut.org/recorder',
       land_records_requires_auth: false,
-      csv_format_notes: 'Contact county clerk for data format. Rural county with smaller sales.',
-      notes: 'Rural county with lower property volume. Smaller sale expected. Contact Clerk directly for CSV/data access.',
-      is_active: false,
+      csv_format_notes: 'Contact Rich County Clerk/Auditor for current CSV format. Rural county with smaller sales.',
+      notes: 'Active - AGRC LIR enabled. Sale procedures TBD - verify with Rich County Clerk before bidding.',
+      is_active: true,
     },
-    update: {}
+    update: {
+      parcel_api_url: 'https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/Parcels_Rich_LIR/FeatureServer/0/query',
+      parcel_api_layer: 'Parcels_Rich_LIR',
+      is_active: true,
+      notes: 'Active - AGRC LIR enabled. Sale procedures TBD - verify with Rich County Clerk before bidding.',
+    }
   })
 
   // Sanpete County (placeholder for future)

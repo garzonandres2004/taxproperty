@@ -1,0 +1,54 @@
+[
+  {
+    "county": "tooele",
+    "parcelId": "0610100015",
+    "headline": "Tooele – 0610100015 – House — 21.1× opening bid vs market value – Recommendation: CAUTION",
+    "recommendation": "CAUTION",
+    "maxBidInclusivePremium": 24500,
+    "scores": {
+      "equity": 4,
+      "titleRisk": 2,
+      "recency": 1,
+      "propertyQuality": 3,
+      "dataCompleteness": 2,
+      "total": 12
+    },
+    "keyFacts": {
+      "owner": "JUNE OSBAHR JT",
+      "subdivision": null,
+      "acres": 1,
+      "class": "House",
+      "openingBid": 3892.64,
+      "buyersPremiumPercent": 8,
+      "estMarketValue": 82131,
+      "locationSummary": "Tooele County — Tooele Valley / Grantsville / Stansbury Park area",
+      "titleSummary": {
+        "hasDeedRecords": null,
+        "documentCount5yr": null,
+        "lastTransferType": null,
+        "notes": null
+      }
+    },
+    "good": [
+      "Total opening cost ($4,204 with 8% premium) is ~95% below estimated market value of $82,131 — strong paper equity of $77,927.",
+      "1.00-acre house parcel — meaningful land size with development or hold potential."
+    ],
+    "bad": [
+      "No title research data yet — recorder search has not been run. Title risk is unknown.",
+      "Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.",
+      "Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.",
+      "3 unresolved data gap(s) in pipeline: assessed_value, zoning, title_signals."
+    ],
+    "nextActions": [
+      "Verify lot shape, road access, and neighboring improvements via GIS satellite imagery (Google Earth or county parcel viewer).",
+      "Run title search via EagleWeb at erecording.tooeleco.gov to assess deed history and lien status before bidding.",
+      "Enter the auction with a firm cap of $24,500 all-in (including 8% buyer premium). Do not exceed this in the heat of bidding."
+    ],
+    "_meta": {
+      "generatedAt": "2026-05-06T04:25:44.743Z",
+      "propertyId": "0cd8f749-17be-4546-bebd-ebd8171af7f0",
+      "investability_v2": 60,
+      "confidence_pct": 70
+    }
+  }
+]
