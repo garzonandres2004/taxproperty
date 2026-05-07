@@ -13,8 +13,14 @@ const scoreRanges = [
 
 export async function GET() {
   try {
+    // Debug logging for Vercel
+    console.log('[Dashboard API] Starting request...')
+    console.log('[Dashboard API] DATABASE_URL:', process.env.DATABASE_URL?.substring(0, 50) + '...')
+    console.log('[Dashboard API] VERCEL:', process.env.VERCEL)
+
     // Aggregate stats
     const totalProperties = await prisma.property.count({ where: { is_seed: false } })
+    console.log('[Dashboard API] Total properties:', totalProperties)
     const highScoring = await prisma.property.count({
       where: { is_seed: false, investability_score: { gte: 80 } },
     })
@@ -185,7 +191,13 @@ export async function GET() {
       researchQueue,
     })
   } catch (error) {
-    console.error('Error fetching dashboard data:', error)
-    return NextResponse.json({ error: 'Failed to fetch dashboard data' }, { status: 500 })
+    console.error('[Dashboard API] Error:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const errorStack = error instanceof Error ? error.stack : ''
+    return NextResponse.json({
+      error: 'Failed to fetch dashboard data',
+      details: errorMessage,
+      stack: process.env.NODE_ENV === 'development' ? errorStack : undefined
+    }, { status: 500 })
   }
 }
