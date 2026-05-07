@@ -12,8 +12,9 @@ export function middleware(request: NextRequest) {
   const authCookie = request.cookies.get(COOKIE_NAME)
   const isAuthenticated = authCookie?.value === 'true'
 
-  // Allow access to private login page, API auth, and static files
+  // Allow access to public pages, login, API, and static files
   if (
+    request.nextUrl.pathname === '/' ||
     request.nextUrl.pathname === '/private' ||
     request.nextUrl.pathname === '/api/auth/simple' ||
     request.nextUrl.pathname.startsWith('/_next/') ||

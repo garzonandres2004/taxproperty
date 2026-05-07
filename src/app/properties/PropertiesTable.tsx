@@ -185,7 +185,7 @@ export default function PropertiesTable({ properties }: PropertiesTableProps) {
                 </td>
                 <td className="px-4 py-3">
                   <Link
-                    href={`/properties/${prop.id}`}
+                    href={`/property/${prop.id}`}
                     className="text-blue-600 hover:underline font-medium"
                   >
                     {prop.parcel_number}

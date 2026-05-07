@@ -86,7 +86,9 @@ function parseAttrs(attrs: Record<string, unknown>): AgrcParcelData {
     owner_name: (attrs.NAME as string | null) ?? null,
     situs_address: (attrs.PARCEL_ADD as string | null) ?? null,
     city: (attrs.PARCEL_CITY as string | null) ?? null,
-    legal_description: (attrs.LEGAL_DESC as string | null) ?? null,
+    legal_description: (attrs.LEGAL_DESC as string | null)
+      ?? (attrs.SUBDIV_NAME ? `Subdivision: ${attrs.SUBDIV_NAME}` : null)
+      ?? null,
     acres: typeof attrs.PARCEL_ACRES === 'number' ? attrs.PARCEL_ACRES : null,
     market_value: typeof attrs.TOTAL_MKT_VALUE === 'number' ? Math.round(attrs.TOTAL_MKT_VALUE) : null,
     land_value: typeof attrs.LAND_MKT_VALUE === 'number' ? Math.round(attrs.LAND_MKT_VALUE) : null,
@@ -122,10 +124,16 @@ export async function lookupAgrc(countySlug: string, parcelId: string): Promise<
     if (attrs) return parseAttrs(attrs)
   }
 
-  // Attempt 5: LIKE prefix on numeric form (first 8 chars) — for multi-segment IDs
+  // Attempt 5: LIKE prefix on numeric form (first 8 chars) — for multi-segment numeric IDs
   const numericPrefix = (numericId || parcelId.replace(/[^0-9]/g, '')).slice(0, 8)
   if (numericPrefix.length >= 6) {
     attrs = await queryAgrc(layerUrl, `PARCEL_ID LIKE '${numericPrefix}%'`)
+    if (attrs) return parseAttrs(attrs)
+  }
+
+  // Attempt 6: LIKE prefix on raw parcel ID — catches trailing-char variants (Juab XE00-5298 → XE00-5298-)
+  if (parcelId.length >= 6 && /[A-Za-z]/.test(parcelId)) {
+    attrs = await queryAgrc(layerUrl, `PARCEL_ID LIKE '${parcelId}%'`)
     if (attrs) return parseAttrs(attrs)
   }
 

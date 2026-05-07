@@ -95,18 +95,23 @@ interface RouteParams {
   params: Promise<{ id: string }>
 }
 
+// Scraper module path - outside bundle, only used in development
+const SCRAPER_PATH = '../../../scripts/scrapers'
+
 // Load scrapers dynamically (server-only, playwright not available in production)
 async function loadScrapers() {
   if (process.env.NODE_ENV === 'production') {
     return null
   }
   try {
-    // Use webpackIgnore to prevent build-time analysis of these imports
-    const [{ scrapeTooeleEagleWeb }, { scrapeRichCounty, saveRichTitleSignals }] = await Promise.all([
-      import(/* webpackIgnore: true */ '@/lib/title/scrapers/tooele-eagleweb'),
-      import(/* webpackIgnore: true */ '@/lib/title/scrapers/rich-county')
-    ])
-    return { scrapeTooeleEagleWeb, scrapeRichCounty, saveRichTitleSignals }
+    // Dynamic imports with paths that can't be statically analyzed
+    const tooeleModule = await import(`${SCRAPER_PATH}/tooele-eagleweb`)
+    const richModule = await import(`${SCRAPER_PATH}/rich-county`)
+    return {
+      scrapeTooeleEagleWeb: tooeleModule.scrapeTooeleEagleWeb,
+      scrapeRichCounty: richModule.scrapeRichCounty,
+      saveRichTitleSignals: richModule.saveRichTitleSignals
+    }
   } catch (error) {
     console.error('Failed to load scrapers:', error)
     return null

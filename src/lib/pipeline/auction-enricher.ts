@@ -6,10 +6,12 @@ import * as fs from 'fs'
 import * as path from 'path'
 import * as crypto from 'crypto'
 import { lookupAgrc } from './agrc-lookup'
+import { runCountyEnricher } from './enrichers'
 import type {
   AuctionListing,
   FullPropertyRecord,
   AgrcParcelData,
+  AssessorEnrichment,
   MissingDataFlag,
   TitleSnapshot,
   CountyReadiness,
@@ -309,13 +311,23 @@ export async function enrichListing(
 
   if (!agrcHit) flags.push('NO_AGRC_MATCH')
 
-  // Resolve physical fields: AGRC preferred, then CSV hints
-  const acres = agrcData?.acres ?? listing.acres_hint
-  const marketValue = agrcData?.market_value ?? null
+  // County-specific enricher — runs when AGRC is missing owner name, value, or legal data.
+  // AGRC never provides owner names (NAME field absent in all Utah LIR layers), so this
+  // always runs for counties that have a registered enricher.
+  let assessorData: AssessorEnrichment | null = null
+  const needsEnrichment = !agrcData?.owner_name || !agrcHit || !agrcData?.market_value
+  if (needsEnrichment) {
+    assessorData = await runCountyEnricher(listing, agrcData?.raw_attributes ?? null)
+    if (rateLimitMs > 0) await new Promise(r => setTimeout(r, rateLimitMs))
+  }
+
+  // Resolve physical fields: AGRC preferred, county enricher fallback, then CSV hints
+  const acres = agrcData?.acres ?? assessorData?.acres ?? listing.acres_hint
+  const marketValue = agrcData?.market_value ?? assessorData?.market_value ?? null
   const landValue = agrcData?.land_value ?? null
   const buildingSqft = agrcData?.building_sqft ?? null
   const yearBuilt = agrcData?.year_built ?? null
-  const agrcClass = agrcData?.property_class ?? null
+  const agrcClass = agrcData?.property_class ?? assessorData?.property_class ?? null
 
   if (!marketValue) flags.push('NO_MARKET_VALUE')
   if (!agrcData?.latitude) flags.push('NO_COORDINATES')
@@ -327,7 +339,7 @@ export async function enrichListing(
   if (propertyType === 'environmental') flags.push('ENVIRONMENTAL_PARCEL')
   if (propertyType === 'street_parcel') flags.push('STREET_PARCEL')
 
-  const subdivision = extractSubdivision(agrcData?.legal_description ?? null)
+  const subdivision = extractSubdivision(agrcData?.legal_description ?? assessorData?.legal_description ?? null)
   const pattern = subdivisionPattern(subdivision, listing.county, propertyType, acres)
   const utilities = likelyUtilities(listing.county, pattern, acres)
   const hoaFlag = pattern === 'recreational_hoa' ? true : null
@@ -379,9 +391,9 @@ export async function enrichListing(
     parcel_ids: listing.parcel_ids,
     is_multi_parcel: listing.parcel_ids.length > 1,
 
-    owner_name: agrcData?.owner_name ?? null,
-    situs_address: agrcData?.situs_address ?? listing.address_hint ?? null,
-    legal_description: agrcData?.legal_description ?? null,
+    owner_name: agrcData?.owner_name ?? assessorData?.owner_name ?? null,
+    situs_address: agrcData?.situs_address ?? assessorData?.situs_address ?? listing.address_hint ?? null,
+    legal_description: agrcData?.legal_description ?? assessorData?.legal_description ?? null,
     subdivision,
     acres,
     building_sqft: buildingSqft,
@@ -422,6 +434,7 @@ export async function enrichListing(
     agrc_hit: agrcHit,
 
     agrc_data: agrcData,
+    assessor_enrichment: assessorData,
     listing_data: listing,
   }
 }

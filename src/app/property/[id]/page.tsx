@@ -289,7 +289,7 @@ export default async function PropertyDetailPage({
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/properties/${property.id}/edit`}>
+          <Link href={`/property/${property.id}/edit`}>
             <Button variant="outline">Edit</Button>
           </Link>
           <Link href="/properties">
@@ -597,7 +597,7 @@ export default async function PropertyDetailPage({
 
               <div className="mt-4 flex gap-2">
                 <Button variant="outline" size="sm" asChild>
-                  <Link href={`/properties/${id}/zoning/edit`}>Edit Zoning</Link>
+                  <Link href={`/property/${id}/zoning/edit`}>Edit Zoning</Link>
                 </Button>
                 {zoningProfile?.zoning_map_url && (
                   <Button variant="outline" size="sm" asChild>
@@ -706,7 +706,7 @@ export default async function PropertyDetailPage({
                               </div>
                               {taxSaleProperty ? (
                                 <Link
-                                  href={`/properties/${taxSaleProperty.id}`}
+                                  href={`/property/${taxSaleProperty.id}`}
                                   className="text-xs text-blue-600 hover:underline"
                                 >
                                   View →

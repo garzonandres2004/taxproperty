@@ -99,106 +99,98 @@ export async function fetchSanpeteAuctionList(): Promise<{ auctionId: string; pa
 }
 
 /**
- * Fetch detailed auction data from a specific auction page
+ * Fetch detailed auction data from a specific auction page.
+ *
+ * Page structure (paragraph sequence):
+ *   "Parcel Number: XXXXXXXXXX"
+ *   "Account Number: RXXXXXX"
+ *   (optional filler paragraphs)
+ *   "XXXXXXXXXX"             ← internal parcel ID, unlabeled
+ *   "OWNER NAME ETAL JT"     ← owner name, unlabeled, immediately after internal parcel
+ *   "Last known mailing address:"
+ *   "STREET"
+ *   "CITY, ST ZIP"
+ *   "Legal Description:"
+ *   "BEG 2.31 CH W, ..."     ← legal text
+ *   "Total Due: $X,XXX.XX"
  */
 export async function fetchSanpeteAuctionDetail(auctionId: string): Promise<SanpeteAuctionData | null> {
   const url = `${PUBLIC_SURPLUS_BASE}/sms/sanpeteco,ut/auction/view?auc=${auctionId}`
 
   try {
     const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
-      }
+      headers: { 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36' }
     })
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`)
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
     const html = await response.text()
     const $ = cheerio.load(html)
 
-    // Extract fields from the page
     const data: Partial<SanpeteAuctionData> = { auction_id: auctionId }
 
-    // Helper to find field by label
-    const findField = (labelPattern: RegExp): string => {
-      const text = $('body').text()
-      const lines = text.split('\n')
-      for (const line of lines) {
-        const clean = line.trim()
-        if (labelPattern.test(clean)) {
-          const match = clean.match(/:\s*(.+)$/) || clean.match(/\)\s*(.+)$/)
-          if (match) return match[1].trim()
+    // Collect all non-empty paragraph texts in document order
+    const paras: string[] = []
+    $('p').each((_, el) => {
+      const text = $(el).text().replace(/\s+/g, ' ').trim()
+      if (text) paras.push(text)
+    })
+
+    let internalParcelIdx = -1
+
+    for (let i = 0; i < paras.length; i++) {
+      const p = paras[i]
+
+      // "Parcel Number: 0000032599"
+      const parcelM = p.match(/^Parcel Number\s*:\s*(\S+)/i)
+      if (parcelM) { data.parcel_number = parcelM[1]; continue }
+
+      // "Account Number: R015616"
+      const accountM = p.match(/^Account Number\s*:\s*(\S+)/i)
+      if (accountM) { data.account_number = accountM[1]; continue }
+
+      // "Bid Deposit is $194.70..."
+      const depositM = p.match(/Bid Deposit is \$?([\d,]+\.?\d*)/i)
+      if (depositM) { data.bid_deposit = parseFloat(depositM[1].replace(/,/g, '')); continue }
+
+      // Internal parcel ID paragraph: standalone alphanumeric string (no spaces, 6+ chars)
+      // Appears after account number. Owner follows immediately.
+      if (data.account_number && internalParcelIdx === -1 && /^[A-Z0-9]{5,}$/i.test(p)) {
+        internalParcelIdx = i
+        // Next paragraph is the owner name
+        const ownerCandidate = paras[i + 1] ?? ''
+        if (
+          ownerCandidate.length > 2 &&
+          !/^Last known/i.test(ownerCandidate) &&
+          !/^Legal/i.test(ownerCandidate) &&
+          !/^Total Due/i.test(ownerCandidate) &&
+          !/^For more/i.test(ownerCandidate)
+        ) {
+          data.owner_name = ownerCandidate.replace(/\s+/g, ' ').trim()
         }
+        continue
       }
-      return ''
-    }
 
-    // Parse from page text
-    const pageText = $('body').text()
-
-    // Parcel Number
-    const parcelMatch = pageText.match(/Parcel Number["']?\s*[:\)]\s*["']?(\d+)/i)
-    if (parcelMatch) data.parcel_number = parcelMatch[1].padStart(10, '0')
-
-    // Account Number
-    const accountMatch = pageText.match(/Account Number["']?\s*[:\)]\s*["']?([A-Z0-9]+)/i)
-    if (accountMatch) data.account_number = accountMatch[1]
-
-    // Owner Name - try multiple patterns
-    const ownerPatterns = [
-      /Owner["']?\s*[:\)]\s*["']?([^\n]+?)(?=\s*(?:Account|Address|Parcel)|$)/i,
-      /Current Owner["']?\s*[:\)]\s*["']?([^\n]+?)(?=\s*(?:Account|Address|Parcel)|$)/i,
-      /Taxpayer["']?\s*[:\)]\s*["']?([^\n]+?)(?=\s*(?:Account|Address|Parcel)|$)/i
-    ]
-
-    for (const pattern of ownerPatterns) {
-      const ownerMatch = pageText.match(pattern)
-      if (ownerMatch && ownerMatch[1].trim().length > 2) {
-        data.owner_name = ownerMatch[1].trim().replace(/\s+/g, ' ')
-        break
+      // "Last known mailing address:" — collect next non-section lines as address
+      if (/^Last known mailing address\s*:?\s*$/i.test(p)) {
+        const lines: string[] = []
+        for (let j = i + 1; j < Math.min(i + 6, paras.length); j++) {
+          if (/^Legal Description/i.test(paras[j]) || /^Total Due/i.test(paras[j]) || /^For more/i.test(paras[j])) break
+          lines.push(paras[j])
+        }
+        if (lines.length) data.mailing_address = lines.join(', ')
+        continue
       }
-    }
 
-    // Legal Description
-    const legalMatch = pageText.match(/Legal Description["']?\s*[:\)]\s*["']?([^\n]+)/i)
-    if (legalMatch) data.legal_description = legalMatch[1].trim()
-
-    // Total Due / Opening Bid - look for dollar amounts in various formats
-    // Try multiple patterns
-    const pricePatterns = [
-      /Total Due[^\n]*?\$?([\d,]+\.\d{2})/i,
-      /Opening Bid[^\n]*?\$?([\d,]+\.\d{2})/i,
-      /Current Price[^\n]*?\$?([\d,]+\.\d{2})/i,
-      /\$([\d,]+\.\d{2})/,
-      /Price:\s*\$?([\d,]+\.?\d*)/i
-    ]
-
-    for (const pattern of pricePatterns) {
-      const priceMatch = pageText.match(pattern)
-      if (priceMatch) {
-        data.total_due = parseFloat(priceMatch[1].replace(/,/g, ''))
-        break
+      // "Legal Description:" is its own paragraph; content is the next
+      if (/^Legal Description\s*:?\s*$/i.test(p)) {
+        data.legal_description = paras[i + 1] ?? ''
+        continue
       }
-    }
 
-    // Bid Deposit - typically 5% of opening bid
-    if (data.total_due) {
-      data.bid_deposit = Math.round(data.total_due * 0.05 * 100) / 100
-    }
-
-    // Auction dates
-    const dateMatch = pageText.match(/Start["']?\s*[:\)]\s*["']?([^\n]+)/i)
-    if (dateMatch) {
-      const startDate = new Date(dateMatch[1].trim())
-      if (!isNaN(startDate.getTime())) data.auction_start = startDate
-    }
-
-    const endMatch = pageText.match(/End["']?\s*[:\)]\s*["']?([^\n]+)/i)
-    if (endMatch) {
-      const endDate = new Date(endMatch[1].trim())
-      if (!isNaN(endDate.getTime())) data.auction_end = endDate
+      // "Total Due: $3,894.09"
+      const totalM = p.match(/^Total Due\s*:\s*\$?([\d,]+\.?\d*)/i)
+      if (totalM) { data.total_due = parseFloat(totalM[1].replace(/,/g, '')); continue }
     }
 
     // PDF Attachment
@@ -207,13 +199,15 @@ export async function fetchSanpeteAuctionDetail(auctionId: string): Promise<Sanp
       data.pdf_url = pdfLink.startsWith('http') ? pdfLink : `${PUBLIC_SURPLUS_BASE}${pdfLink}`
     }
 
-    // Parse legal description for subdivision and acres
+    // Parse acres from legal description
     if (data.legal_description) {
-      const acresMatch = data.legal_description.match(/(\d+\.?\d*)\s*(?:AC|acres?)/i)
-      if (acresMatch) data.acres = parseFloat(acresMatch[1])
+      const acresM = data.legal_description.match(/CONT\s+([\d.]+)\s*AC/i)
+        ?? data.legal_description.match(/([\d.]+)\s*(?:AC|ACRES?)\b/i)
+      if (acresM) data.acres = parseFloat(acresM[1])
 
-      const subdivisionMatch = data.legal_description.match(/(?:LOT\s+\d+,?\s+)?(?:SEC?\s*[A-Z]+,?\s+)?([^,]+)(?:\s+CONT)?/i)
-      if (subdivisionMatch) data.subdivision = subdivisionMatch[1].trim()
+      // Named subdivision: "HIDEAWAY VALLEY SUBDIVISION", "INDIAN RIDGE RANCH", etc.
+      const subM = data.legal_description.match(/\b([A-Z][A-Z\s]+(?:SUBDIVISION|RANCH|RIDGE|ESTATES|HILLS|PARK|RESORT|VILLAGE|ACRES))\b/i)
+      if (subM) data.subdivision = subM[1].trim()
     }
 
     return data as SanpeteAuctionData

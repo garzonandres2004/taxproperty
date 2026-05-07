@@ -917,7 +917,7 @@ export default function PropertiesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <Link href={`/properties/${property.county}/${property.parcel_number}`} className="flex flex-col">
+                      <Link href={`/memo/${property.county}/${property.parcel_number}`} className="flex flex-col">
                         <span className="text-xs font-mono font-bold text-slate-500 mb-0.5">
                           {property.parcel_number}
                         </span>
@@ -1038,7 +1038,7 @@ export default function PropertiesPage() {
                     </td>
                     <td className="px-6 py-4">
                       {property.titleAnalysis ? (
-                        <Link href={`/properties/${property.county}/${property.parcel_number}`}>
+                        <Link href={`/memo/${property.county}/${property.parcel_number}`}>
                           <div
                             className={cn(
                               'w-10 h-10 rounded-lg flex items-center justify-center font-black transition-transform group-hover:scale-110 border text-xs cursor-pointer',
@@ -1054,7 +1054,7 @@ export default function PropertiesPage() {
                         </Link>
                       ) : (
                         <Link
-                          href={`/properties/${property.county}/${property.parcel_number}`}
+                          href={`/memo/${property.county}/${property.parcel_number}`}
                           className="text-xs text-slate-400 hover:text-blue-600 underline"
                         >
                           Analyze
@@ -1104,7 +1104,7 @@ export default function PropertiesPage() {
                     <td className="px-6 py-4 text-right action-button">
                       <div className="flex items-center justify-end gap-2">
                         <Link
-                          href={`/properties/${property.county}/${property.parcel_number}`}
+                          href={`/memo/${property.county}/${property.parcel_number}`}
                           className="p-2 text-slate-300 hover:text-slate-900 transition-colors"
                         >
                           <ChevronRight size={20} />

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { ExternalLink, TrendingUp, Home, DollarSign, Edit2, Save, X } from 'lucide-react'
 import { formatCurrency } from '@/lib/ui-utils'
-import { calculateValueGap } from '@/lib/third-party-enrichment'
+import { calculateValueGap } from '@/lib/value-gap'
 
 interface MarketSignalsCardProps {
   propertyId: string

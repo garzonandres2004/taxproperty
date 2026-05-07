@@ -5,8 +5,26 @@ import { PrismaClient } from '@prisma/client'
 import { PhaseResult, PhaseStatus } from '../types'
 import { getRecorderEntry } from '../recorder-catalog'
 import { scanAndRecordDataGaps } from '../data-gaps'
-import { scrapeUtahCountyRecorder, saveTitleSignals } from '@/lib/title/scrapers/utah-county'
-import { scrapeRichCounty, saveRichTitleSignals } from '@/lib/title/scrapers/rich-county'
+import { scrapeDocumentList as scrapeUtahCountyRecorder, scrapeDocumentDetail } from '@/lib/title/utah-county-scraper'
+
+// Scraper module path - outside bundle, only used in development
+const SCRAPER_PATH = '../../../scripts/scrapers'
+
+// Rich County scraper uses Playwright - import dynamically only in development
+async function loadRichScraper() {
+  if (process.env.NODE_ENV === 'production') {
+    return null
+  }
+  try {
+    const scraper = await import(`${SCRAPER_PATH}/rich-county`)
+    return {
+      scrapeRichCounty: scraper.scrapeRichCounty,
+      saveRichTitleSignals: scraper.saveRichTitleSignals
+    }
+  } catch {
+    return null
+  }
+}
 
 export interface TitlePhaseOptions {
   dryRun?: boolean
@@ -92,6 +110,28 @@ export async function runTitlePhase(
 
     // Rich County: Playwright-based scraper (free guest login, DevExpress controls)
     if (property.county === 'rich' && property.parcel_number) {
+      const richScraper = await loadRichScraper()
+
+      if (!richScraper) {
+        result.status = 'partial'
+        result.notes.push('Rich County scraper not available in production — local development only')
+
+        if (!dryRun) {
+          await prisma.dataGap.upsert({
+            where: { property_id_phase_field: { property_id: propertyId, phase: 'title', field: 'title_signals' } },
+            create: {
+              property_id: propertyId, phase: 'title', field: 'title_signals',
+              reason: 'SCRAPER_UNAVAILABLE', level: 'C',
+              source_hint: `Rich County scraper requires Playwright - run locally for title signals`
+            },
+            update: { resolved: false }
+          })
+        }
+        result.dataGapsRecorded.push('title:title_signals')
+        result.durationMs = Date.now() - startTime
+        return result
+      }
+
       const email = process.env.RICH_COUNTY_RECORDER_EMAIL
       const password = process.env.RICH_COUNTY_RECORDER_PASSWORD
 
@@ -116,11 +156,11 @@ export async function runTitlePhase(
       }
 
       try {
-        const scrapeResult = await scrapeRichCounty(property.parcel_number)
+        const scrapeResult = await richScraper.scrapeRichCounty(property.parcel_number)
 
         if (scrapeResult) {
           if (!dryRun) {
-            await saveRichTitleSignals(prisma, propertyId, scrapeResult)
+            await richScraper.saveRichTitleSignals(prisma, propertyId, scrapeResult)
           }
           result.fieldsSet.push('title_signals')
           result.notes.push(`Rich County recorder: ${scrapeResult.rawDocuments.length} docs found, ${scrapeResult.documentCount5yr} in 5yr window`)
@@ -159,23 +199,58 @@ export async function runTitlePhase(
     // Level A: Utah County has direct scraper
     if (property.county === 'utah' && property.parcel_number) {
       try {
-        const scrapeResult = await scrapeUtahCountyRecorder(property.parcel_number)
+        const documents = await scrapeUtahCountyRecorder(property.parcel_number)
 
-        if (scrapeResult) {
+        if (documents && documents.length > 0) {
+          // Calculate basic title signals from documents
+          const docCount5yr = documents.length
+          const mortgageDocs = documents.filter(d => d.type?.toLowerCase().includes('mortgage')).length
+          const lienDocs = documents.filter(d => d.type?.toLowerCase().includes('lien') || d.type?.toLowerCase().includes('notice')).length
+          const releaseDocs = documents.filter(d => d.type?.toLowerCase().includes('release') || d.type?.toLowerCase().includes('satisfaction')).length
+          const latestDoc = documents[0]
+
+          // Simple red flag detection
+          const redFlags: string[] = []
+          if (lienDocs > releaseDocs) {
+            redFlags.push('Potentially unreleased liens')
+          }
+
           if (!dryRun) {
-            await saveTitleSignals(prisma, propertyId, scrapeResult)
+            // Save or update title signals
+            await prisma.titleSignals.upsert({
+              where: { property_id: propertyId },
+              create: {
+                property_id: propertyId,
+                document_count_5yr: docCount5yr,
+                mortgage_docs_found: mortgageDocs,
+                lien_docs_found: lienDocs,
+                release_docs_found: releaseDocs,
+                red_flags_count: redFlags.length,
+                data_source: 'utah_county_recorder',
+                scraped_at: new Date()
+              },
+              update: {
+                document_count_5yr: docCount5yr,
+                mortgage_docs_found: mortgageDocs,
+                lien_docs_found: lienDocs,
+                release_docs_found: releaseDocs,
+                red_flags_count: redFlags.length,
+                data_source: 'utah_county_recorder',
+                scraped_at: new Date()
+              }
+            })
           }
 
           result.fieldsSet.push('title_signals')
           result.notes.push(`Title signals scraped from Utah County Recorder`)
-          result.notes.push(`Documents found: ${scrapeResult.documentCount5yr}, Red flags: ${scrapeResult.redFlags.length}`)
+          result.notes.push(`Documents found: ${docCount5yr}, Red flags: ${redFlags.length}`)
 
-          if (scrapeResult.redFlags.length > 0) {
-            result.notes.push(`Red flags: ${scrapeResult.redFlags.join(', ')}`)
+          if (redFlags.length > 0) {
+            result.notes.push(`Red flags: ${redFlags.join(', ')}`)
           }
 
           if (verbose) {
-            console.log(`[Title Phase] Utah County: ${scrapeResult.documentCount5yr} docs, ${scrapeResult.redFlags.length} red flags`)
+            console.log(`[Title Phase] Utah County: ${docCount5yr} docs, ${redFlags.length} red flags`)
           }
         } else {
           result.status = 'partial'

@@ -50,7 +50,7 @@ export default function EditPropertyPage({
       })
 
       if (response.ok) {
-        router.push(`/properties/${params.id}`)
+        router.push(`/property/${params.id}`)
       } else {
         alert('Error updating property')
         setIsSubmitting(false)
@@ -74,7 +74,7 @@ export default function EditPropertyPage({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">Edit Property</h1>
-        <Link href={`/properties/${params.id}`}>
+        <Link href={`/property/${params.id}`}>
           <Button variant="outline">← Cancel</Button>
         </Link>
       </div>

@@ -68,6 +68,25 @@ export interface TitleSnapshot {
   source: string | null    // e.g. "eagleweb", "recorder_index", "none"
 }
 
+export interface AssessorEnrichment {
+  source: string | null           // "sanpete_publicsurplus" | "publicsurplus_detail" | etc.
+  fetched_at: string | null
+  owner_name: string | null
+  mailing_address: string | null  // owner's mailing address
+  situs_address: string | null    // property street address (from PS "Location:" label)
+  account_number: string | null
+  assessed_value: number | null
+  market_value: number | null
+  tax_year: number | null
+  taxes_owed: number | null       // annual tax bill or delinquent total from county
+  property_class: string | null
+  legal_description: string | null
+  acres: number | null
+  subdivision: string | null
+  source_url: string | null
+  notes: string | null
+}
+
 export interface FullPropertyRecord {
   // ── Identity ──────────────────────────────────────────────────────
   listing_id: string
@@ -128,5 +147,6 @@ export interface FullPropertyRecord {
 
   // ── Raw sources ────────────────────────────────────────────────────
   agrc_data: AgrcParcelData | null
+  assessor_enrichment: AssessorEnrichment | null
   listing_data: AuctionListing
 }

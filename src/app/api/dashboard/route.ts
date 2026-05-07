@@ -106,28 +106,44 @@ export async function GET() {
       },
     })
 
-    // GO/CAUTION/RESEARCH/SKIP counts from recommendation_bucket
-    const goCount = await prisma.property.count({
+    // Individual bucket counts for dashboard
+    const topTargetCount = await prisma.property.count({
+      where: { is_seed: false, recommendation_bucket: 'TOP_TARGET' }
+    })
+    const bidCandidateCount = await prisma.property.count({
       where: { is_seed: false, recommendation_bucket: 'BID_CANDIDATE' }
     })
-    const cautionCount = await prisma.property.count({
+    const watchlistCount = await prisma.property.count({
       where: { is_seed: false, recommendation_bucket: 'WATCHLIST' }
     })
-    const researchCount = await prisma.property.count({
+    const researchMoreCount = await prisma.property.count({
       where: { is_seed: false, recommendation_bucket: 'RESEARCH_MORE' }
     })
-    const skipCount = await prisma.property.count({
+    const avoidCount = await prisma.property.count({
       where: { is_seed: false, recommendation_bucket: 'AVOID' }
     })
+
+    // Transform counties to the format expected by the dashboard
+    const countiesResponse = counties.map(c => ({
+      id: c.county_name,
+      name: c.county_name,
+      displayName: c.display_name,
+      propertyCount: c.total_properties,
+      auctionDate: c.auction_date,
+      readinessScore: c.readiness === 'LIVE' ? 100 : c.readiness === 'NEAR_LIVE' ? 75 : c.readiness === 'PARTIAL' ? 50 : 25,
+      status: (c.readiness || 'PLANNED') as 'LIVE' | 'NEAR_LIVE' | 'PARTIAL' | 'PLANNED'
+    }))
 
     return NextResponse.json({
       stats: {
         totalProperties,
+        totalCounties: counties.length,
         highScoring,
         totalMarketValue,
         totalPayoff,
         bidCount,
       },
+      counties: countiesResponse,
       readinessBreakdown: {
         LIVE: readinessBreakdown.LIVE.map(c => ({
           county: c.county_name,
@@ -158,10 +174,11 @@ export async function GET() {
         daysUntil: Math.ceil((new Date(c.auction_date!).getTime() - today.getTime()) / (1000 * 60 * 60 * 24)),
       })),
       recommendationCounts: {
-        GO: goCount,
-        CAUTION: cautionCount,
-        RESEARCH: researchCount,
-        SKIP: skipCount,
+        TOP_TARGET: topTargetCount,
+        BID_CANDIDATE: bidCandidateCount,
+        WATCHLIST: watchlistCount,
+        RESEARCH: researchMoreCount,
+        AVOID: avoidCount,
       },
       distributionData,
       topProperties,
