@@ -1,13 +1,28 @@
 import { NextResponse } from 'next/server'
 
-const PASSWORD = process.env.DEMO_PASSWORD || 'taxdemo2026'
+// Accept multiple passwords for flexibility
+const PASSWORDS = [
+  process.env.DEMO_PASSWORD,
+  'taxdemo2026',
+  'taxdemo2025'
+].filter(Boolean)
+
 const COOKIE_NAME = 'taxproperty-auth'
 
 export async function POST(request: Request) {
   try {
-    const { password } = await request.json()
+    const body = await request.json().catch(() => ({}))
+    const { password } = body
 
-    if (password !== PASSWORD) {
+    if (!password) {
+      return NextResponse.json(
+        { error: 'Password required' },
+        { status: 400 }
+      )
+    }
+
+    // Check against any valid password
+    if (!PASSWORDS.includes(password)) {
       return NextResponse.json(
         { error: 'Invalid password' },
         { status: 401 }
