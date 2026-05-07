@@ -1,30 +1,127 @@
 {
-  "run_id": "181cfb93-09f7-4cf0-a448-484616cc5b6d",
-  "generated_at": "2026-05-06T22:59:31.047Z",
+  "run_id": "86cf3ae3-bf42-4d1d-a34a-72ff4d1cb849",
+  "generated_at": "2026-05-07T01:01:16.784Z",
   "csv_source": "/Users/andres/Desktop/claude-projects/taxtpropertyidea/taxproperty-utah/output/utah_auctions.csv",
-  "total_listings": 10,
-  "enriched": 10,
-  "agrc_hits": 10,
-  "memos_generated": 10,
+  "total_listings": 469,
+  "enriched": 469,
+  "agrc_hits": 449,
+  "memos_generated": 0,
   "by_county": [
+    {
+      "county": "sanpete",
+      "county_display": "Sanpete",
+      "readiness": "NEAR_LIVE",
+      "listings": 24,
+      "agrc_hits": 6,
+      "with_market_value": 0,
+      "rec_counts": {},
+      "earliest_end": "2026-05-21T20:00:00.000Z",
+      "price_range": "$436 – $23,981"
+    },
+    {
+      "county": "juab",
+      "county_display": "Juab",
+      "readiness": "PLANNED",
+      "listings": 3,
+      "agrc_hits": 3,
+      "with_market_value": 3,
+      "rec_counts": {},
+      "earliest_end": "2026-05-21T21:00:00.000Z",
+      "price_range": "$1,679 – $3,889"
+    },
     {
       "county": "box_elder",
       "county_display": "Box Elder",
       "readiness": "PLANNED",
-      "listings": 10,
-      "agrc_hits": 10,
-      "with_market_value": 10,
-      "rec_counts": {
-        "RESEARCH": 10
-      },
+      "listings": 91,
+      "agrc_hits": 91,
+      "with_market_value": 91,
+      "rec_counts": {},
       "earliest_end": "2026-05-22T00:00:00.000Z",
-      "price_range": "$363 – $536"
+      "price_range": "$327 – $10,907"
+    },
+    {
+      "county": "salt_lake",
+      "county_display": "Salt Lake",
+      "readiness": "PLANNED",
+      "listings": 174,
+      "agrc_hits": 174,
+      "with_market_value": 174,
+      "rec_counts": {},
+      "earliest_end": "2026-05-28T11:30:00.000Z",
+      "price_range": "$14 – $197,274"
+    },
+    {
+      "county": "sevier",
+      "county_display": "Sevier",
+      "readiness": "PLANNED",
+      "listings": 4,
+      "agrc_hits": 4,
+      "with_market_value": 4,
+      "rec_counts": {},
+      "earliest_end": "2026-05-28T19:00:00.000Z",
+      "price_range": "$622 – $26,779"
+    },
+    {
+      "county": "iron",
+      "county_display": "Iron",
+      "readiness": "PLANNED",
+      "listings": 76,
+      "agrc_hits": 75,
+      "with_market_value": 75,
+      "rec_counts": {},
+      "earliest_end": "2026-05-28T20:00:00.000Z",
+      "price_range": "$520 – $13,301"
+    },
+    {
+      "county": "wasatch",
+      "county_display": "Wasatch",
+      "readiness": "PLANNED",
+      "listings": 14,
+      "agrc_hits": 14,
+      "with_market_value": 14,
+      "rec_counts": {},
+      "earliest_end": "2026-05-28T22:00:00.000Z",
+      "price_range": "$1,994 – $69,497"
+    },
+    {
+      "county": "washington",
+      "county_display": "Washington",
+      "readiness": "PLANNED",
+      "listings": 13,
+      "agrc_hits": 13,
+      "with_market_value": 13,
+      "rec_counts": {},
+      "earliest_end": "2026-05-28T22:00:00.000Z",
+      "price_range": "$235 – $14,987"
+    },
+    {
+      "county": "beaver",
+      "county_display": "Beaver",
+      "readiness": "PLANNED",
+      "listings": 3,
+      "agrc_hits": 3,
+      "with_market_value": 3,
+      "rec_counts": {},
+      "earliest_end": "2026-05-28T23:00:00.000Z",
+      "price_range": "$650 – $2,233"
+    },
+    {
+      "county": "duchesne",
+      "county_display": "Duchesne",
+      "readiness": "PLANNED",
+      "listings": 67,
+      "agrc_hits": 66,
+      "with_market_value": 66,
+      "rec_counts": {},
+      "earliest_end": "2026-05-28T23:00:00.000Z",
+      "price_range": "$396 – $22,421"
     }
   ],
   "memo_breakdown": {
     "live": 0,
     "near_live": 0,
     "partial": 0,
-    "planned": 10
+    "planned": 0
   }
 }

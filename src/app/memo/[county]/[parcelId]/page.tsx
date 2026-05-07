@@ -24,6 +24,8 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { getCountyAdapter } from '@/lib/counties'
+import { getCountyLinkList } from '@/lib/county-links'
+import { PropertyImage } from '@/components/PropertyImage'
 import { scoreProperty } from '@/lib/scoring'
 import { formatCurrency, cn, cleanHtmlEntities } from '@/lib/ui-utils'
 
@@ -64,6 +66,7 @@ interface PropertyData {
   marketability_risk: string
   data_confidence: number | null
   notes: string | null
+  county_source_url: string | null
 }
 
 // Generate metadata for the page
@@ -108,13 +111,15 @@ export default async function ParcelDetailPage({
     notFound()
   }
 
-  // Get county adapter for links
+  // Get county adapter for legacy zoning links
   const adapter = getCountyAdapter(county)
-  const links = adapter.makeExternalLinks(
+  const legacyLinks = adapter.makeExternalLinks(
     property.parcel_number,
     property.property_address || '',
     property.zoningProfile?.jurisdiction
   )
+  // Use new registry for source links — works for all counties
+  const countyLinkList = getCountyLinkList(county, property.parcel_number)
 
   // Calculate scores
   const scoringResult = scoreProperty({
@@ -232,12 +237,18 @@ export default async function ParcelDetailPage({
                 <span className="font-bold">Max Bid: {formatCurrency(property.max_bid_calculated)}</span>
               </div>
             )}
-            <Button variant="outline" size="sm" asChild>
-              <a href={links.recorderUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink size={14} className="mr-1" />
-                County Records
-              </a>
-            </Button>
+            {(countyLinkList[0] || legacyLinks.recorderUrl) && (
+              <Button variant="outline" size="sm" asChild>
+                <a
+                  href={countyLinkList[0]?.url ?? legacyLinks.recorderUrl ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink size={14} className="mr-1" />
+                  {countyLinkList[0]?.label ?? 'County Records'}
+                </a>
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -304,6 +315,35 @@ export default async function ParcelDetailPage({
               </div>
             </div>
           </div>
+
+          {/* Property Image Row */}
+          {(property.photo_url || property.latitude) && (
+            <div className="flex gap-4">
+              <div className="w-64 h-40 rounded-xl overflow-hidden border border-slate-200 shrink-0">
+                <PropertyImage
+                  address={property.property_address}
+                  parcelNumber={property.parcel_number}
+                  propertyType={property.property_type}
+                  size="lg"
+                  photoUrl={property.photo_url}
+                  latitude={property.latitude}
+                  longitude={property.longitude}
+                  className="w-full h-full rounded-none"
+                />
+              </div>
+              {property.latitude && property.longitude && (
+                <div className="flex-1 h-40 rounded-xl overflow-hidden border border-slate-200">
+                  {/* Static satellite map showing context */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://maps.googleapis.com/maps/api/staticmap?center=${property.latitude},${property.longitude}&zoom=15&size=600x160&maptype=satellite&markers=color:red%7C${property.latitude},${property.longitude}&key=${process.env.GOOGLE_MAPS_API_KEY}`}
+                    alt="Satellite map"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Max Bid Callout */}
           {property.max_bid_calculated && (
@@ -507,7 +547,7 @@ export default async function ParcelDetailPage({
                         </div>
                       </div>
                       <Button variant="outline" size="sm" asChild>
-                        <a href={links.recorderUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={legacyLinks.recorderUrl} target="_blank" rel="noopener noreferrer">
                           <Search size={14} className="mr-1" />
                           View Recorder Records
                         </a>
@@ -518,7 +558,7 @@ export default async function ParcelDetailPage({
                       <Search size={48} className="mx-auto mb-3 text-slate-300" />
                       <p className="text-slate-500 mb-3">No title analysis yet</p>
                       <Button variant="outline" size="sm" asChild>
-                        <a href={links.recorderUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={legacyLinks.recorderUrl} target="_blank" rel="noopener noreferrer">
                           Check County Records
                         </a>
                       </Button>
@@ -621,25 +661,30 @@ export default async function ParcelDetailPage({
               {/* Source Links */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Quick Links</CardTitle>
+                  <CardTitle>Official Sources</CardTitle>
+                  <CardDescription className="text-xs">{county.replace('_', ' ')} County</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  <Button variant="outline" size="sm" className="w-full justify-start" asChild>
-                    <a href={links.recorderUrl} target="_blank" rel="noopener noreferrer">
-                      <FileText size={14} className="mr-2" />
-                      County Recorder
-                    </a>
-                  </Button>
-                  <Button variant="outline" size="sm" className="w-full justify-start" asChild>
-                    <a href={links.assessorUrl} target="_blank" rel="noopener noreferrer">
-                      <Building2 size={14} className="mr-2" />
-                      Tax Assessor
-                    </a>
-                  </Button>
-                  {links.parcelMapUrl && (
+                  {countyLinkList.map(link => (
+                    <Button key={link.label} variant="outline" size="sm" className="w-full justify-start" asChild>
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink size={12} className="mr-2 shrink-0" />
+                        {link.label}
+                      </a>
+                    </Button>
+                  ))}
+                  {property.county_source_url && (
                     <Button variant="outline" size="sm" className="w-full justify-start" asChild>
-                      <a href={links.parcelMapUrl} target="_blank" rel="noopener noreferrer">
-                        <MapPin size={14} className="mr-2" />
+                      <a href={property.county_source_url} target="_blank" rel="noopener noreferrer">
+                        <FileText size={12} className="mr-2 shrink-0" />
+                        Original Listing
+                      </a>
+                    </Button>
+                  )}
+                  {legacyLinks.parcelMapUrl && (
+                    <Button variant="outline" size="sm" className="w-full justify-start" asChild>
+                      <a href={legacyLinks.parcelMapUrl} target="_blank" rel="noopener noreferrer">
+                        <MapPin size={12} className="mr-2 shrink-0" />
                         Parcel Map
                       </a>
                     </Button>
@@ -647,10 +692,13 @@ export default async function ParcelDetailPage({
                   {property.zoningProfile?.zoning_map_url && (
                     <Button variant="outline" size="sm" className="w-full justify-start" asChild>
                       <a href={property.zoningProfile.zoning_map_url} target="_blank" rel="noopener noreferrer">
-                        <TrendingUp size={14} className="mr-2" />
+                        <TrendingUp size={12} className="mr-2 shrink-0" />
                         Zoning Map
                       </a>
                     </Button>
+                  )}
+                  {countyLinkList.length === 0 && !property.county_source_url && (
+                    <p className="text-xs text-slate-400 text-center py-2">No public sources configured for this county</p>
                   )}
                 </CardContent>
               </Card>

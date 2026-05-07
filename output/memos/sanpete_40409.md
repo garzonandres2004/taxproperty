@@ -22,6 +22,8 @@
 
 - **County:** Sanpete
 - **Parcel:** 40409
+- **Owner:** FRANDSEN JEANETTE
+- **Subdivision:** PLAT D HIDEAWAY VALLEY SUB
 - **Acres:** 5.12
 - **Class:** unknown
 - **Opening bid:** $1,570
@@ -53,7 +55,7 @@ No title research data available yet.
 
 ---
 
-*Generated: 5/6/2026, 4:59:43 PM*
+*Generated: 5/6/2026, 6:10:34 PM*
 *Data Sources: Tax Sale CSV Import*
 *Analyst Notes: NEAR_LIVE county: High confidence with minor verification needed. Confidence reduced by 15%.*
 

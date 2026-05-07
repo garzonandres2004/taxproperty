@@ -21,6 +21,7 @@ import {
 import { AppLayout } from '@/components/AppLayout'
 import { PropertyImage, ParcelMapImage } from '@/components/PropertyImage'
 import { cn, formatCurrency, getScoreColor, getRiskColor, getRecommendationStyle, cleanHtmlEntities } from '@/lib/ui-utils'
+import { getCountyLinkList } from '@/lib/county-links'
 
 interface Property {
   id: string
@@ -43,6 +44,9 @@ interface Property {
   source_last_checked_at: string | null
   sale_date: string | null
   photo_url: string | null
+  latitude: number | null
+  longitude: number | null
+  county_source_url: string | null
   is_otc: boolean
   notes: string | null
   max_bid_calculated: number | null
@@ -902,19 +906,15 @@ export default function PropertiesPage() {
                       </button>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <PropertyImage
-                          address={property.property_address}
-                          parcelNumber={property.parcel_number}
-                          propertyType={property.property_type}
-                          size="sm"
-                          photoUrl={property.photo_url}
-                        />
-                        <ParcelMapImage
-                          parcelNumber={property.parcel_number}
-                          size="sm"
-                        />
-                      </div>
+                      <PropertyImage
+                        address={property.property_address}
+                        parcelNumber={property.parcel_number}
+                        propertyType={property.property_type}
+                        size="sm"
+                        photoUrl={property.photo_url}
+                        latitude={property.latitude}
+                        longitude={property.longitude}
+                      />
                     </td>
                     <td className="px-6 py-4">
                       <Link href={`/memo/${property.county}/${property.parcel_number}`} className="flex flex-col">
@@ -1102,16 +1102,42 @@ export default function PropertiesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right action-button">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1.5">
+                        {/* County source link mini-buttons */}
+                        {getCountyLinkList(property.county, property.parcel_number)
+                          .filter(l => l.primary)
+                          .slice(0, 2)
+                          .map(link => (
+                            <a
+                              key={link.label}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={e => e.stopPropagation()}
+                              className="px-1.5 py-0.5 text-[9px] font-bold text-slate-500 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 rounded border border-slate-200 hover:border-blue-200 transition-colors uppercase tracking-wide"
+                              title={`Open ${link.label}`}
+                            >
+                              {link.label}
+                            </a>
+                          ))}
+                        {property.county_source_url && (
+                          <a
+                            href={property.county_source_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={e => e.stopPropagation()}
+                            className="px-1.5 py-0.5 text-[9px] font-bold text-slate-500 hover:text-emerald-600 bg-slate-100 hover:bg-emerald-50 rounded border border-slate-200 hover:border-emerald-200 transition-colors uppercase tracking-wide"
+                            title="Original listing source"
+                          >
+                            Src
+                          </a>
+                        )}
                         <Link
                           href={`/memo/${property.county}/${property.parcel_number}`}
-                          className="p-2 text-slate-300 hover:text-slate-900 transition-colors"
+                          className="p-1.5 text-slate-300 hover:text-slate-900 transition-colors"
                         >
-                          <ChevronRight size={20} />
+                          <ChevronRight size={18} />
                         </Link>
-                        <button className="p-2 text-slate-300 hover:text-slate-900 transition-colors">
-                          <MoreVertical size={20} />
-                        </button>
                       </div>
                     </td>
                   </tr>

@@ -20,7 +20,9 @@ export async function POST(
           { estimated_market_value: null },
           { estimated_market_value: 0 },
           { latitude: null },
-          { photo_url: null }
+          { photo_url: null },
+          { property_address: null },
+          { owner_name: null }
         ]
       },
       select: {

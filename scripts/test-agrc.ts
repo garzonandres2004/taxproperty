@@ -5,8 +5,10 @@ async function main() {
   const cases = [
     { county: 'box_elder', parcel: '08-067-0051', expect: 'SERIAL_NUM hit' },
     { county: 'box_elder', parcel: '01-150-0083', expect: 'SERIAL_NUM hit' },
-    { county: 'box_elder', parcel: '01-150-0012', expect: 'likely miss (lot doesnt exist)' },
-    { county: 'salt_lake', parcel: '22-05-333-013-0000', expect: 'hit or miss' },
+    { county: 'box_elder', parcel: '01-150-0012', expect: 'hit (low value lot)' },
+    { county: 'salt_lake', parcel: '22-05-333-013-0000', expect: 'hit' },
+    { county: 'juab', parcel: 'XE00-5298', expect: 'LIKE raw% hit' },
+    { county: 'juab', parcel: 'XD00-4481-48', expect: 'hit' },
   ]
 
   for (const c of cases) {

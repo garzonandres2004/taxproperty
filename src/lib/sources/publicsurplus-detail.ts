@@ -44,12 +44,22 @@ export async function fetchPublicSurplusDetail(
     const html = await res.text()
     const $ = cheerio.load(html)
 
-    // Collect all non-empty paragraph texts in document order
+    // Collect all non-empty paragraph texts in document order.
     const paras: string[] = []
     $('p').each((_, el) => {
       const text = $(el).text().replace(/\s+/g, ' ').trim()
       if (text) paras.push(text)
     })
+
+    // Box Elder places "Owner of Record: NAME<br>" inside a <div> not a <p>.
+    // Extract it directly from raw HTML to avoid grabbing surrounding text.
+    const rawOwnerM = html.match(/Owner\s+of\s+Record\s*:(?:&nbsp;|\s)*([^<\n]{2,80}?)(?:\s*<br|<\/div)/i)
+    if (rawOwnerM) {
+      const rawOwner = rawOwnerM[1].replace(/&nbsp;/g, ' ').trim()
+      if (rawOwner && !paras.some(p => p.includes(rawOwner))) {
+        paras.push(`Owner of Record: ${rawOwner}`)
+      }
+    }
 
     const data: PublicSurplusDetail = {
       auction_id: auctionId,

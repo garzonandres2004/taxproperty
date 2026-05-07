@@ -12,7 +12,9 @@ import {
   Target,
   TrendingUp,
   MapPin,
-  Calendar
+  Calendar,
+  Loader2,
+  FileBadge,
 } from 'lucide-react'
 import { AppLayout } from '@/components/AppLayout'
 import { Button } from '@/components/ui/button'
@@ -58,7 +60,13 @@ function ReportsContent() {
   const [counties, setCounties] = useState<CountySummary[]>([])
   const [topOpportunities, setTopOpportunities] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'memos' | 'counties' | 'opportunities'>('memos')
+  const [activeTab, setActiveTab] = useState<'memos' | 'counties' | 'opportunities' | 'pdf'>('memos')
+  // PDF report state
+  const [pdfCounty, setPdfCounty] = useState('salt_lake')
+  const [pdfTopN, setPdfTopN] = useState(10)
+  const [pdfMinScore, setPdfMinScore] = useState(40)
+  const [pdfGenerating, setPdfGenerating] = useState(false)
+  const [pdfError, setPdfError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchData()
@@ -196,6 +204,54 @@ function ReportsContent() {
     URL.revokeObjectURL(url)
   }
 
+  const generatePdfReport = async () => {
+    setPdfGenerating(true)
+    setPdfError(null)
+    try {
+      const res = await fetch('/api/reports/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ county: pdfCounty, topN: pdfTopN, minScore: pdfMinScore, excludeFlags: [] }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        setPdfError(err.error || 'Generation failed')
+        return
+      }
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      const countyDisplay = pdfCounty.split('_').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join('_')
+      a.download = `Utah_Tax_Sale_${countyDisplay}_County_May2026.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      setPdfError('Network error — check console')
+    } finally {
+      setPdfGenerating(false)
+    }
+  }
+
+  const PDF_COUNTIES = [
+    { id: 'salt_lake', label: 'Salt Lake County' },
+    { id: 'box_elder', label: 'Box Elder County' },
+    { id: 'iron', label: 'Iron County' },
+    { id: 'weber', label: 'Weber County' },
+    { id: 'duchesne', label: 'Duchesne County' },
+    { id: 'tooele', label: 'Tooele County' },
+    { id: 'sanpete', label: 'Sanpete County' },
+    { id: 'davis', label: 'Davis County' },
+    { id: 'wasatch', label: 'Wasatch County' },
+    { id: 'washington', label: 'Washington County' },
+    { id: 'rich', label: 'Rich County' },
+    { id: 'sevier', label: 'Sevier County' },
+    { id: 'beaver', label: 'Beaver County' },
+    { id: 'juab', label: 'Juab County' },
+  ]
+
   const bucketColors: Record<string, string> = {
     TOP_TARGET: 'bg-emerald-500',
     BID_CANDIDATE: 'bg-blue-500',
@@ -236,7 +292,8 @@ function ReportsContent() {
           {[
             { id: 'memos', label: 'Investment Memos', icon: FileText },
             { id: 'counties', label: 'County Summary', icon: Building2 },
-            { id: 'opportunities', label: 'Top Opportunities', icon: Target }
+            { id: 'opportunities', label: 'Top Opportunities', icon: Target },
+            { id: 'pdf', label: 'PDF Reports', icon: FileBadge },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -448,6 +505,134 @@ function ReportsContent() {
               </div>
             </CardContent>
           </Card>
+        )}
+        {/* PDF Reports Tab */}
+        {activeTab === 'pdf' && (
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileBadge size={20} />
+                  Professional PDF Report Generator
+                </CardTitle>
+                <p className="text-sm text-slate-500 mt-1">
+                  Generate a polished, investor-ready PDF for any county — ready to share or sell.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* County selector */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">County</label>
+                  <select
+                    value={pdfCounty}
+                    onChange={e => setPdfCounty(e.target.value)}
+                    className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  >
+                    {PDF_COUNTIES.map(c => (
+                      <option key={c.id} value={c.id}>{c.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Top N + Min Score */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Top N Properties <span className="font-normal text-slate-400">(1–20)</span>
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={20}
+                      value={pdfTopN}
+                      onChange={e => setPdfTopN(Math.min(20, Math.max(1, parseInt(e.target.value) || 10)))}
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      Min Score Threshold <span className="font-normal text-slate-400">(0–100)</span>
+                    </label>
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={pdfMinScore}
+                      onChange={e => setPdfMinScore(Math.min(100, Math.max(0, parseInt(e.target.value) || 40)))}
+                      className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                    />
+                  </div>
+                </div>
+
+                {/* Report contents preview */}
+                <div className="bg-slate-50 rounded-lg p-4 border border-slate-200 space-y-1.5">
+                  <p className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Report Contents</p>
+                  {[
+                    'Cover page — executive summary, key stats, how-to-use',
+                    'Methodology — screening process, data sources, score guide, risk flag legend',
+                    `Top ${pdfTopN} property profiles — bid, equity multiple, score, key facts, risk flags, our take, next steps`,
+                    'Resources — county links, auction details, due diligence checklist, legal disclaimer',
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <span className="text-emerald-500 text-xs mt-0.5">✓</span>
+                      <span className="text-xs text-slate-600">{item}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {pdfError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
+                    {pdfError}
+                  </div>
+                )}
+
+                <Button
+                  onClick={generatePdfReport}
+                  disabled={pdfGenerating}
+                  className="w-full gap-2 bg-slate-900 hover:bg-slate-800 text-white py-3 text-sm font-bold"
+                  size="lg"
+                >
+                  {pdfGenerating ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      Generating PDF...
+                    </>
+                  ) : (
+                    <>
+                      <Download size={16} />
+                      Generate &amp; Download PDF Report
+                    </>
+                  )}
+                </Button>
+                <p className="text-xs text-slate-400 text-center">
+                  Generation takes 5–15 seconds depending on county size. File will download automatically.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Sample report spec */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">What&apos;s in the Report</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { label: 'Cover + Executive Summary', desc: 'Screened count, top equity multiple, key findings' },
+                    { label: 'Methodology', desc: 'Data sources, score formula, risk flag guide, disclaimer' },
+                    { label: 'Property Profiles', desc: 'Bid, value, equity multiple, score, key facts, our take' },
+                    { label: 'Resources + Checklist', desc: 'County links, auction details, due diligence steps' },
+                  ].map((item, i) => (
+                    <div key={i} className="p-3 border border-slate-200 rounded-lg">
+                      <p className="text-xs font-bold text-slate-800 mb-1">Page {i + 1}{i === 2 ? '+' : ''}</p>
+                      <p className="text-xs font-semibold text-slate-600">{item.label}</p>
+                      <p className="text-xs text-slate-400 mt-1">{item.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
       </div>
     </AppLayout>

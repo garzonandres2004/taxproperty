@@ -13,6 +13,7 @@ import { enrichWashington } from './washington'
 import { enrichJuab } from './juab'
 import { enrichBeaver } from './beaver'
 import { enrichSevier } from './sevier'
+import { enrichWasatch } from './wasatch'
 
 export type AgrcRaw = Record<string, unknown> | null
 
@@ -27,6 +28,7 @@ const COUNTY_ENRICHERS: Record<string, CountyEnricher> = {
   juab: enrichJuab,
   beaver: enrichBeaver,
   sevier: enrichSevier,
+  wasatch: enrichWasatch,
 }
 
 export async function runCountyEnricher(

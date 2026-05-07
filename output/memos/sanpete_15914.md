@@ -22,6 +22,7 @@
 
 - **County:** Sanpete
 - **Parcel:** 15914
+- **Owner:** HEIL BECK TRUSTEES
 - **Class:** unknown
 - **Opening bid:** $7,168
 - **Buyer's premium:** 5%
@@ -48,7 +49,7 @@ No title research data available yet.
 
 ---
 
-*Generated: 5/6/2026, 4:59:49 PM*
+*Generated: 5/6/2026, 6:10:41 PM*
 *Data Sources: Tax Sale CSV Import*
 *Analyst Notes: NEAR_LIVE county: High confidence with minor verification needed. Confidence reduced by 15%.*
 

@@ -22,6 +22,8 @@
 
 - **County:** Sanpete
 - **Parcel:** 28240
+- **Owner:** MCGEE DALLAS ETAL JT
+- **Acres:** 1.00
 - **Class:** unknown
 - **Opening bid:** $3,992
 - **Buyer's premium:** 5%
@@ -31,12 +33,16 @@
 #### Title Summary
 No title research data available yet.
 
+### Good
+
+- 1.00-acre unknown parcel — meaningful land size with development or hold potential.
+
 ### Bad / Watchpoints
 
 - County is in beta — auction details and title automation may need verification.
 - No market value available — equity potential cannot be calculated without this data point.
 - No title research data yet — recorder search has not been run. Title risk is unknown.
-- Parcel size and physical characteristics are unknown — check assessor or GIS records.
+- Lot boundaries, road access, and utility availability need to be confirmed via GIS or on-site inspection.
 - Current occupancy unknown — possible tenants, holdover occupants, or encroachments not visible in public records.
 - 4 unresolved data gap(s) in pipeline: NO_AGRC_MATCH, NO_MARKET_VALUE, NO_COORDINATES.
 
@@ -48,7 +54,7 @@ No title research data available yet.
 
 ---
 
-*Generated: 5/6/2026, 4:59:45 PM*
+*Generated: 5/6/2026, 6:10:37 PM*
 *Data Sources: Tax Sale CSV Import*
 *Analyst Notes: NEAR_LIVE county: High confidence with minor verification needed. Confidence reduced by 15%.*
 

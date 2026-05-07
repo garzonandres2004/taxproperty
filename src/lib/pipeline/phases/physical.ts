@@ -5,6 +5,8 @@ import { PrismaClient } from '@prisma/client'
 import { PhaseResult, PhaseStatus } from '../types'
 import { getCountyAdapter } from '@/lib/counties'
 import { scanAndRecordDataGaps } from '../data-gaps'
+import { runCountyEnricher } from '../enrichers'
+import type { AuctionListing } from '../auction-types'
 
 export interface PhysicalPhaseOptions {
   dryRun?: boolean
@@ -93,6 +95,61 @@ export async function runPhysicalPhase(
     if (enrichmentResult.lot_size_sqft && enrichmentResult.lot_size_sqft > 0) {
       updates.lot_size_sqft = enrichmentResult.lot_size_sqft
       result.fieldsSet.push('lot_size_sqft')
+    }
+
+    // Also run the county-specific enricher (owner, address, legal) when the
+    // county adapter didn't produce market value (i.e., not a full adapter).
+    if (!enrichmentResult.estimated_market_value) {
+      // Extract auction ID from county_source_url when available (e.g. publicsurplus ?auc=12345)
+      const auctionIdMatch = property.county_source_url?.match(/[?&]auc=(\d+)/)
+      const listingId = auctionIdMatch?.[1] ?? property.id
+
+      const listing: AuctionListing = {
+        listing_id: listingId,
+        county: property.county,
+        county_display: property.county.replace('_', ' '),
+        parcel_ids: [property.parcel_number],
+        parcel_raw: property.parcel_number,
+        title: '',
+        opening_bid: property.total_amount_due,
+        start_date: null,
+        end_date: null,
+        end_date_parsed: null,
+        status: 'unknown',
+        url: '',
+        description: '',
+        address_hint: property.property_address,
+        acres_hint: null,
+        source_file: '',
+        scraped_at: new Date().toISOString(),
+      }
+      try {
+        const assessorData = await runCountyEnricher(listing)
+        if (assessorData) {
+          if (assessorData.owner_name && !property.owner_name) {
+            updates.owner_name = assessorData.owner_name
+            result.fieldsSet.push('owner_name')
+          }
+          if (assessorData.situs_address && !property.property_address) {
+            updates.property_address = assessorData.situs_address
+            result.fieldsSet.push('property_address')
+          }
+          if (assessorData.mailing_address && !property.owner_mailing_address) {
+            updates.owner_mailing_address = assessorData.mailing_address
+            result.fieldsSet.push('owner_mailing_address')
+          }
+          if (assessorData.legal_description && !property.legal_description) {
+            updates.legal_description = assessorData.legal_description
+            result.fieldsSet.push('legal_description')
+          }
+          if (assessorData.market_value && assessorData.market_value > 0 && !updates.estimated_market_value) {
+            updates.estimated_market_value = assessorData.market_value
+            result.fieldsSet.push('estimated_market_value')
+          }
+        }
+      } catch {
+        // county enricher failure is non-fatal
+      }
     }
 
     // Apply updates
