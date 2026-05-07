@@ -192,6 +192,15 @@ export default function DashboardPage() {
     totalMarketValue: 0,
     totalPayoff: 0
   })
+
+  // Safe getter for recommendation counts with defaults
+  const getSafeCounts = (counts: DashboardStats['recommendationCounts'] | undefined) => ({
+    TOP_TARGET: counts?.TOP_TARGET ?? 0,
+    BID_CANDIDATE: counts?.BID_CANDIDATE ?? 0,
+    WATCHLIST: counts?.WATCHLIST ?? 0,
+    RESEARCH: counts?.RESEARCH ?? 0,
+    AVOID: counts?.AVOID ?? 0
+  })
   const [userSettings, setUserSettings] = useState<UserSettings | null>(null)
   const [loading, setLoading] = useState(true)
   const [nextAuction, setNextAuction] = useState<{ date: string; county: string; daysUntil: number } | null>(null)
@@ -209,12 +218,12 @@ export default function DashboardPage() {
         const data = await res.json()
         setTopProperties(data.topProperties || [])
         setCounties(data.counties || [])
-        setStats(data.stats || {
-          totalProperties: 0,
-          totalCounties: 0,
-          recommendationCounts: { TOP_TARGET: 0, BID_CANDIDATE: 0, WATCHLIST: 0, RESEARCH: 0, AVOID: 0 },
-          totalMarketValue: 0,
-          totalPayoff: 0
+        setStats({
+          totalProperties: data.stats?.totalProperties ?? 0,
+          totalCounties: data.stats?.totalCounties ?? 0,
+          recommendationCounts: getSafeCounts(data.stats?.recommendationCounts),
+          totalMarketValue: data.stats?.totalMarketValue ?? 0,
+          totalPayoff: data.stats?.totalPayoff ?? 0
         })
 
         // Calculate next auction
@@ -262,14 +271,17 @@ export default function DashboardPage() {
     return { fitsMax, fitsCash, affordable: fitsMax && fitsCash }
   }
 
+  // Safely get recommendation counts
+  const safeCounts = getSafeCounts(stats.recommendationCounts)
+
   // Calculate GO count (TOP_TARGET + BID_CANDIDATE)
-  const goCount = stats.recommendationCounts.TOP_TARGET + stats.recommendationCounts.BID_CANDIDATE
+  const goCount = safeCounts.TOP_TARGET + safeCounts.BID_CANDIDATE
   // Calculate CAUTION count (WATCHLIST)
-  const cautionCount = stats.recommendationCounts.WATCHLIST
+  const cautionCount = safeCounts.WATCHLIST
   // Calculate RESEARCH count (RESEARCH)
-  const researchCount = stats.recommendationCounts.RESEARCH
+  const researchCount = safeCounts.RESEARCH
   // Calculate SKIP count (AVOID)
-  const skipCount = stats.recommendationCounts.AVOID
+  const skipCount = safeCounts.AVOID
 
   if (loading) {
     return (
@@ -410,7 +422,7 @@ export default function DashboardPage() {
                   return (
                     <Link
                       key={property.id}
-                      href={`/properties/${property.county}/${property.parcel_number}`}
+                      href={`/memo/${property.county}/${property.parcel_number}`}
                     >
                       <div className="flex items-center gap-4 p-4 rounded-xl border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all group">
                         {/* Score */}
@@ -426,7 +438,7 @@ export default function DashboardPage() {
                         <div className="flex-grow min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="text-xs font-mono text-slate-400">{property.parcel_number}</span>
-                            <span className="text-xs text-slate-400 capitalize">• {property.county.replace('_', ' ')}</span>
+                            <span className="text-xs text-slate-400 capitalize">• {(property.county || 'unknown').replace(/_/g, ' ')}</span>
                           </div>
                           <p className="text-sm font-bold text-slate-900 truncate group-hover:text-emerald-600 transition-colors">
                             {cleanHtmlEntities(property.property_address) || 'No address'}
@@ -503,9 +515,9 @@ export default function DashboardPage() {
                         <div className="flex items-center gap-2">
                           <span className={cn(
                             'text-xs font-bold px-2 py-0.5 rounded-full text-white',
-                            statusColors[county.status]
+                            statusColors[county.status || 'PLANNED']
                           )}>
-                            {county.status.replace('_', ' ')}
+                            {(county.status || 'PLANNED').replace(/_/g, ' ')}
                           </span>
                           <span className="text-sm font-bold text-slate-700">{county.readinessScore}%</span>
                         </div>
