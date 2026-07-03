@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// A vehicle in the dealership inventory.
+// status: DRAFT | AVAILABLE | PENDING | SOLD
+// condition: Excellent | Very Good | Good | Fair | Needs Work
+model Vehicle {
+  id            String   @id @default(cuid())
+  stockNumber   String?
+  vin           String?
+  year          Int
+  make          String
+  model         String
+  trim          String?
+  bodyStyle     String?
+  mileage       Int
+  price         Float
+  cost          Float?
+  condition     String   @default("Good")
+  exteriorColor String?
+  interiorColor String?
+  transmission  String?
+  fuelType      String?
+  drivetrain    String?
+  engine        String?
+  titleStatus   String   @default("Clean")
+  description   String   @default("")
+  features      String   @default("") // comma-separated list
+  status        String   @default("AVAILABLE")
+  featured      Boolean  @default(false)
+  soldPrice     Float?
+  soldAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  photos      Photo[]
+  leads       Lead[]
+  socialPosts SocialPost[]
+}
+
+model Photo {
+  id        String  @id @default(cuid())
+  url       String
+  sortOrder Int     @default(0)
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
+
+// Connect: a customer inquiry / lead.
+// source: WEBSITE | FACEBOOK | MARKETPLACE | INSTAGRAM | PHONE | WALK_IN
+// status: NEW | CONTACTED | NEGOTIATING | APPOINTMENT | SOLD | LOST
+model Lead {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String?
+  email     String?
+  message   String   @default("")
+  source    String   @default("WEBSITE")
+  status    String   @default("NEW")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vehicleId String?
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id], onDelete: SetNull)
+  notes     LeadNote[]
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  body      String
+  createdAt DateTime @default(now())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+// Tracks where each vehicle has been published.
+// platform: MARKETPLACE | FACEBOOK | INSTAGRAM
+model SocialPost {
+  id        String   @id @default(cuid())
+  platform  String
+  postedAt  DateTime @default(now())
+  postUrl   String?
+  vehicleId String
+  vehicle   Vehicle  @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}

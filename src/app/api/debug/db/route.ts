@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const diagnostics: Record<string, unknown> = {
+    const diagnostics = {
       env: {
         DATABASE_URL: process.env.DATABASE_URL?.substring(0, 50) + '...',
         VERCEL: process.env.VERCEL,

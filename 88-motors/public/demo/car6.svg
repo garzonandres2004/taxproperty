@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e5e5e5"/><stop offset="1" stop-color="#a3a3a3"/>
+    </linearGradient>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#4c1d95"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect y="430" width="800" height="170" fill="#404040"/>
+  <path d="M120 430 L150 350 Q160 330 185 325 L280 310 Q330 250 400 245 L500 245 Q560 250 600 310 L660 325 Q690 332 695 360 L705 430 Z" fill="url(#body)"/>
+  <path d="M300 310 Q340 262 400 258 L480 258 Q530 262 565 308 L470 318 L470 262 L455 262 L455 318 Z" fill="#bfdbfe" opacity="0.9"/>
+  <circle cx="230" cy="430" r="55" fill="#171717"/><circle cx="230" cy="430" r="28" fill="#d4d4d4"/>
+  <circle cx="580" cy="430" r="55" fill="#171717"/><circle cx="580" cy="430" r="28" fill="#d4d4d4"/>
+  <text x="400" y="560" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="bold" fill="#fafafa">88 MOTORS</text>
+</svg>

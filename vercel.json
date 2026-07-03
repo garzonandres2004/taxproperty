@@ -2,9 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "includeFiles": [
-    "prisma/dev.db"
-  ],
   "rewrites": [
     {
       "source": "/(.*)",
