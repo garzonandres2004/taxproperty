@@ -493,3 +493,20 @@ test("PR23 r2: a future dated improved parcel with a statement is never a buy an
   assert.doesNotMatch(x.competition.explanation, /pay quickly/);
   assert.match(x.competition.explanation, /in the future/);
 });
+
+// Codex PR #23 round 3 notes
+
+test("PR23 r3: no 'pay quickly' when the timeline is unknown or past the escheat date", async () => {
+  const { assessCompetition } = await import("../src/core/competition.ts");
+  const house = { kind: "single_family", countyCode: "45" } as Parcel;
+  const value = { market: 200000 } as ValueEstimate;
+  const best = { profit: 50000, maxPrice: 100000 } as never;
+  const base = { parcel: house, value, tier: "mid" as const, best, budgetCeiling: Infinity, a, calibration: {} };
+  const noDate = assessCompetition({ ...base, listing: { channel: "lands_available", parcelId: "x", parcelKey: "x", quotedTotal: 5000 }, today });
+  const noToday = assessCompetition({ ...base, listing: { channel: "lands_available", parcelId: "x", parcelKey: "x", quotedTotal: 5000, saleDate: "2026-01-01" } });
+  const past = assessCompetition({ ...base, listing: { channel: "lands_available", parcelId: "x", parcelKey: "x", quotedTotal: 5000, saleDate: "2023-01-01" }, today });
+  const open = assessCompetition({ ...base, listing: { channel: "lands_available", parcelId: "x", parcelKey: "x", quotedTotal: 5000, saleDate: "2026-01-01" }, today });
+  for (const c of [noDate, noToday, past]) assert.doesNotMatch(c.explanation, /pay quickly/);
+  assert.match(past.explanation, /may already belong to the county/);
+  assert.match(open.explanation, /pay quickly/, "open to the public, inside the window: urgency is real");
+});

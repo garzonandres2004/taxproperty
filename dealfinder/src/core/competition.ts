@@ -10,6 +10,7 @@ import { readFileSync, existsSync } from "node:fs";
 import type { Assumptions } from "./assumptions.ts";
 import type { Competition, Listing, Parcel, StrategyResult, ValueEstimate } from "./types.ts";
 import { money, pct } from "./stats.ts";
+import { addYears, iso, utcDate, utcDay } from "./dates.ts";
 
 export type TypeBucket = "improved" | "vacant" | "other";
 
@@ -43,37 +44,36 @@ export function assessCompetition(args: {
   const bucket = typeBucket(parcel);
 
   if (listing.channel === "lands_available") {
+    const fixed = listing.quotedTotal ?? listing.openingBid ?? 0;
+    const sale = listing.saleDate ? utcDate(listing.saleDate) : null;
+    const now = args.today ? utcDay(args.today) : null;
+    // Urgency advice needs a trustworthy timeline. Without one, say so and give no "pay quickly".
+    if (!sale || !now) {
+      return { level: "none", expectedClearing: fixed, winChance: "likely", explanation: "No bidding, fixed price. The list date is missing, so whether it is open to the public yet is unknown. Confirm with the clerk that it is for sale." };
+    }
+    if (sale.getTime() > now.getTime()) {
+      return { level: "none", expectedClearing: fixed, winChance: "likely", explanation: "No bidding, fixed price. The list date is in the future, so its timing cannot be trusted. Confirm the date and that it is for sale with the clerk before acting." };
+    }
     // Florida: only the county may buy in the first 90 days after the auction.
-    const sale = listing.saleDate ? new Date(`${listing.saleDate}T00:00:00Z`) : null;
-    if (sale && args.today && !Number.isNaN(sale.getTime())) {
-      const opens = new Date(sale.getTime() + 90 * 86400000);
-      if (sale.getTime() > args.today.getTime()) {
-        return {
-          level: "none",
-          expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,
-          winChance: "likely",
-          explanation: "No bidding, fixed price. The list date is in the future, so its timing cannot be trusted. Confirm the date and that it is for sale with the clerk before acting.",
-        };
-      }
-      if (args.today.getTime() < opens.getTime()) {
-        return {
-          level: "none",
-          expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,
-          winChance: "likely",
-          explanation: `No bidding, fixed price. Only the county can buy it until about ${opens.toISOString().slice(0, 10)} (90 days after the auction); after that it is first come first served. Request the statement before then.`,
-        };
-      }
+    const opens = new Date(sale.getTime() + 90 * 86400000);
+    if (now.getTime() < opens.getTime()) {
+      return { level: "none", expectedClearing: fixed, winChance: "likely", explanation: `No bidding, fixed price. Only the county can buy it until about ${iso(opens)} (90 days after the auction); after that it is first come first served. Request the statement before then.` };
+    }
+    const escheat = addYears(sale, a.risk.landsAvailableEscheatYears);
+    if (now.getTime() >= escheat.getTime()) {
+      return { level: "none", expectedClearing: fixed, winChance: "maybe", explanation: `No bidding, fixed price, but it passed the ${a.risk.landsAvailableEscheatYears} year mark on ${iso(escheat)} and may already belong to the county. Confirm it is still for sale before anything else.` };
     }
     const attractive = best && Number.isFinite(best.profit) ? best.profit > 0 && bucket === "improved" : bucket === "improved";
     return {
       level: attractive ? "low" : "none",
-      expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,
+      expectedClearing: fixed,
       winChance: "likely",
       explanation: attractive
         ? "No bidding: fixed price, first come first served. Homes on this list get noticed, so request the statement and pay quickly."
         : "No bidding: fixed price, first come first served. Nobody can outbid you; the only risk is someone paying first.",
     };
   }
+
 
   const learned = calibration[parcel.countyCode]?.[bucket];
   const ratio = learned && learned.n >= 3 ? learned.ratio : a.competition.clearingRatio[tier][bucket];

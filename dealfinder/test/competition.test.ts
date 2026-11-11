@@ -10,7 +10,7 @@ const best = (maxPrice: number) => ({ maxPrice }) as StrategyResult;
 const auction: Listing = { channel: "auction", parcelId: "x", parcelKey: "x", openingBid: 5000 };
 
 test("Lands Available has no bidding", () => {
-  const c = assessCompetition({ parcel: house, listing: { ...auction, channel: "lands_available" }, value, tier: "large", best: best(50000), budgetCeiling: 50000, a, calibration: {} });
+  const c = assessCompetition({ parcel: house, listing: { ...auction, channel: "lands_available", saleDate: "2026-01-01" }, value, tier: "large", best: best(50000), budgetCeiling: 50000, a, calibration: {}, today: new Date("2026-11-11T12:00:00Z") });
   assert.equal(c.winChance, "likely");
   assert.match(c.explanation, /first come first served/);
 });

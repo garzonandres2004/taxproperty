@@ -5,6 +5,7 @@ import type { Assumptions } from "../core/assumptions.ts";
 import type { CostBreakdown, Listing, Parcel, RiskFlag, ValueEstimate } from "../core/types.ts";
 import { isImprovedResidential, isVacant } from "./useCodes.ts";
 import { money } from "../core/stats.ts";
+import { addMonths, addYears, iso, utcDate, utcDay } from "../core/dates.ts";
 
 const GOVT_OWNER = /\b(COUNTY|STATE OF FLORIDA|CITY OF|TOWN OF|VILLAGE OF|UNITED STATES|USA|BOARD OF|SCHOOL BOARD|TRUSTEES OF (THE )?INTERNAL|TIITF|WATER MANAGEMENT|DEPT OF|DEPARTMENT OF|HOUSING AUTHORITY)\b/;
 const ASSOC_OWNER = /\b(ASSOCIATION|ASSN|ASSOC|HOA|POA|PROPERTY OWNERS|HOMEOWNERS|COMMUNITY DEVELOPMENT|CDD|MASTER ASSOC)\b/;
@@ -141,30 +142,4 @@ export function floridaRiskFlags(args: {
   return flags;
 }
 
-/** Plain calendar date at UTC midnight, or null. */
-function utcDate(isoDate: string): Date | null {
-  const d = new Date(`${isoDate.slice(0, 10)}T00:00:00Z`);
-  return Number.isNaN(d.getTime()) ? null : d;
-}
-
-function utcDay(d: Date): Date {
-  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
-}
-
-/** Same calendar day N years later. Feb 29 maps to Feb 28 (the earlier day, so the escheat warning is never late). */
-export function addYears(d: Date, years: number): Date {
-  const y = d.getUTCFullYear() + years;
-  const m = d.getUTCMonth();
-  const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
-  return new Date(Date.UTC(y, m, Math.min(d.getUTCDate(), lastDay)));
-}
-
-function addMonths(d: Date, months: number): Date {
-  const total = d.getUTCFullYear() * 12 + d.getUTCMonth() + months;
-  const y = Math.floor(total / 12);
-  const m = total % 12;
-  const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
-  return new Date(Date.UTC(y, m, Math.min(d.getUTCDate(), lastDay)));
-}
-
-const iso = (d: Date) => d.toISOString().slice(0, 10);
+export { addYears } from "../core/dates.ts";
