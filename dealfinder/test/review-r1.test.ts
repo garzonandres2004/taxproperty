@@ -527,5 +527,7 @@ test("PR25 r1: an estimate only house in the open window is get a quote and is t
   const x = (await run(nal, [{ text: "Parcel ID,Estimated Purchase Price,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" }], settings({ totalCapital: 500000, maxPerDeal: 100000 }))).analyses[0];
   assert.equal(x.verdict, "needs_quote");
   assert.doesNotMatch(x.competition.explanation, /pay quickly/);
+  assert.match(x.competition.explanation, /request the clerk's statement soon/);
   assert.ok(!x.why.some((w) => /pay quickly/.test(w)));
+  assert.ok(x.why.some((w) => /request the clerk's statement soon/.test(w)));
 });

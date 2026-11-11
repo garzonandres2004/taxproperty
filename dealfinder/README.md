@@ -21,7 +21,7 @@ For every parcel on a county list it:
 
 Verdicts: **Buy candidate** (or Bid candidate at auction), **Get a quote**, **Watch**, **Pass**, **Avoid**.
 
-A Lands Available parcel becomes a Buy candidate only with the clerk's statement (a statement column such as `Statement Total`, `Quote`, `Payoff` or `Purchase Price`, listed in step 3; never an `Estimated ...` column). Without one the price is the tool's rough estimate, so the best it can be is Get a quote. Parcels listed longer than the 3 year escheat window are flagged: they may already belong to the county. A list with no usable date (sale, auction or offered date) also holds parcels at Get a quote, because the tool cannot tell whether the county window has passed.
+A Lands Available parcel becomes a Buy candidate only with the clerk's statement (a statement column such as `Statement Total`, `Quote`, `Payoff` or `Purchase Price`, listed in step 3; never an `Estimated ...` column). Without one the price is an estimate, so it cannot be a Buy candidate (Get a quote is the best it can reach; it can still be Watch, Pass or Avoid). Parcels listed for 3 years or more are flagged because they may already belong to the county, and they cannot be a Buy candidate either. The same goes for a list with no usable date (a Sale Date, Auction Date, Date Offered or Date Listed column), because the tool cannot tell whether the county window has passed.
 
 ## Step by step
 
