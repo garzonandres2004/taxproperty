@@ -196,6 +196,9 @@ function plans(p: Parcel, value: ValueEstimate, neighbors: Neighbor[], a: Assump
   return out;
 }
 
+// Below this, no county will sell you a tax deed: fees and back taxes alone cost more.
+export const MIN_PLAUSIBLE_ALL_IN = 500;
+
 export function buildStrategies(input: StrategyInput): StrategyResult[] {
   const { parcel, value, neighbors, settings, a, allIn, ceilingToPrice } = input;
   const freeCash = settings.totalCapital * (1 - settings.reservePct);
@@ -212,26 +215,30 @@ export function buildStrategies(input: StrategyInput): StrategyResult[] {
     const maxAllIn = Math.max(0, Math.floor(Math.min(byDollars, byReturn)));
     const maxPrice = ceilingToPrice(maxAllIn);
 
+    // The most the user can pay and still afford the whole plan: under the
+    // profit ceiling, under max per deal, and leaving cash for the upfront costs.
+    const affordableAllIn = Math.max(0, Math.floor(Math.min(maxAllIn, settings.maxPerDeal, freeCash - upfront)));
+
     let profit = NaN;
     let returnPct = NaN;
-    let cashNeeded = NaN;
+    let cashNeeded: number;
     let fitsBudget: boolean;
     if (allIn !== null) {
-      profit = Math.round(plan.exitPrice - allIn - extra);
+      // Not rounded: eligibility is checked on the exact number; reports round for display.
+      profit = plan.exitPrice - allIn - extra;
       returnPct = profit / (allIn + extra);
-      cashNeeded = Math.round(allIn + upfront);
+      cashNeeded = allIn + upfront;
       fitsBudget = allIn <= settings.maxPerDeal && cashNeeded <= freeCash;
     } else {
-      // Unknown price: it fits only if a price that meets the targets also fits the budget.
-      const purchaseCeiling = Math.min(maxAllIn, settings.maxPerDeal);
-      cashNeeded = Math.round(purchaseCeiling + upfront);
-      fitsBudget = purchaseCeiling > 0 && cashNeeded <= freeCash;
+      // Unknown price: it fits if some plausible price meets the targets and leaves cash for the plan.
+      fitsBudget = affordableAllIn >= MIN_PLAUSIBLE_ALL_IN;
+      cashNeeded = (fitsBudget ? affordableAllIn : MIN_PLAUSIBLE_ALL_IN) + upfront;
     }
 
     const notes = [...plan.notes];
     if (plan.isEquity) notes.push("Profit shown for this strategy is equity you build, not cash in hand, unless you sell or refinance.");
     let financing = plan.financing;
-    if (!fitsBudget && Number.isFinite(cashNeeded)) {
+    if (!fitsBudget && Number.isFinite(freeCash)) {
       const gap = cashNeeded - freeCash;
       if (gap > 0) financing += ` This plan needs about ${money(cashNeeded)} before you get paid, ${money(gap)} more than your free cash (capital minus reserve). You would need a partner or private lender for the gap.`;
     }
@@ -246,8 +253,10 @@ export function buildStrategies(input: StrategyInput): StrategyResult[] {
       profit,
       returnPct,
       cashNeeded,
+      upfrontCosts: upfront,
       maxAllIn,
       maxPrice,
+      affordableAllIn,
       certainty: plan.certainty,
       fitsBudget,
       financing,
@@ -271,9 +280,6 @@ export function pickBest(results: StrategyResult[], settings: Settings): Strateg
   });
   return ranked[0] ?? null;
 }
-
-// Below this, no county will sell you a tax deed: fees and back taxes alone cost more.
-const MIN_PLAUSIBLE_ALL_IN = 500;
 
 export function meetsTargets(s: StrategyResult, settings: Settings): boolean {
   return Number.isFinite(s.profit)

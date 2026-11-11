@@ -4,6 +4,8 @@ import { a } from "./helpers.ts";
 import { addComp, compsFromParcel, emptyCompIndex, estimateValue } from "../src/core/valuation.ts";
 import type { Parcel } from "../src/core/types.ts";
 
+const today = new Date("2026-11-11T12:00:00Z");
+
 function parcel(over: Partial<Parcel>): Parcel {
   return {
     state: "FL", countyCode: "45", countyName: "Lake", parcelId: "X", parcelKey: "X", assessmentYear: 2026, useCode: "000",
@@ -19,9 +21,9 @@ test("median sale to assessed ratio of nearby comps drives the estimate", () => 
   const ratios = [1.2, 1.3, 1.4, 1.5, 1.6];
   ratios.forEach((r, i) => {
     const p = parcel({ parcelKey: `C${i}`, justValue: 20000, sales: [{ price: 20000 * r, year: 2025, month: 1, qualified: true, qualCode: "01", vi: "V" }] });
-    for (const c of compsFromParcel(p, a, 2026)) addComp(idx, "45", c);
+    for (const c of compsFromParcel(p, a, today)) addComp(idx, "45", c);
   });
-  const v = estimateValue(parcel({ justValue: 10000 }), idx, a, 2026);
+  const v = estimateValue(parcel({ justValue: 10000 }), idx, a, today);
   assert.equal(v.method, "comps_ratio");
   assert.equal(v.market, 14000);
   assert.equal(v.confidence, "high");
@@ -30,19 +32,19 @@ test("median sale to assessed ratio of nearby comps drives the estimate", () => 
 
 test("non arm's length, stale, and vacant-vs-improved mismatched sales are ignored", () => {
   const base = { year: 2025, month: 1, vi: "V" };
-  assert.equal(compsFromParcel(parcel({ sales: [{ ...base, price: 100, qualified: false, qualCode: "11" }] }), a, 2026).length, 0);
-  assert.equal(compsFromParcel(parcel({ sales: [{ ...base, price: 15000, qualified: true, qualCode: "01", year: 2018 }] }), a, 2026).length, 0);
-  assert.equal(compsFromParcel(parcel({ kind: "single_family", sales: [{ ...base, price: 15000, qualified: true, qualCode: "01" }] }), a, 2026).length, 0);
+  assert.equal(compsFromParcel(parcel({ sales: [{ ...base, price: 100, qualified: false, qualCode: "11" }] }), a, today).length, 0);
+  assert.equal(compsFromParcel(parcel({ sales: [{ ...base, price: 15000, qualified: true, qualCode: "01", year: 2018 }] }), a, today).length, 0);
+  assert.equal(compsFromParcel(parcel({ kind: "single_family", sales: [{ ...base, price: 15000, qualified: true, qualCode: "01" }] }), a, today).length, 0);
 });
 
 test("no comps falls back to assessed value with low confidence", () => {
-  const v = estimateValue(parcel({ justValue: 8500 }), emptyCompIndex(), a, 2026);
+  const v = estimateValue(parcel({ justValue: 8500 }), emptyCompIndex(), a, today);
   assert.equal(v.method, "assessed");
   assert.equal(v.confidence, "low");
   assert.equal(v.market, 10000);
 });
 
 test("zero just value means unknown value, not a deal", () => {
-  const v = estimateValue(parcel({ justValue: 0 }), emptyCompIndex(), a, 2026);
+  const v = estimateValue(parcel({ justValue: 0 }), emptyCompIndex(), a, today);
   assert.equal(v.market, 0);
 });

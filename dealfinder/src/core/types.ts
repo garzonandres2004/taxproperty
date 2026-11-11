@@ -73,10 +73,14 @@ export interface Listing {
   quotedTotal?: number;
   saleDate?: string; // ISO date of auction, or date it went to Lands Available
   sourceLine?: string;
+  /** Lines that disagreed when the same parcel was listed more than once. */
+  conflicts?: string[];
+  /** The opening bid came from a plain number on a text line (no $ sign or cents). */
+  amountFromPlainNumber?: boolean;
 }
 
 export interface Settings {
-  /** Total cash the user has for deals. Required. Never defaulted. */
+  /** Total cash the user has for deals. Required. Never defaulted. Infinity only in public mode (no budget applied). */
   totalCapital: number;
   /** Most the user will put into one purchase, all in. Required. Never defaulted. */
   maxPerDeal: number;
@@ -138,8 +142,10 @@ export interface StrategyResult {
   profit: number; // NaN when the purchase price is not known yet
   returnPct: number; // profit / total cash in; NaN when price unknown
   cashNeeded: number; // all in plus extra costs paid before exit
+  upfrontCosts: number; // costs paid in cash after buying and before the exit pays (rehab, quiet title, holding)
   maxAllIn: number; // highest all in cost (price plus fees) that still meets the user's targets
   maxPrice: number; // same ceiling expressed as a bid (auctions) or statement total (Lands Available)
+  affordableAllIn: number; // highest all in purchase that also fits max per deal and free cash after upfront costs
   certainty: number; // 0..1, how likely this exit plays out as modeled
   fitsBudget: boolean;
   financing: string;

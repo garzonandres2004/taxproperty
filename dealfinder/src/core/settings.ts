@@ -46,6 +46,17 @@ export function validateSettings(raw: Record<string, unknown>): Settings {
   };
 }
 
+/**
+ * Public mode (reports posted on GitHub): no budget at all. Limits are Infinity,
+ * which every comparison treats as "no cap", so no stand in number can ever be printed.
+ * Preference fields (targets, strategies, counties) still come from the file if given.
+ */
+export function publicSettings(path: string): Settings {
+  const raw: Record<string, unknown> = path ? JSON.parse(readFileSync(path, "utf8")) : {};
+  const base = validateSettings({ ...raw, totalCapital: 1, maxPerDeal: 1 });
+  return { ...base, totalCapital: Infinity, maxPerDeal: Infinity };
+}
+
 export function loadSettings(path: string, overrides: Record<string, unknown> = {}): Settings {
   let raw: Record<string, unknown> = {};
   if (path) raw = JSON.parse(readFileSync(path, "utf8"));

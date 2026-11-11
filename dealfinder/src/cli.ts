@@ -10,8 +10,8 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync } from "node:fs";
 import { dirname, basename, join } from "node:path";
 import { loadAssumptions } from "./core/assumptions.ts";
-import { loadSettings, SettingsError } from "./core/settings.ts";
-import { parseListing, type RawListing } from "./core/listings.ts";
+import { loadSettings, publicSettings, SettingsError } from "./core/settings.ts";
+import { ListingError, parseListing, type RawListing } from "./core/listings.ts";
 import { calibrate, loadCalibration, type Outcome, type TypeBucket } from "./core/competition.ts";
 import { renderHtml, renderMarkdown } from "./core/report.ts";
 import { parseCsvText } from "./core/csv.ts";
@@ -21,8 +21,6 @@ import { money } from "./core/stats.ts";
 
 type Args = Record<string, string[]>;
 
-/** Stand in for "no limit" in public reports. Never shown; the report says the budget was not applied. */
-const PUBLIC_NO_BUDGET = 1e12;
 
 export function parseArgs(argv: string[]): { cmd: string; args: Args } {
   const [cmd = "help", ...rest] = argv;
@@ -75,16 +73,16 @@ async function analyze(args: Args): Promise<number> {
   // Public mode: for reports shared on GitHub. No budget is applied or printed,
   // so nothing about the owner's money leaks. Verdicts then reflect the deal only.
   const publicMode = one(args, "public") === "true";
-  const settings = loadSettings(one(args, "settings") ?? "", publicMode
-    ? { totalCapital: PUBLIC_NO_BUDGET, maxPerDeal: PUBLIC_NO_BUDGET }
-    : { totalCapital: one(args, "capital"), maxPerDeal: one(args, "max-per-deal") });
+  const settings = publicMode
+    ? publicSettings(one(args, "settings") ?? "")
+    : loadSettings(one(args, "settings") ?? "", { totalCapital: one(args, "capital"), maxPerDeal: one(args, "max-per-deal") });
   const a = loadAssumptions(one(args, "assumptions"));
   const calibration = loadCalibration(one(args, "calibration") ?? "data/calibration.json");
   const today = one(args, "today") ? new Date(`${one(args, "today")}T12:00:00`) : new Date();
 
   const listings: RawListing[] = [];
-  for (const f of lands) listings.push(...parseListing(readFileSync(f, "utf8"), "lands_available"));
-  for (const f of auction) listings.push(...parseListing(readFileSync(f, "utf8"), "auction"));
+  for (const f of lands) listings.push(...parseListing(readFileSync(f, "utf8"), "lands_available", basename(f)));
+  for (const f of auction) listings.push(...parseListing(readFileSync(f, "utf8"), "auction", basename(f)));
   if (!listings.length) throw new SettingsError("No parcel numbers found in the list file(s).");
 
   const result = await runFlorida({ nalPaths: nal, listings, settings, a, calibration, today });
@@ -170,7 +168,7 @@ export async function main(argv: string[]): Promise<number> {
         return cmd === "help" || cmd === "--help" ? 0 : 1;
     }
   } catch (e) {
-    if (e instanceof SettingsError) {
+    if (e instanceof SettingsError || e instanceof ListingError) {
       console.error(e.message);
       return 2;
     }

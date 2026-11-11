@@ -24,8 +24,8 @@ test("Lands Available: clerk statement wins over the estimate", () => {
   assert.equal(landsAvailableCosts(quoted, p, a, new Date("2026-11-11"))!.allIn, 4100);
   const est: Listing = { channel: "lands_available", parcelId: "x", parcelKey: "x", openingBid: 3000, saleDate: "2025-11-11" };
   const c = landsAvailableCosts(est, p, a, new Date("2026-11-11"))!;
-  // 12 months: taxes 20000*1.8% = 360, interest 3000*1.5%*12 = 540
-  assert.equal(c.otherFees, 900);
+  // 365 days = 11.99 average months: taxes about 360, interest about 540
+  assert.ok(Math.abs(c.otherFees - 900) < 1, String(c.otherFees));
   assert.ok(c.allIn > 3900 && c.allIn < 4000);
   const none: Listing = { channel: "lands_available", parcelId: "x", parcelKey: "x" };
   assert.equal(landsAvailableCosts(none, p, a, new Date()), null);

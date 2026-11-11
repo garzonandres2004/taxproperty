@@ -4,6 +4,8 @@
 import type { Analysis, Settings } from "./types.ts";
 import type { Assumptions } from "./assumptions.ts";
 import type { RawListing } from "./listings.ts";
+
+type UnmatchedLine = RawListing & { reason?: string };
 import { money, pct } from "./stats.ts";
 
 export const VERDICT_LABEL: Record<Analysis["verdict"], string> = {
@@ -27,7 +29,7 @@ export interface ReportMeta {
   parcelsScanned: number;
   compsFound: number;
   referenceYear: number;
-  unmatched: RawListing[];
+  unmatched: UnmatchedLine[];
   publicMode?: boolean;
 }
 
@@ -69,7 +71,7 @@ export function renderMarkdown(analyses: Analysis[], settings: Settings, a: Assu
   L.push(`Generated ${meta.generatedAt.toISOString().slice(0, 16).replace("T", " ")} UTC. Tax roll year ${meta.referenceYear}. ${meta.parcelsScanned.toLocaleString()} parcels scanned, ${meta.compsFound.toLocaleString()} usable sales found.`, "");
   L.push(settingsLine(settings, meta), "");
   L.push(`Results: ${counts}.`, "");
-  if (meta.unmatched.length) L.push(`${meta.unmatched.length} list line(s) did not match any parcel in the tax roll. They are listed at the end.`, "");
+  if (meta.unmatched.length) L.push(`${meta.unmatched.length} list line(s) could not be matched to exactly one parcel. They are listed at the end with the reason.`, "");
 
   L.push("## Ranked list", "");
   L.push("| # | Verdict | Score | Parcel | County | Type | Address | Value | Price all in | Best plan | Profit | Max to pay |");
@@ -89,8 +91,8 @@ export function renderMarkdown(analyses: Analysis[], settings: Settings, a: Assu
     L.push("");
   }
   if (meta.unmatched.length) {
-    L.push("## Not found in the tax roll", "");
-    for (const u of meta.unmatched.slice(0, 200)) L.push(`- ${u.sourceLine}`);
+    L.push("## List lines not analyzed", "");
+    for (const u of meta.unmatched.slice(0, 200)) L.push(`- ${u.sourceLine}${u.reason ? ` (${u.reason})` : ""}`);
     L.push("");
   }
   L.push("## Assumptions used", "", "```json", JSON.stringify(a, null, 2), "```", "");
@@ -205,7 +207,7 @@ ${flags ? `<h3>Risks and checks before paying</h3><ul class="flags">${flags}</ul
     ? `<section class="card"><h2>Avoided</h2><ul>${avoided.map((x) => `<li>${esc(x.parcel.parcelId)} (${esc(x.parcel.useDescription)}, ${esc(addr(x))}): ${esc(x.flags.filter((f) => f.severity === "avoid").map((f) => f.message).join(" "))}</li>`).join("")}</ul></section>`
     : "";
   const unmatchedHtml = meta.unmatched.length
-    ? `<section class="card"><h2>Not found in the tax roll</h2><ul>${meta.unmatched.slice(0, 200).map((u) => `<li><code>${esc(u.sourceLine)}</code></li>`).join("")}</ul></section>`
+    ? `<section class="card"><h2>List lines not analyzed</h2><ul>${meta.unmatched.slice(0, 200).map((u) => `<li><code>${esc(u.sourceLine)}</code>${u.reason ? ` <span class="muted">${esc(u.reason)}</span>` : ""}</li>`).join("")}</ul></section>`
     : "";
 
   return `<!doctype html>
@@ -226,7 +228,7 @@ details pre{white-space:pre-wrap;font-size:12px;background:#fafaf8;padding:10px;
 </style></head><body><main>
 <h1>${esc(meta.title)}</h1>
 <p class="muted">Generated ${meta.generatedAt.toISOString().slice(0, 16).replace("T", " ")} UTC · tax roll year ${meta.referenceYear} · ${meta.parcelsScanned.toLocaleString()} parcels scanned · ${meta.compsFound.toLocaleString()} usable sales</p>
-<div class="card">${esc(settingsLine(settings, meta))}<br><b>Results:</b> ${esc(countVerdicts(analyses))}.${meta.unmatched.length ? ` ${meta.unmatched.length} list line(s) did not match the tax roll (see the end).` : ""}</div>
+<div class="card">${esc(settingsLine(settings, meta))}<br><b>Results:</b> ${esc(countVerdicts(analyses))}.${meta.unmatched.length ? ` ${meta.unmatched.length} list line(s) could not be matched (see the end).` : ""}</div>
 <div class="card table-wrap"><table><thead><tr><th>#</th><th>Verdict</th><th>Score</th><th>Parcel</th><th>County</th><th>Type</th><th>Address</th><th>Value</th><th>Price all in</th><th>Best plan</th><th>Profit</th><th>Max to pay</th></tr></thead><tbody>
 ${rows || `<tr><td colspan="12">Nothing to show.</td></tr>`}
 </tbody></table></div>

@@ -6,9 +6,9 @@
 import type { Assumptions } from "../core/assumptions.ts";
 import { readCsvRecords, normalizeHeader, recordToObject } from "../core/csv.ts";
 import type { Analysis, Listing, Parcel, RiskFlag, Settings, StrategyResult } from "../core/types.ts";
-import type { RawListing } from "../core/listings.ts";
+import { resolveLooseAmount, type RawListing } from "../core/listings.ts";
 import { addComp, compsFromParcel, emptyCompIndex, estimateValue, type CompIndex } from "../core/valuation.ts";
-import { createNeighborFinder } from "../core/neighbors.ts";
+import { createNeighborFinder, parcelUid } from "../core/neighbors.ts";
 import { buildStrategies, meetsTargets, pickBest } from "../core/strategies.ts";
 import { assessCompetition, type Calibration } from "../core/competition.ts";
 import { money, pct } from "../core/stats.ts";
@@ -28,7 +28,7 @@ export interface RunInput {
 
 export interface RunResult {
   analyses: Analysis[];
-  unmatched: RawListing[];
+  unmatched: UnmatchedListing[];
   parcelsScanned: number;
   compsFound: number;
   referenceYear: number;
@@ -53,6 +53,65 @@ function countyAllowed(code: string, settings: Settings): boolean {
   return settings.counties.some((c) => flCounty(c)?.code === code);
 }
 
+interface Match {
+  key: string;
+  parcel: Parcel;
+}
+
+export interface UnmatchedListing extends RawListing {
+  reason: string;
+}
+
+/**
+ * Decide which roll parcel a list line means. One parcel: done. Several: the
+ * longest matching key wins only when every other match is a piece of it (the
+ * spaced-out parcel number case). Anything else is ambiguous and reported, never guessed.
+ */
+export function resolveMatches(matches: Match[]): { parcel: Parcel; key: string } | { ambiguous: string } | null {
+  if (!matches.length) return null;
+  const byUid = new Map<string, Match>();
+  for (const m of matches) {
+    const uid = parcelUid(m.parcel);
+    const prev = byUid.get(uid);
+    if (!prev || m.key.length > prev.key.length) byUid.set(uid, m);
+  }
+  const distinct = [...byUid.values()].sort((x, y) => y.key.length - x.key.length);
+  if (distinct.length === 1) return { parcel: distinct[0].parcel, key: distinct[0].key };
+  const [top, ...others] = distinct;
+  if (others.every((o) => o.key.length < top.key.length && top.key.includes(o.key))) return { parcel: top.parcel, key: top.key };
+  const names = distinct.slice(0, 4).map((m) => `${m.parcel.countyName} ${m.parcel.parcelId}`).join("; ");
+  return { ambiguous: `matches more than one parcel (${names}). Limit counties in settings or fix the list line.` };
+}
+
+/** Merge lines that point at the same parcel and channel. Statements beat estimates; disagreements are kept as conflicts. */
+export function mergeListings(parcel: Parcel, raws: { raw: RawListing; key: string }[]): Listing {
+  const conflicts: string[] = [];
+  const distinct = (vals: (number | undefined)[]) => [...new Set(vals.filter((v): v is number => v !== undefined))];
+  let plain = false;
+  const bids = distinct(raws.map(({ raw, key }) => {
+    if (raw.openingBid !== undefined) return raw.openingBid;
+    const loose = resolveLooseAmount(raw, key);
+    if (loose !== undefined) plain = true;
+    return loose;
+  }));
+  const quotes = distinct(raws.map(({ raw }) => raw.quotedTotal));
+  if (bids.length > 1) conflicts.push(`opening bids disagree: ${bids.map(money).join(", ")} (using the highest)`);
+  if (quotes.length > 1) conflicts.push(`clerk statements disagree: ${quotes.map(money).join(", ")} (using the highest)`);
+  const first = <T,>(f: (r: RawListing) => T | undefined) => raws.map(({ raw }) => f(raw)).find((v) => v !== undefined && v !== "");
+  return {
+    channel: raws[0].raw.channel,
+    parcelId: parcel.parcelId,
+    parcelKey: parcel.parcelKey,
+    caseNumber: first((r) => r.caseNumber),
+    openingBid: bids.length ? Math.max(...bids) : undefined,
+    quotedTotal: quotes.length ? Math.max(...quotes) : undefined,
+    saleDate: first((r) => r.saleDate),
+    sourceLine: raws.map(({ raw }) => raw.sourceLine).join(" || "),
+    conflicts: conflicts.length ? conflicts : undefined,
+    amountFromPlainNumber: plain && bids.length > 0 && raws.every(({ raw }) => raw.openingBid === undefined) ? true : undefined,
+  };
+}
+
 export async function runFlorida(input: RunInput): Promise<RunResult> {
   const { settings, a, today } = input;
   const opts = { qualifiedSaleCodes: a.valuation.qualifiedSaleCodes };
@@ -60,44 +119,64 @@ export async function runFlorida(input: RunInput): Promise<RunResult> {
   // Index every candidate key so any one of them can match.
   const byKey = new Map<string, number[]>();
   input.listings.forEach((l, i) => l.candidateKeys.forEach((k) => byKey.set(k, [...(byKey.get(k) ?? []), i])));
-  const matched = new Map<number, Parcel>();
-  const matchedKeyLen = new Map<number, number>();
+  const matches = new Map<number, Match[]>();
+  const excludedByCounty = new Set<number>();
 
-  // Pass 1: find listed parcels. Match on PARCEL_ID or ALT_KEY.
+  // Pass 1: find listed parcels. Match on PARCEL_ID or ALT_KEY; keep every match, decide later.
   let scanned = 0;
   let referenceYear = 0;
   for await (const row of scanNal(input.nalPaths)) {
     scanned++;
     const yr = Number(row.ASMNT_YR) || 0;
     if (yr > referenceYear) referenceYear = yr;
-    const keys = [parcelKey(row.PARCEL_ID), parcelKey(row.ALT_KEY ?? "")].filter(Boolean);
+    const keys = [...new Set([parcelKey(row.PARCEL_ID), parcelKey(row.ALT_KEY ?? "")].filter(Boolean))];
+    let parcel: Parcel | null = null;
     for (const k of keys) {
-      for (const i of byKey.get(k) ?? []) {
-        // Prefer the longest matching candidate (most specific) when a line had several.
-        if ((matchedKeyLen.get(i) ?? 0) >= k.length) continue;
-        const p = nalRowToParcel(row, opts);
-        if (!countyAllowed(p.countyCode, settings)) continue;
-        matched.set(i, p);
-        matchedKeyLen.set(i, k.length);
+      const hits = byKey.get(k);
+      if (!hits) continue;
+      parcel ??= nalRowToParcel(row, opts);
+      if (!countyAllowed(parcel.countyCode, settings)) {
+        hits.forEach((i) => excludedByCounty.add(i));
+        continue;
       }
+      for (const i of hits) matches.set(i, [...(matches.get(i) ?? []), { key: k, parcel }]);
     }
   }
   if (!referenceYear) referenceYear = today.getFullYear();
+
+  // Resolve each line to one parcel, or report why not.
+  const unmatched: UnmatchedListing[] = [];
+  const groups = new Map<string, { parcel: Parcel; items: { raw: RawListing; key: string }[] }>();
+  input.listings.forEach((raw, i) => {
+    const r = resolveMatches(matches.get(i) ?? []);
+    if (!r) {
+      unmatched.push({ ...raw, reason: excludedByCounty.has(i) ? "only matches parcels in counties excluded by your settings" : "not found in the tax roll" });
+      return;
+    }
+    if ("ambiguous" in r) {
+      unmatched.push({ ...raw, reason: r.ambiguous });
+      return;
+    }
+    const gk = `${parcelUid(r.parcel)}|${raw.channel}`;
+    const g = groups.get(gk) ?? { parcel: r.parcel, items: [] };
+    g.items.push({ raw, key: r.key });
+    groups.set(gk, g);
+  });
 
   // Pass 2: comps and neighbors.
   const comps: CompIndex = emptyCompIndex();
   const finder = createNeighborFinder(a.neighbors);
   const subjectCounties = new Set<string>();
-  for (const p of matched.values()) {
-    finder.addSubject(p);
-    subjectCounties.add(p.countyCode);
+  for (const g of groups.values()) {
+    finder.addSubject(g.parcel);
+    subjectCounties.add(g.parcel.countyCode);
   }
   let compsFound = 0;
-  if (matched.size) {
+  if (groups.size) {
     for await (const row of scanNal(input.nalPaths)) {
       const p = nalRowToParcel(row, opts);
       if (!subjectCounties.has(p.countyCode)) continue;
-      for (const c of compsFromParcel(p, a, referenceYear)) {
+      for (const c of compsFromParcel(p, a, today)) {
         addComp(comps, p.countyCode, c);
         compsFound++;
       }
@@ -105,30 +184,11 @@ export async function runFlorida(input: RunInput): Promise<RunResult> {
     }
   }
 
-  // Dedupe: the same parcel listed twice keeps the first listing.
-  const seen = new Set<string>();
   const analyses: Analysis[] = [];
-  const unmatched: RawListing[] = [];
-  input.listings.forEach((raw, i) => {
-    const parcel = matched.get(i);
-    if (!parcel) {
-      unmatched.push(raw);
-      return;
-    }
-    if (seen.has(parcel.parcelKey)) return;
-    seen.add(parcel.parcelKey);
-    const listing: Listing = {
-      channel: raw.channel,
-      parcelId: parcel.parcelId,
-      parcelKey: parcel.parcelKey,
-      caseNumber: raw.caseNumber,
-      openingBid: raw.openingBid,
-      quotedTotal: raw.quotedTotal,
-      saleDate: raw.saleDate,
-      sourceLine: raw.sourceLine,
-    };
-    analyses.push(analyzeOne(parcel, listing, comps, finder.neighborsOf(parcel), input, referenceYear));
-  });
+  for (const g of groups.values()) {
+    const listing = mergeListings(g.parcel, g.items);
+    analyses.push(analyzeOne(g.parcel, listing, comps, finder.neighborsOf(g.parcel), input));
+  }
 
   analyses.sort((x, y) => verdictRank(x.verdict) - verdictRank(y.verdict) || y.score - x.score);
   return { analyses, unmatched, parcelsScanned: scanned, compsFound, referenceYear };
@@ -144,10 +204,9 @@ export function analyzeOne(
   comps: CompIndex,
   neighbors: Analysis["neighbors"],
   input: Pick<RunInput, "settings" | "a" | "calibration" | "today">,
-  referenceYear: number,
 ): Analysis {
   const { settings, a, calibration, today } = input;
-  const value = estimateValue(parcel, comps, a, referenceYear);
+  const value = estimateValue(parcel, comps, a, today);
   const tier = flCounty(parcel.countyCode)?.tier ?? "small";
   const isAuction = listing.channel === "auction";
   const ceilingToPrice = isAuction ? (maxAllIn: number) => maxBidForAllIn(maxAllIn, a) : (maxAllIn: number) => maxAllIn;
@@ -171,38 +230,59 @@ export function analyzeOne(
   const strategies = priceKnown ? buildStrategies({ parcel, value, neighbors, settings, a, allIn: costs!.allIn, ceilingToPrice }) : ceilingOnly;
   const best = pickBest(strategies, settings);
   const flags = floridaRiskFlags({ parcel, listing, value, costs, a, today });
+  for (const c of listing.conflicts ?? []) {
+    flags.push({ code: "LISTING_CONFLICT", severity: "danger", message: `This parcel is listed more than once and the lines disagree: ${c}.`, check: "Confirm the current amount with the clerk before acting." });
+  }
+  if (listing.amountFromPlainNumber) {
+    flags.push({ code: "AMOUNT_FROM_PLAIN_NUMBER", severity: "caution", message: `The amount ${money(listing.openingBid ?? 0)} was read from a plain number on the list line (no $ sign or cents).`, check: "Make sure that number is the opening bid." });
+  }
+  if (isAuction && listing.openingBid === undefined) {
+    flags.push({ code: "NO_OPENING_BID", severity: "caution", message: "The list did not show an opening bid. Profit below uses the expected final price.", check: "Look up the opening bid on the auction site." });
+  }
 
-  const offer = makeOffer(listing, best, costs, settings, a);
-  const verdict = decideVerdict({ flags, best, settings, priceKnown, competition, isAuction, offer });
+  const offer = makeOffer(listing, best, costs, settings, a, ceilingToPrice);
+  const verdict = decideVerdict({ flags, best, settings, priceKnown, competition, isAuction, offer, listing });
   const score = scoreIt({ flags, best, competition, value, verdict });
   const why = explain({ parcel, listing, value, costs, best, competition, neighbors, flags, verdict, settings, offer });
 
   return { parcel, listing, value, costs, priceKnown, flags, competition, strategies, best, offer, neighbors, score, verdict, why };
 }
 
-function makeOffer(listing: Listing, best: StrategyResult | null, costs: Analysis["costs"], settings: Settings, a: Assumptions): Analysis["offer"] {
-  const maxDealCeiling = listing.channel === "auction" ? maxBidForAllIn(settings.maxPerDeal, a) : settings.maxPerDeal;
+function makeOffer(
+  listing: Listing,
+  best: StrategyResult | null,
+  costs: Analysis["costs"],
+  settings: Settings,
+  a: Assumptions,
+  ceilingToPrice: (allIn: number) => number,
+): Analysis["offer"] {
+  const isAuction = listing.channel === "auction";
   const targetCeiling = best ? best.maxPrice : 0;
-  const ceiling = Math.min(targetCeiling, maxDealCeiling);
-  const cappedByBudget = maxDealCeiling < targetCeiling;
-  const capNote = cappedByBudget ? ` (capped by your max per deal of ${money(settings.maxPerDeal)} all in; the deal itself would support ${money(targetCeiling)})` : "";
+  // Highest price that meets the targets AND leaves cash for the plan's costs after buying.
+  const ceiling = best ? Math.min(targetCeiling, ceilingToPrice(best.affordableAllIn)) : 0;
+  const cappedByBudget = best !== null && ceiling < targetCeiling;
+  const capNote = cappedByBudget
+    ? ` (capped by your budget: max per deal ${money(settings.maxPerDeal)} all in, and cash left for this plan's ${money(best!.upfrontCosts)} of costs before it pays; the deal itself would support ${money(targetCeiling)})`
+    : "";
 
-  if (listing.channel === "auction") {
+  if (isAuction) {
     const low = listing.openingBid ?? 0;
     if (!best || targetCeiling <= 0) return { low, high: 0, walkAway: 0, note: "Do not bid. No price meets your profit targets." };
     if (targetCeiling < low) return { low, high: 0, walkAway: 0, note: `Do not bid. The most this is worth to you is ${money(targetCeiling)}, below the opening bid ${money(low)}.` };
-    if (maxDealCeiling < low) return { low, high: 0, walkAway: 0, note: `Over your budget. The opening bid ${money(low)} is above your max per deal (${money(settings.maxPerDeal)} all in). The deal would support bids up to ${money(targetCeiling)} with more capital or a partner.` };
-    return { low, high: ceiling, walkAway: ceiling, note: `Start at the opening bid ${money(low)}. Stop at ${money(ceiling)}${capNote}. Fees on top: about ${money(auctionCosts(ceiling, a).allIn - ceiling)} in doc stamps and recording.` };
+    if (ceiling < low || ceiling <= 0) return { low, high: 0, walkAway: 0, note: `Over your budget. ${low ? `The opening bid ${money(low)}` : "Any bid"} is more than you can pay and still cover this plan with your cash. The deal would support bids up to ${money(targetCeiling)} with more capital or a partner.` };
+    const start = low ? `Start at the opening bid ${money(low)}.` : "The list shows no opening bid; check it on the auction site.";
+    return { low, high: ceiling, walkAway: ceiling, note: `${start} Stop at ${money(ceiling)}${capNote}. Fees on top: about ${money(auctionCosts(ceiling, a).allIn - ceiling)} in doc stamps and recording.` };
   }
 
-  if (!best || ceiling <= 0) return { low: costs?.allIn ?? 0, high: 0, walkAway: 0, note: "Pass. No price meets your profit targets." };
+  if (!best || targetCeiling <= 0) return { low: costs?.allIn ?? 0, high: 0, walkAway: 0, note: "Pass. No price meets your profit targets." };
+  if (ceiling <= 0) return { low: costs?.allIn ?? 0, high: 0, walkAway: 0, note: `Over your budget. You would not have cash left for this plan. The deal would support up to ${money(targetCeiling)} all in with more capital or a partner.` };
   if (!costs) {
     return { low: 0, high: ceiling, walkAway: ceiling, note: `Fixed price, no bidding. Request the clerk's statement. Buy only if the statement total is ${money(ceiling)} or less${capNote}.` };
   }
   const fixed = costs.allIn;
-  const source = listing.quotedTotal ? "clerk statement" : "estimate; request the clerk's statement to confirm";
+  const source = listing.quotedTotal ? "clerk statement" : "rough estimate, not the clerk's math; request the clerk's statement to confirm";
   if (fixed > ceiling) {
-    const reason = fixed > maxDealCeiling && fixed <= targetCeiling ? `above your max per deal of ${money(settings.maxPerDeal)}` : `above the most it is worth to you, ${money(targetCeiling)}`;
+    const reason = fixed <= targetCeiling ? `more than you can pay and still cover this plan with your cash (${money(ceiling)})` : `above the most it is worth to you, ${money(targetCeiling)}`;
     return { low: fixed, high: fixed, walkAway: ceiling, note: `Fixed price about ${money(fixed)} (${source}) is ${reason}.` };
   }
   return { low: fixed, high: fixed, walkAway: ceiling, note: `Fixed price about ${money(fixed)} (${source}). Still worth it up to ${money(ceiling)}${capNote}.` };
@@ -216,19 +296,29 @@ function decideVerdict(args: {
   competition: Analysis["competition"];
   isAuction: boolean;
   offer: Analysis["offer"];
+  listing: Listing;
 }): Analysis["verdict"] {
-  const { flags, best, settings, priceKnown, competition, isAuction, offer } = args;
+  const { flags, best, settings, priceKnown, competition, isAuction, offer, listing } = args;
   if (flags.some((f) => f.severity === "avoid")) return "avoid";
   if (!best || offer.walkAway <= 0) return "pass";
+  let v: Analysis["verdict"];
   if (isAuction) {
     // Some bid meets the targets. Whether it is worth showing up depends on the competition.
-    if (competition.winChance === "unlikely" || !meetsTargets(best, settings) || !best.fitsBudget) return "watch";
-    return "buy_candidate";
+    if (listing.openingBid === undefined) v = "needs_quote";
+    else if (competition.winChance === "unlikely" || !meetsTargets(best, settings) || !best.fitsBudget) v = "watch";
+    else v = "buy_candidate";
+  } else if (!priceKnown) {
+    if (!meetsTargets(best, settings)) return "pass";
+    v = best.fitsBudget ? "needs_quote" : "watch";
+  } else {
+    if (!meetsTargets(best, settings) || flags.some((f) => f.code === "PRICE_OVER_VALUE")) return "pass";
+    v = best.fitsBudget ? "buy_candidate" : "watch";
   }
-  if (!priceKnown) return best.fitsBudget ? "needs_quote" : "watch";
-  if (!meetsTargets(best, settings) || flags.some((f) => f.code === "PRICE_OVER_VALUE")) return "pass";
-  if (!best.fitsBudget) return "watch";
-  return "buy_candidate";
+  // Disagreeing list lines: never a straight buy until the clerk confirms the number.
+  if (v === "buy_candidate" && listing.conflicts?.length) v = "watch";
+  // Amount guessed from a plain number: confirm the price before calling it a buy.
+  if (v === "buy_candidate" && listing.amountFromPlainNumber) v = "needs_quote";
+  return v;
 }
 
 function scoreIt(args: { flags: RiskFlag[]; best: StrategyResult | null; competition: Analysis["competition"]; value: Analysis["value"]; verdict: Analysis["verdict"] }): number {

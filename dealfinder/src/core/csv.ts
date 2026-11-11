@@ -106,13 +106,13 @@ export function parseCsvText(text: string, delimiter?: string): string[][] {
 
 /** Stream records from a file. First record is the header. */
 export async function* readCsvRecords(path: string, delimiter?: string, chunkSize = 1 << 20): AsyncGenerator<string[]> {
-  const stream = createReadStream(path, { encoding: "latin1", highWaterMark: chunkSize });
+  // UTF-8: names like "José" stay intact; multi-byte characters split across chunks are reassembled by the stream decoder.
+  const stream = createReadStream(path, { encoding: "utf8", highWaterMark: chunkSize });
   let state: CsvState | null = delimiter ? new CsvState(delimiter) : null;
   const out: string[][] = [];
   let first = true;
   for await (const raw of stream as AsyncIterable<string>) {
-    // Read as latin1 so any byte is safe; a UTF-8 byte order mark then shows up as these 3 chars.
-    const chunk = first ? raw.replace(/^\u00EF\u00BB\u00BF/, "") : raw;
+    const chunk = first ? raw.replace(/^\uFEFF/, "") : raw;
     first = false;
     if (!state) state = new CsvState(detectDelimiter(chunk));
     feed(state, chunk, out);

@@ -13,13 +13,14 @@ export function recordingFees(a: Assumptions): number {
   return f.recordingFirstPage + Math.max(0, f.deedPages - 1) * f.recordingAdditionalPage;
 }
 
-function monthsBetween(fromIso: string | undefined, to: Date): number {
+/** Elapsed months as a fraction (days / average month), so Oct 31 to Nov 1 is about 0.03, not 1. */
+export function monthsBetween(fromIso: string | undefined, to: Date): number {
   if (!fromIso) return 0;
-  // List dates are plain calendar dates; compare calendar months in UTC so the
-  // machine's time zone cannot shift a date into the previous month.
+  // List dates are plain calendar dates; read them as UTC so the machine's time zone cannot shift them.
   const d = new Date(`${fromIso.slice(0, 10)}T00:00:00Z`);
   if (Number.isNaN(d.getTime())) return 0;
-  return Math.max(0, (to.getUTCFullYear() - d.getUTCFullYear()) * 12 + (to.getUTCMonth() - d.getUTCMonth()));
+  const toDay = Date.UTC(to.getUTCFullYear(), to.getUTCMonth(), to.getUTCDate());
+  return Math.max(0, (toDay - d.getTime()) / (86400000 * (365.25 / 12)));
 }
 
 /** All in cost for a given price (bid). Used for auctions and for solving max bid. */
@@ -30,9 +31,12 @@ export function auctionCosts(price: number, a: Assumptions): CostBreakdown {
 }
 
 /**
- * Lands Available: the clerk's statement is the real number. Without one we
- * estimate: opening bid + taxes that came due since the sale + accrued interest
- * + doc stamps + recording. The estimate is labeled as such in the report.
+ * Lands Available: the clerk's statement is the real number. Without one we make
+ * a rough planning estimate: opening bid + an assumed share of just value as later
+ * taxes + assumed monthly interest on the opening bid + doc stamps + recording.
+ * This is NOT the statutory calculation under F.S. 197.502 (bases, accrual dates
+ * and rounding are not modeled). Reports label it an estimate and say to get the
+ * clerk's statement.
  */
 export function landsAvailableCosts(listing: Listing, parcel: Parcel, a: Assumptions, today: Date): CostBreakdown | null {
   if (listing.quotedTotal && listing.quotedTotal > 0) {

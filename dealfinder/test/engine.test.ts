@@ -44,7 +44,7 @@ test("end to end on the sample county files", async () => {
 
   const house = byId(r, "13-19-26-0300-001-02000");
   assert.equal(house.verdict, "pass");
-  assert.match(house.offer.note, /above your max per deal/);
+  assert.match(house.offer.note, /Over your budget/);
 
   const condo = byId(r, "14-19-26-0400-000-21000");
   const codes = condo.flags.map((f) => f.code);

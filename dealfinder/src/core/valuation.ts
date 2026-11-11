@@ -54,24 +54,35 @@ function isVacantGroup(group: string): boolean {
   return group === "vacant_res" || group === "vacant_com" || group === "acreage";
 }
 
+/** Months between a sale and today; negative means a sale dated in the future. Unknown month counts as June. */
+export function saleAgeMonths(year: number, month: number, today: Date): number {
+  const m = month >= 1 && month <= 12 ? month : 6;
+  return today.getUTCFullYear() * 12 + today.getUTCMonth() + 1 - (year * 12 + m);
+}
+
+function saleUsable(s: { qualified: boolean; year: number; month: number; vi: string; price: number }, vacant: boolean, jv: number, a: Assumptions, today: Date): boolean {
+  if (!s.qualified) return false;
+  const age = saleAgeMonths(s.year, s.month, today);
+  if (age < 0 || age > a.valuation.compMaxAgeYears * 12) return false;
+  if (s.vi === "V" && !vacant) return false; // sold as land, now built: ratio would be wrong
+  if (s.vi === "I" && vacant) return false; // sold with a building that is gone now
+  const ratio = s.price / jv;
+  return ratio >= a.valuation.ratioMin && ratio <= a.valuation.ratioMax;
+}
+
 export function tractOf(censusBlock: string): string {
   const d = (censusBlock || "").replace(/\D/g, "");
   return d.length >= 11 ? d.slice(0, 11) : "";
 }
 
 /** Turn a tax roll parcel into zero or more comp records (one per usable sale). */
-export function compsFromParcel(p: Parcel, a: Assumptions, referenceYear: number): Comp[] {
+export function compsFromParcel(p: Parcel, a: Assumptions, today: Date): Comp[] {
   if (p.justValue < 1000) return [];
   const group = kindGroup(p.kind);
   const vacant = isVacantGroup(group);
   const out: Comp[] = [];
   for (const s of p.sales) {
-    if (!s.qualified) continue;
-    if (referenceYear - s.year > a.valuation.compMaxAgeYears) continue;
-    if (s.vi === "V" && !vacant) continue; // sold as land, now built: ratio would be wrong
-    if (s.vi === "I" && vacant) continue;
-    const ratio = s.price / p.justValue;
-    if (ratio < a.valuation.ratioMin || ratio > a.valuation.ratioMax) continue;
+    if (!saleUsable(s, vacant, p.justValue, a, today)) continue;
     out.push({
       parcelKey: p.parcelKey,
       group,
@@ -108,12 +119,12 @@ function push(m: Map<string, Comp[]>, k: string, c: Comp) {
 
 export function addComp(idx: CompIndex, countyCode: string, c: Comp): void {
   if (c.neighborhood) push(idx.byNeighborhood, `${countyCode}|${c.group}|${c.neighborhood}`, c);
-  if (c.tract) push(idx.byTract, `${c.group}|${c.tract}`, c);
-  if (c.zip) push(idx.byZip, `${c.group}|${c.zip}`, c);
+  if (c.tract) push(idx.byTract, `${countyCode}|${c.group}|${c.tract}`, c);
+  if (c.zip) push(idx.byZip, `${countyCode}|${c.group}|${c.zip}`, c);
   if (c.city) push(idx.byCity, `${countyCode}|${c.group}|${c.city}`, c);
 }
 
-export function estimateValue(p: Parcel, idx: CompIndex, a: Assumptions, referenceYear: number): ValueEstimate {
+export function estimateValue(p: Parcel, idx: CompIndex, a: Assumptions, today: Date): ValueEstimate {
   const v = a.valuation;
   const group = kindGroup(p.kind);
   const notes: string[] = [];
@@ -125,8 +136,8 @@ export function estimateValue(p: Parcel, idx: CompIndex, a: Assumptions, referen
 
   const levels: [string, Comp[] | undefined][] = [
     ["same appraiser neighborhood", p.neighborhood ? idx.byNeighborhood.get(`${p.countyCode}|${group}|${p.neighborhood}`) : undefined],
-    ["same census tract", tractOf(p.censusBlock) ? idx.byTract.get(`${group}|${tractOf(p.censusBlock)}`) : undefined],
-    ["same ZIP code", p.situsZip ? idx.byZip.get(`${group}|${p.situsZip}`) : undefined],
+    ["same census tract", tractOf(p.censusBlock) ? idx.byTract.get(`${p.countyCode}|${group}|${tractOf(p.censusBlock)}`) : undefined],
+    ["same ZIP code", p.situsZip ? idx.byZip.get(`${p.countyCode}|${group}|${p.situsZip}`) : undefined],
     ["same city", p.situsCity ? idx.byCity.get(`${p.countyCode}|${group}|${p.situsCity.toUpperCase()}`) : undefined],
   ];
 
@@ -149,7 +160,8 @@ export function estimateValue(p: Parcel, idx: CompIndex, a: Assumptions, referen
     };
   }
 
-  const own = p.sales.find((s) => s.qualified && referenceYear - s.year <= v.compMaxAgeYears);
+  // Same tests as comps: arm's length, recent, same vacant/improved state, sane ratio to just value.
+  const own = p.sales.find((s) => saleUsable(s, isVacantGroup(group), jv, a, today));
   if (own) {
     notes.push(`Only its own arm's length sale (${own.year}) to go on. Few or no nearby comparable sales.`);
     return {

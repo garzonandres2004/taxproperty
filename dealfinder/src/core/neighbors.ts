@@ -6,6 +6,9 @@
 
 import type { Neighbor, Parcel } from "./types.ts";
 
+/** Parcel numbers are only unique inside a county. */
+export const parcelUid = (p: Pick<Parcel, "countyCode" | "parcelKey">): string => `${p.countyCode}|${p.parcelKey}`;
+
 export interface StreetKey {
   key: string;
   number: number;
@@ -77,17 +80,17 @@ export function createNeighborFinder(opts: { houseNumberRange: number; lotRange:
 
   return {
     addSubject(p) {
-      subjectKeys.add(p.parcelKey);
+      subjectKeys.add(parcelUid(p));
       const s = parseStreet(p.situsAddress, p.situsCity);
-      if (s) streetSubjects.set(s.key, [...(streetSubjects.get(s.key) ?? []), { parcelKey: p.parcelKey, number: s.number }]);
+      if (s) streetSubjects.set(s.key, [...(streetSubjects.get(s.key) ?? []), { parcelKey: parcelUid(p), number: s.number }]);
       const pl = parsePlat(p.legal);
-      if (pl) platSubjects.set(`${p.countyCode}|${pl.key}`, [...(platSubjects.get(`${p.countyCode}|${pl.key}`) ?? []), { parcelKey: p.parcelKey, lot: pl.lot }]);
+      if (pl) platSubjects.set(`${p.countyCode}|${pl.key}`, [...(platSubjects.get(`${p.countyCode}|${pl.key}`) ?? []), { parcelKey: parcelUid(p), lot: pl.lot }]);
     },
     offer(p) {
       const s = parseStreet(p.situsAddress, p.situsCity);
       if (s) {
         for (const subj of streetSubjects.get(s.key) ?? []) {
-          if (subj.parcelKey === p.parcelKey) continue;
+          if (subj.parcelKey === parcelUid(p)) continue;
           const d = Math.abs(subj.number - s.number);
           if (d <= opts.houseNumberRange) {
             add(subj.parcelKey, { parcelId: p.parcelId, ownerName: p.ownerName, situsAddress: p.situsAddress, reason: `same street, ${d} house numbers away`, distance: d });
@@ -97,7 +100,7 @@ export function createNeighborFinder(opts: { houseNumberRange: number; lotRange:
       const pl = parsePlat(p.legal);
       if (pl) {
         for (const subj of platSubjects.get(`${p.countyCode}|${pl.key}`) ?? []) {
-          if (subj.parcelKey === p.parcelKey) continue;
+          if (subj.parcelKey === parcelUid(p)) continue;
           const d = Math.abs(subj.lot - pl.lot);
           if (d <= opts.lotRange) {
             add(subj.parcelKey, { parcelId: p.parcelId, ownerName: p.ownerName, situsAddress: p.situsAddress, reason: `same plat and block, lot ${pl.lot}`, distance: d * 10 });
@@ -106,7 +109,7 @@ export function createNeighborFinder(opts: { houseNumberRange: number; lotRange:
       }
     },
     neighborsOf(p) {
-      const arr = [...(found.get(p.parcelKey)?.values() ?? [])];
+      const arr = [...(found.get(parcelUid(p))?.values() ?? [])];
       return arr
         .sort((a, b) => a.distance - b.distance)
         .slice(0, opts.maxShown)
