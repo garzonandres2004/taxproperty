@@ -135,7 +135,7 @@ function detailMd(x: Analysis, n: number): string[] {
     for (const nb of x.neighbors) L.push(`- ${nb.parcelId}: ${nb.ownerName}${nb.situsAddress ? `, ${nb.situsAddress}` : ""} (${nb.reason})`);
     L.push("");
   }
-  const checks = x.flags.filter((f) => f.severity !== "info" || f.check);
+  const checks = x.flags; // every flag is shown, info included
   if (checks.length) {
     L.push("**Risks and checks before paying**", "");
     for (const f of checks) L.push(`- [${f.severity}] ${f.message}${f.check ? ` Check: ${f.check}` : ""}`);
@@ -176,7 +176,6 @@ export function renderHtml(analyses: Analysis[], settings: Settings, a: Assumpti
         )
         .join("");
       const flags = x.flags
-        .filter((f) => f.severity !== "info" || f.check)
         .map((f) => `<li class="sev-${f.severity}"><b>${f.severity}</b> ${esc(f.message)}${f.check ? ` <i>Check: ${esc(f.check)}</i>` : ""}</li>`)
         .join("");
       const nbs = x.neighbors.map((nb) => `<li>${esc(nb.parcelId)}: ${esc(nb.ownerName)}${nb.situsAddress ? `, ${esc(nb.situsAddress)}` : ""} <span class="muted">(${esc(nb.reason)})</span></li>`).join("");

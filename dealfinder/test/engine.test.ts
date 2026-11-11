@@ -30,7 +30,7 @@ test("end to end on the sample county files", async () => {
   assert.equal(r.unmatched.length, 1);
 
   const lotA = byId(r, "12-19-26-0100-002-00500"); // matched through the alternate key on the list
-  assert.equal(lotA.verdict, "buy_candidate");
+  assert.equal(lotA.verdict, "needs_quote"); // good deal, but the price is our estimate until the clerk's statement
   assert.equal(lotA.competition.winChance, "likely");
   assert.equal(lotA.value.method, "comps_ratio");
   const nbIds = lotA.neighbors.map((n) => n.parcelId);

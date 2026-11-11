@@ -84,7 +84,8 @@ async function analyze(args: Args): Promise<number> {
   const listings: RawListing[] = [];
   for (const f of lands) listings.push(...parseListing(readFileSync(f, "utf8"), "lands_available", basename(f)));
   for (const f of auction) listings.push(...parseListing(readFileSync(f, "utf8"), "auction", basename(f)));
-  if (!listings.length) throw new SettingsError("No parcel numbers found in the list file(s).");
+  // An empty list is a real answer (some counties have nothing for sale): report it, do not fail.
+  if (!listings.length) console.log("No parcel numbers found in the list file(s). Writing an empty report.");
 
   const valuesFile = one(args, "values");
   const valueOverrides = valuesFile ? loadValueOverrides(valuesFile) : undefined;

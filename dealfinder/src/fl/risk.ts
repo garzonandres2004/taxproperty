@@ -101,8 +101,15 @@ export function floridaRiskFlags(args: {
     const d = new Date(listing.saleDate);
     if (!Number.isNaN(d.getTime())) {
       const years = (today.getTime() - d.getTime()) / (365.25 * 24 * 3600 * 1000);
-      if (years > r.landsAvailableEscheatYears - 0.5) {
-        flags.push({ code: "ESCHEAT_SOON", severity: "info", message: `On the list for ${years.toFixed(1)} years. It goes to the county at ${r.landsAvailableEscheatYears} years, so this window is closing.` });
+      if (years >= r.landsAvailableEscheatYears) {
+        flags.push({
+          code: "PAST_ESCHEAT",
+          severity: "danger",
+          message: `On the list for ${years.toFixed(1)} years. By statute, Lands Available parcels go to the county after ${r.landsAvailableEscheatYears} years, so this one may already belong to the county or the list may be out of date. Later taxes and interest in the estimate are also very uncertain this long after the sale.`,
+          check: "Ask the clerk whether it is still for sale at the opening bid, and get the statement in writing.",
+        });
+      } else if (years > r.landsAvailableEscheatYears - 0.5) {
+        flags.push({ code: "ESCHEAT_SOON", severity: "caution", message: `On the list for ${years.toFixed(1)} years. It goes to the county at ${r.landsAvailableEscheatYears} years, so this window is closing.`, check: "Request the clerk's statement now." });
       }
       if (years < 0.25) {
         flags.push({ code: "COUNTY_WINDOW", severity: "info", message: "Went to the list less than 90 days ago. Only the county can buy it until 90 days pass." });
@@ -110,7 +117,12 @@ export function floridaRiskFlags(args: {
     }
   }
   if (listing.channel === "lands_available" && !p.landsAvailableFlag) {
-    flags.push({ code: "ROLL_NOT_FLAGGED", severity: "info", message: "The tax roll does not mark this parcel as land available for taxes. Normal if the roll is older than the list; confirm it is still available." });
+    flags.push({
+      code: "ROLL_NOT_FLAGGED",
+      severity: "caution",
+      message: "The tax roll does not mark this parcel as land available for taxes. If the roll is newer than the list, it may already be sold, redeemed, or owned by the county.",
+      check: "Confirm with the clerk that it is still available.",
+    });
   }
   if (p.ownerState && p.ownerState.toUpperCase() !== "FL") {
     flags.push({ code: "OUT_OF_STATE_OWNER", severity: "info", message: `Owner mailing address is in ${p.ownerState}.` });

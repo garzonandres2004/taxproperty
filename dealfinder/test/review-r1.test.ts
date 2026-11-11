@@ -376,3 +376,37 @@ test("R6: after an override, HTML and Markdown both show why the estimate was do
     assert.match(out, /Tax roll estimate:/);
   }
 });
+
+// Lands Available 3 county run (issue #18)
+
+test("LA3: an estimated Lands Available price is never a straight buy; a clerk statement is", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const est = await run(nal, [{ text: "Parcel ID,Opening Bid,Date Offered\n12-19-26-0100-002-00500,3200,2025-11-11\n", channel: "lands_available" }]);
+  assert.equal(est.analyses[0].verdict, "needs_quote");
+  const stmt = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,4200\n", channel: "lands_available" }]);
+  assert.equal(stmt.analyses[0].verdict, "buy_candidate");
+});
+
+test("LA3: a parcel listed past the escheat window gets a danger flag and stays at get a quote", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2019-03-01\n", channel: "lands_available" }]);
+  const x = r.analyses[0];
+  assert.ok(x.flags.some((f) => f.code === "PAST_ESCHEAT" && f.severity === "danger"));
+  assert.ok(!x.flags.some((f) => f.code === "ESCHEAT_SOON"));
+  assert.equal(x.verdict, "needs_quote");
+});
+
+test("LA3: every flag, info included, is in the HTML and Markdown reports", async () => {
+  const { renderHtml, renderMarkdown } = await import("../src/core/report.ts");
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const s = settings();
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2024-01-01\n", channel: "lands_available" }], s);
+  const meta = { title: "t", generatedAt: today, nalFiles: [], listFiles: [], parcelsScanned: r.parcelsScanned, compsFound: r.compsFound, referenceYear: r.referenceYear, unmatched: r.unmatched };
+  const html = renderHtml(r.analyses, s, a, meta);
+  const md = renderMarkdown(r.analyses, s, a, meta);
+  for (const f of r.analyses[0].flags) {
+    const needle = f.message.slice(0, 30).replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+    assert.ok(html.includes(needle), `html missing ${f.code}`);
+    assert.ok(md.includes(f.message.slice(0, 30)), `md missing ${f.code}`);
+  }
+});
