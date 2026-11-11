@@ -47,7 +47,8 @@ export function assessCompetition(args: {
     const sale = listing.saleDate ? new Date(`${listing.saleDate}T00:00:00Z`) : null;
     if (sale && args.today && !Number.isNaN(sale.getTime())) {
       const opens = new Date(sale.getTime() + 90 * 86400000);
-      if (args.today.getTime() < opens.getTime()) {
+      // Only when the auction already happened: a future date is a list error, flagged elsewhere.
+      if (sale.getTime() <= args.today.getTime() && args.today.getTime() < opens.getTime()) {
         return {
           level: "none",
           expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,

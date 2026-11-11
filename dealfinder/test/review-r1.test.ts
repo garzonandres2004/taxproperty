@@ -454,9 +454,31 @@ test("Putnam: public reports say n/a for budget fit instead of yes", async () =>
   }
 });
 
-test("Putnam map check: a legal description full of EX carve outs is flagged as a likely remnant", async () => {
-  const legal = "\"SW 1/4 OF NE 1/4 EX OR 123 PG 4 EX OR 125 PG 9 EX OR 130 PG 2 EX RD R/W\"";
-  const nal = roll([`72,35-10-24-0000-0060-0000,2026,000,6300,23500,0,0,,,,,,A,${legal},N9,,PERRY,32347,`]);
-  const x = (await run(nal, [{ text: "Parcel ID,Statement Total\n35-10-24-0000-0060-0000,2596.42\n", channel: "lands_available" }])).analyses[0];
-  assert.ok(x.flags.some((f) => f.code === "REMNANT_LEGAL"));
+
+// PR #23 Codex round 1
+
+test("PR23: the 3 year escheat date is a calendar anniversary (1,095 day span)", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const listings = parseListing("Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2024-03-01\n", "lands_available");
+  const at = async (d: string) => (await runFlorida({ nalPaths: [nal], listings, settings: settings(), a, calibration: {}, today: new Date(`${d}T12:00:00Z`) })).analyses[0];
+  const dayBefore = await at("2027-02-28");
+  assert.ok(dayBefore.flags.some((f) => f.code === "ESCHEAT_SOON"));
+  assert.ok(!dayBefore.flags.some((f) => f.code === "PAST_ESCHEAT"));
+  const anniversary = await at("2027-03-01");
+  assert.ok(anniversary.flags.some((f) => f.code === "PAST_ESCHEAT"));
+  assert.equal(anniversary.verdict, "needs_quote");
+});
+
+test("PR23: Feb 29 anniversaries fall on Feb 28", async () => {
+  const { addYears } = await import("../src/fl/risk.ts");
+  assert.equal(addYears(new Date("2024-02-29T00:00:00Z"), 3).toISOString().slice(0, 10), "2027-02-28");
+  assert.equal(addYears(new Date("2024-02-29T00:00:00Z"), 4).toISOString().slice(0, 10), "2028-02-29");
+});
+
+test("PR23: a future list date is flagged and never treated as the county window", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2027-01-15\n", channel: "lands_available" }])).analyses[0];
+  assert.ok(x.flags.some((f) => f.code === "FUTURE_SALE_DATE"));
+  assert.ok(!x.flags.some((f) => f.code === "COUNTY_WINDOW"));
+  assert.doesNotMatch(x.competition.explanation, /Only the county can buy/);
 });

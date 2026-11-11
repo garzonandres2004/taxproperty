@@ -21,7 +21,7 @@ For every parcel on a county list it:
 
 Verdicts: **Buy candidate** (or Bid candidate at auction), **Get a quote**, **Watch**, **Pass**, **Avoid**.
 
-A Lands Available parcel becomes a Buy candidate only with the clerk's statement (a `Statement Total` column). Without one the price is the tool's rough estimate, so the best it can be is Get a quote. Parcels listed longer than the 3 year escheat window are flagged: they may already belong to the county.
+A Lands Available parcel becomes a Buy candidate only with the clerk's statement (a `Statement Total`, `Quote`, `Payoff` or `Purchase Price` column; never an `Estimated ...` column). Without one the price is the tool's rough estimate, so the best it can be is Get a quote. Parcels listed longer than the 3 year escheat window are flagged: they may already belong to the county.
 
 ## Step by step
 
@@ -56,7 +56,7 @@ Use the **DOR** file only. A county property appraiser's own export (for example
 
 **Lands Available (start here).** Go to the county clerk's tax deed page and find "List of Lands Available" (many counties use RealTDM; pick case status "List of Lands"). If it is a PDF, select all the text, copy it, and paste it into a `.txt` file. The tool finds the parcel numbers in the text on its own. If the clerk gives you a statement (exact payoff), put it in a small CSV with columns `Parcel ID,Statement Total` and pass it too; statements beat estimates.
 
-**Column names matter.** If the clerk's list prints an estimated total (Putnam: "Estimated Purchase Price"), keep that header: the tool uses it as the full price and adds nothing. Only call a column "Opening Bid" if it really is the opening bid; the tool then adds estimated later taxes and interest on top. A "Statement Total" column is the clerk's statement and is the only thing that can make a Lands Available parcel a buy. Use the clerk's own list when one exists; third party case pages can be out of date.
+**Column names matter.** If the clerk's list prints an estimated total (Putnam: "Estimated Purchase Price"), keep that header: the tool uses it as the full price and adds nothing. Only call a column "Opening Bid" if it really is the opening bid; the tool then adds estimated later taxes and interest on top. A clerk statement column ("Statement Total", or "Quote", "Payoff", "Purchase Price") is the only thing that can make a Lands Available parcel a buy; an "Estimated ..." column never can. Use the clerk's own list when one exists; third party case pages can be out of date.
 
 **Auction list.** From the county's RealTaxDeed site, export or copy the upcoming sale list (case number, parcel, opening bid, date).
 
