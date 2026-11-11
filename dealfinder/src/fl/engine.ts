@@ -251,6 +251,18 @@ export function analyzeOne(
   for (const c of listing.conflicts ?? []) {
     flags.push({ code: "LISTING_CONFLICT", severity: "danger", message: `This parcel is listed more than once and the lines disagree: ${c}.`, check: "Confirm the current amount with the clerk before acting." });
   }
+  // An override never hides why the roll estimate was doubted: carry the reason as a flag every report shows.
+  if (own && estimate.confidence === "low") {
+    const disagree = estimate.method === "comps_ratio" && estimate.compCount > 0;
+    flags.push({
+      code: "OVERRIDE_OF_DOUBTED_ESTIMATE",
+      severity: "caution",
+      message: disagree
+        ? `You replaced a low confidence estimate (${money(estimate.market)}) whose ${estimate.compCount} nearby sales disagree a lot.`
+        : `You replaced a low confidence estimate (${money(estimate.market)}) that had no usable nearby sales.`,
+      check: disagree ? "Be sure you know why those sales differ and that your comps match this parcel." : "Be sure your 3 sold comps really match this parcel.",
+    });
+  }
   if (own && estimate.market > 0 && (own > estimate.market * 2 || own < estimate.market * 0.5)) {
     flags.push({ code: "USER_VALUE_FAR", severity: "danger", message: `Your value ${money(own)} is ${own > estimate.market ? "more than double" : "less than half"} the tax roll estimate ${money(estimate.market)}.`, check: "Make sure it is not a typo (an extra zero) and that your sold comps really match this parcel." });
   }

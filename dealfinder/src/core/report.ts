@@ -191,6 +191,7 @@ export function renderHtml(analyses: Analysis[], settings: Settings, a: Assumpti
 <div><div class="k">Best plan</div><div class="v">${esc(x.best?.label ?? "none")}</div><div class="muted">${esc(profitText(x))}</div></div>
 </div>
 <h3>Why</h3><ul>${x.why.map((w) => `<li>${esc(w)}</li>`).join("")}</ul>
+<p><b>Value estimate:</b> ${money(x.value.market)} (range ${money(x.value.low)} to ${money(x.value.high)}), ${x.value.confidence} confidence. ${esc(x.value.notes.join(" "))}</p>
 <p><b>Property:</b> ${esc(p.useDescription)} (use code ${p.useCode}). Land ${p.landSqft ? Math.round(p.landSqft).toLocaleString() + " sq ft" : "size unknown"}${p.livingSqft ? `, living area ${p.livingSqft.toLocaleString()} sq ft` : ""}${p.yearBuilt ? `, built ${p.yearBuilt}` : ""}. Just value ${money(p.justValue)}. Owner ${esc(p.ownerName || "unknown")}.</p>
 ${c ? `<p><b>Cost to get the deed:</b> ${money(c.allIn)} = price ${money(c.price)}${c.otherFees ? ` + later taxes and interest ${money(c.otherFees)}` : ""}${c.docStamps ? ` + doc stamps ${money(c.docStamps)}` : ""}${c.recording ? ` + recording ${money(c.recording)}` : ""}.</p>` : ""}
 <p><b>Offer:</b> ${esc(x.offer.note)}</p>

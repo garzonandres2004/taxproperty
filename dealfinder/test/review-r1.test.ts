@@ -357,3 +357,22 @@ test("R5: low confidence from disagreeing sales is explained as disagreement, an
   assert.equal(o.value.method, "user");
   assert.ok(o.value.notes.some((n) => /Tax roll estimate: .*disagree a lot/.test(n)), "override keeps why the estimate was doubted");
 });
+
+// Codex round 6 (issue #19): the reason must reach the HTML report, not only stored notes.
+
+test("R6: after an override, HTML and Markdown both show why the estimate was doubted", async () => {
+  const { renderHtml, renderMarkdown } = await import("../src/core/report.ts");
+  const ratios = [0.5, 0.8, 1.2, 1.7, 2.2, 2.8, 1.0, 2.5];
+  const rows = ratios.map((r, i) => `45,AG-${100000 + i},2026,000,100000,20000,0,0,01,V,${100000 * r},2026,3,O${i},X,N7,,EUSTIS,32726,`);
+  const nal = roll([...rows, "45,SUBJ-123456,2026,000,100000,20000,0,0,,,,,,S,X,N7,,EUSTIS,32726,"]);
+  const s = settings({ totalCapital: 100000, maxPerDeal: 50000 });
+  const listings = parseListing("Parcel ID,Statement Total\nSUBJ-123456,3000\n", "lands_available");
+  const r = await runFlorida({ nalPaths: [nal], listings, settings: s, a, calibration: {}, today, valueOverrides: new Map([["SUBJ123456", 29000]]) });
+  const x = r.analyses[0];
+  assert.ok(x.flags.some((f) => f.code === "OVERRIDE_OF_DOUBTED_ESTIMATE" && /disagree a lot/.test(f.message)));
+  const meta = { title: "t", generatedAt: today, nalFiles: [], listFiles: [], parcelsScanned: r.parcelsScanned, compsFound: r.compsFound, referenceYear: r.referenceYear, unmatched: r.unmatched };
+  for (const out of [renderHtml(r.analyses, s, a, meta), renderMarkdown(r.analyses, s, a, meta)]) {
+    assert.match(out, /disagree a lot/);
+    assert.match(out, /Tax roll estimate:/);
+  }
+});
