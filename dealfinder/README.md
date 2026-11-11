@@ -68,6 +68,8 @@ node src/cli.ts analyze --nal NAL_lake.csv --lands lake_lands.txt --auction lake
 
 Open `reports/lake.html` in your browser. The same results are in `.md` and `.json`.
 
+To share a report publicly (GitHub issues, this repo is public), add `--public`. That applies no budget and prints none; no settings file is needed. Team rules are in [docs/dealfinder/TEAM.md](../docs/dealfinder/TEAM.md).
+
 ### 5. Before you pay for anything
 
 The report lists the checks for each parcel. Always:
@@ -92,7 +94,7 @@ After 3 results for a county and type, the competition estimate uses your real n
 
 ```
 npm run demo     # writes reports/demo.html
-npm test         # 38 tests
+npm test         # all tests
 ```
 
 The sample parcels are invented, built with the real NAL column names (`node fixtures/make-fixtures.ts`).

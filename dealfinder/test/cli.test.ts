@@ -40,3 +40,15 @@ test("record then calibrate", () => {
   const cal = JSON.parse(readFileSync(join(dir, "cal.json"), "utf8"));
   assert.deepEqual(cal["45"].vacant, { ratio: 0.3, n: 3 });
 });
+
+test("public mode needs no settings and never prints a budget", () => {
+  const dir = mkdtempSync(join(tmpdir(), "df-"));
+  const out = join(dir, "pub");
+  const r = cli(["analyze", "--nal", "fixtures/nal_sample.csv", "--lands", "fixtures/lands_available_sample.txt", "--auction", "fixtures/auction_sample.csv", "--public", "--today", "2026-11-11", "--out", out]);
+  assert.equal(r.status, 0, r.stderr);
+  for (const ext of ["html", "md", "json"]) {
+    const t = readFileSync(`${out}.${ext}`, "utf8");
+    assert.ok(!/1,000,000,000,000|1000000000000|1e\+12|max per deal of|your free cash|capital \$/.test(t), `${ext} leaks budget`);
+  }
+  assert.match(readFileSync(`${out}.md`, "utf8"), /Public report: no budget applied/);
+});

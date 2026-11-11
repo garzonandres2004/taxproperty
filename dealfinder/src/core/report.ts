@@ -28,6 +28,13 @@ export interface ReportMeta {
   compsFound: number;
   referenceYear: number;
   unmatched: RawListing[];
+  publicMode?: boolean;
+}
+
+function settingsLine(settings: Settings, meta: ReportMeta): string {
+  const prefs = `minimum profit ${money(settings.minProfit)} and ${pct(settings.minReturnPct)} return`;
+  if (meta.publicMode) return `Public report: no budget applied, so verdicts reflect the deal only (${prefs}). Run it privately with your settings file to apply your budget.`;
+  return `Your settings: capital ${money(settings.totalCapital)}, max per deal ${money(settings.maxPerDeal)} all in, reserve ${pct(settings.reservePct)}, ${prefs}.`;
 }
 
 function profitText(a: Analysis): string {
@@ -60,7 +67,7 @@ export function renderMarkdown(analyses: Analysis[], settings: Settings, a: Assu
   const L: string[] = [];
   L.push(`# ${meta.title}`, "");
   L.push(`Generated ${meta.generatedAt.toISOString().slice(0, 16).replace("T", " ")} UTC. Tax roll year ${meta.referenceYear}. ${meta.parcelsScanned.toLocaleString()} parcels scanned, ${meta.compsFound.toLocaleString()} usable sales found.`, "");
-  L.push(`Your settings: capital ${money(settings.totalCapital)}, max per deal ${money(settings.maxPerDeal)} all in, reserve ${pct(settings.reservePct)}, minimum profit ${money(settings.minProfit)} and ${pct(settings.minReturnPct)} return.`, "");
+  L.push(settingsLine(settings, meta), "");
   L.push(`Results: ${counts}.`, "");
   if (meta.unmatched.length) L.push(`${meta.unmatched.length} list line(s) did not match any parcel in the tax roll. They are listed at the end.`, "");
 
@@ -219,7 +226,7 @@ details pre{white-space:pre-wrap;font-size:12px;background:#fafaf8;padding:10px;
 </style></head><body><main>
 <h1>${esc(meta.title)}</h1>
 <p class="muted">Generated ${meta.generatedAt.toISOString().slice(0, 16).replace("T", " ")} UTC · tax roll year ${meta.referenceYear} · ${meta.parcelsScanned.toLocaleString()} parcels scanned · ${meta.compsFound.toLocaleString()} usable sales</p>
-<div class="card"><b>Your settings:</b> capital ${money(settings.totalCapital)}, max per deal ${money(settings.maxPerDeal)} all in, reserve ${pct(settings.reservePct)}, minimum profit ${money(settings.minProfit)} and ${pct(settings.minReturnPct)} return.<br><b>Results:</b> ${esc(countVerdicts(analyses))}.${meta.unmatched.length ? ` ${meta.unmatched.length} list line(s) did not match the tax roll (see the end).` : ""}</div>
+<div class="card">${esc(settingsLine(settings, meta))}<br><b>Results:</b> ${esc(countVerdicts(analyses))}.${meta.unmatched.length ? ` ${meta.unmatched.length} list line(s) did not match the tax roll (see the end).` : ""}</div>
 <div class="card table-wrap"><table><thead><tr><th>#</th><th>Verdict</th><th>Score</th><th>Parcel</th><th>County</th><th>Type</th><th>Address</th><th>Value</th><th>Price all in</th><th>Best plan</th><th>Profit</th><th>Max to pay</th></tr></thead><tbody>
 ${rows || `<tr><td colspan="12">Nothing to show.</td></tr>`}
 </tbody></table></div>
