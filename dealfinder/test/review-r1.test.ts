@@ -35,7 +35,7 @@ test("P1: a later clerk statement is merged, not discarded", async () => {
   const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
   const r = await run(nal, [
     { text: "Parcel ID,Opening Bid\n12-19-26-0100-002-00500,3200\n", channel: "lands_available" },
-    { text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,50000\n", channel: "lands_available" },
+    { text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,50000,2026-01-01\n", channel: "lands_available" },
   ]);
   assert.equal(r.analyses.length, 1);
   const x = r.analyses[0];
@@ -47,8 +47,8 @@ test("P1: a later clerk statement is merged, not discarded", async () => {
 test("P1: conflicting statements are flagged and never a straight buy", async () => {
   const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
   const r = await run(nal, [
-    { text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,3000\n", channel: "lands_available" },
-    { text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,3400\n", channel: "lands_available" },
+    { text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,3000,2026-01-01\n", channel: "lands_available" },
+    { text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,3400,2026-01-01\n", channel: "lands_available" },
   ]);
   const x = r.analyses[0];
   assert.equal(x.listing.quotedTotal, 3400);
@@ -89,7 +89,7 @@ test("P1: walk away price leaves cash for the plan's upfront costs", () => {
 test("P1: walk away is capped end to end", async () => {
   const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
   const s = settings({ totalCapital: 10000, maxPerDeal: 8000, reservePct: 0.2, strategies: ["quiet_title_and_list"] });
-  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,5000\n", channel: "lands_available" }], s);
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,5000,2026-01-01\n", channel: "lands_available" }], s);
   const x = r.analyses[0];
   const freeCash = 10000 * 0.8;
   assert.ok(x.offer.walkAway + x.best!.upfrontCosts <= freeCash, `${x.offer.walkAway} + ${x.best!.upfrontCosts}`);
@@ -187,7 +187,7 @@ test("P2: public mode has no numeric stand in even for absurd values", async () 
   const s = publicSettings("");
   assert.equal(s.totalCapital, Infinity);
   const nal = roll(["45,12-19-26-0100-002-00500,2026,000,1700000000000,10000,0,0,,,,,,DOE,X,N1,,EUSTIS,32726,"]);
-  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,5000\n", channel: "lands_available" }], { ...s, strategies: ["quiet_title_and_list"] });
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,5000,2026-01-01\n", channel: "lands_available" }], { ...s, strategies: ["quiet_title_and_list"] });
   const text = JSON.stringify(r.analyses, (_k, v) => (typeof v === "number" && !Number.isFinite(v) ? null : v));
   assert.ok(!/max per deal|capped by your budget|free cash/.test(text));
 });
@@ -273,7 +273,7 @@ test("R2 note: plain numbers skip year-like values and tiny numbers", () => {
 
 test("Run1: a buy resting on a guessed value is held at watch, and a checked value releases it", async () => {
   const nal = roll(["72,07567-012,2026,000,20000,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
-  const list = [{ text: "Parcel ID,Statement Total\n07567-012,3000\n", channel: "lands_available" as const }];
+  const list = [{ text: "Parcel ID,Statement Total,Date Offered\n07567-012,3000,2026-01-01\n", channel: "lands_available" as const }];
   const guessed = (await run(nal, list)).analyses[0];
   assert.equal(guessed.value.confidence, "low");
   assert.equal(guessed.verdict, "watch");
@@ -299,7 +299,7 @@ test("Run1: avoided parcels are shown by default", async () => {
 
 test("Run1: a Lands Available price far under value carries a find-the-reason flag", async () => {
   const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
-  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,2000\n", channel: "lands_available" }]);
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,2000,2026-01-01\n", channel: "lands_available" }]);
   assert.ok(r.analyses[0].flags.some((f) => f.code === "DEEP_DISCOUNT"));
 });
 
@@ -321,7 +321,7 @@ test("Run3: sales that disagree a lot lower the confidence", () => {
 
 test("R4: a hand value far from the roll estimate is flagged and the estimate is shown", async () => {
   const nal = roll(["72,07567-012,2026,000,20000,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
-  const listings = parseListing("Parcel ID,Statement Total\n07567-012,3000\n", "lands_available");
+  const listings = parseListing("Parcel ID,Statement Total,Date Offered\n07567-012,3000,2026-01-01\n", "lands_available");
   const r = await runFlorida({ nalPaths: [nal], listings, settings: settings(), a, calibration: {}, today, valueOverrides: new Map([["07567012", 240000]]) });
   const x = r.analyses[0];
   assert.ok(x.flags.some((f) => f.code === "USER_VALUE_FAR"));
@@ -330,7 +330,7 @@ test("R4: a hand value far from the roll estimate is flagged and the estimate is
 
 test("R4: the how-to-fix line shows for a guessed value even when over budget", async () => {
   const nal = roll(["72,07567-012,2026,000,200000,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
-  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n07567-012,30000\n", channel: "lands_available" }], settings({ totalCapital: 20000, maxPerDeal: 8000 }));
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n07567-012,30000,2026-01-01\n", channel: "lands_available" }], settings({ totalCapital: 20000, maxPerDeal: 8000 }));
   const x = r.analyses[0];
   assert.equal(x.value.confidence, "low");
   assert.equal(x.best!.fitsBudget, false, "statement 30000 is over the 8000 max per deal");
@@ -344,7 +344,7 @@ test("R5: low confidence from disagreeing sales is explained as disagreement, an
   const ratios = [0.5, 0.8, 1.2, 1.7, 2.2, 2.8, 1.0, 2.5];
   const rows = ratios.map((r, i) => `45,AG-${100000 + i},2026,000,100000,20000,0,0,01,V,${100000 * r},2026,3,O${i},X,N7,,EUSTIS,32726,`);
   const nal = roll([...rows, "45,SUBJ-123456,2026,000,100000,20000,0,0,,,,,,S,X,N7,,EUSTIS,32726,"]);
-  const list = [{ text: "Parcel ID,Statement Total\nSUBJ-123456,3000\n", channel: "lands_available" as const }];
+  const list = [{ text: "Parcel ID,Statement Total,Date Offered\nSUBJ-123456,3000,2026-01-01\n", channel: "lands_available" as const }];
   const x = (await run(nal, list, settings({ totalCapital: 100000, maxPerDeal: 50000 }))).analyses[0];
   assert.equal(x.value.confidence, "low");
   assert.ok(x.value.compCount > 0);
@@ -366,7 +366,7 @@ test("R6: after an override, HTML and Markdown both show why the estimate was do
   const rows = ratios.map((r, i) => `45,AG-${100000 + i},2026,000,100000,20000,0,0,01,V,${100000 * r},2026,3,O${i},X,N7,,EUSTIS,32726,`);
   const nal = roll([...rows, "45,SUBJ-123456,2026,000,100000,20000,0,0,,,,,,S,X,N7,,EUSTIS,32726,"]);
   const s = settings({ totalCapital: 100000, maxPerDeal: 50000 });
-  const listings = parseListing("Parcel ID,Statement Total\nSUBJ-123456,3000\n", "lands_available");
+  const listings = parseListing("Parcel ID,Statement Total,Date Offered\nSUBJ-123456,3000,2026-01-01\n", "lands_available");
   const r = await runFlorida({ nalPaths: [nal], listings, settings: s, a, calibration: {}, today, valueOverrides: new Map([["SUBJ123456", 29000]]) });
   const x = r.analyses[0];
   assert.ok(x.flags.some((f) => f.code === "OVERRIDE_OF_DOUBTED_ESTIMATE" && /disagree a lot/.test(f.message)));
@@ -384,7 +384,7 @@ test("LA3: an estimated Lands Available price is never a straight buy; a clerk s
   const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
   const est = await run(nal, [{ text: "Parcel ID,Opening Bid,Date Offered\n12-19-26-0100-002-00500,3200,2025-11-11\n", channel: "lands_available" }]);
   assert.equal(est.analyses[0].verdict, "needs_quote");
-  const stmt = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,4200\n", channel: "lands_available" }]);
+  const stmt = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" }]);
   assert.equal(stmt.analyses[0].verdict, "buy_candidate");
 });
 
@@ -446,7 +446,7 @@ test("Putnam: public reports say n/a for budget fit instead of yes", async () =>
   const { publicSettings } = await import("../src/core/settings.ts");
   const s = publicSettings("");
   const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
-  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,4200\n", channel: "lands_available" }], s);
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" }], s);
   const meta = { title: "t", generatedAt: today, nalFiles: [], listFiles: [], parcelsScanned: r.parcelsScanned, compsFound: r.compsFound, referenceYear: r.referenceYear, unmatched: r.unmatched, publicMode: true };
   for (const out of [renderHtml(r.analyses, s, a, meta), renderMarkdown(r.analyses, s, a, meta)]) {
     assert.match(out, /n\/a \(no budget\)/);
@@ -508,5 +508,24 @@ test("PR23 r3: no 'pay quickly' when the timeline is unknown or past the escheat
   const open = assessCompetition({ ...base, listing: { channel: "lands_available", parcelId: "x", parcelKey: "x", quotedTotal: 5000, saleDate: "2026-01-01" }, today });
   for (const c of [noDate, noToday, past]) assert.doesNotMatch(c.explanation, /pay quickly/);
   assert.match(past.explanation, /may already belong to the county/);
-  assert.match(open.explanation, /pay quickly/, "open to the public, inside the window: urgency is real");
+  assert.match(open.explanation, /pay quickly/, "statement backed, open to the public, before escheat: urgency is real");
+  const estimate = assessCompetition({ ...base, listing: { channel: "lands_available", parcelId: "x", parcelKey: "x", quotedTotal: 4200, quoteIsEstimate: true, saleDate: "2026-01-01" }, today });
+  assert.doesNotMatch(estimate.explanation, /pay quickly/);
+  assert.match(estimate.explanation, /request the clerk's statement soon/);
+});
+
+test("PR25 r1: no list date caps a statement backed house at get a quote", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,001,150000,10000,1400,1990,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,20000\n", channel: "lands_available" }], settings({ totalCapital: 500000, maxPerDeal: 100000 }))).analyses[0];
+  assert.ok(x.flags.some((f) => f.code === "NO_LIST_DATE"));
+  assert.equal(x.verdict, "needs_quote");
+  assert.doesNotMatch(x.competition.explanation, /pay quickly/);
+});
+
+test("PR25 r1: an estimate only house in the open window is get a quote and is told to request the statement, not to pay", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,001,150000,10000,1400,1990,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text: "Parcel ID,Estimated Purchase Price,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" }], settings({ totalCapital: 500000, maxPerDeal: 100000 }))).analyses[0];
+  assert.equal(x.verdict, "needs_quote");
+  assert.doesNotMatch(x.competition.explanation, /pay quickly/);
+  assert.ok(!x.why.some((w) => /pay quickly/.test(w)));
 });

@@ -68,9 +68,12 @@ export function assessCompetition(args: {
       level: attractive ? "low" : "none",
       expectedClearing: fixed,
       winChance: "likely",
-      explanation: attractive
-        ? "No bidding: fixed price, first come first served. Homes on this list get noticed, so request the statement and pay quickly."
-        : "No bidding: fixed price, first come first served. Nobody can outbid you; the only risk is someone paying first.",
+      // Paying is only urgent once the price is the clerk's statement; before that the urgent step is asking for it.
+      explanation: !attractive
+        ? "No bidding: fixed price, first come first served. Nobody can outbid you; the only risk is someone paying first."
+        : listing.quotedTotal && !listing.quoteIsEstimate
+          ? "No bidding: fixed price, first come first served. Homes on this list get noticed, so pay quickly once you have checked it."
+          : "No bidding: fixed price, first come first served. Homes on this list get noticed, so request the clerk's statement soon.",
     };
   }
 

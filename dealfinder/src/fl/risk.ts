@@ -98,6 +98,9 @@ export function floridaRiskFlags(args: {
   if (listing.channel === "lands_available" && costs && value.market > 0 && costs.allIn < value.market * 0.15) {
     flags.push({ code: "DEEP_DISCOUNT", severity: "caution", message: `Price is ${Math.round((costs.allIn / value.market) * 100)}% of estimated value and still nobody bid at auction. Usually there is a reason: no road access, wetlands, an unbuildable lot, a big government lien, or a value estimate that is wrong.`, check: "Find the reason before paying: GIS map, lien search, and real sold prices nearby." });
   }
+  if (listing.channel === "lands_available" && !(listing.saleDate && utcDate(listing.saleDate))) {
+    flags.push({ code: "NO_LIST_DATE", severity: "caution", message: "The list gives no usable date, so it is unknown whether the 90 day county window has passed or the 3 year escheat date has come.", check: "Ask the clerk when it was offered and confirm it is for sale to the public." });
+  }
   if (listing.channel === "lands_available" && listing.saleDate) {
     const sale = utcDate(listing.saleDate);
     const now = utcDay(today);
