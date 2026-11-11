@@ -52,6 +52,12 @@ export function floridaRiskFlags(args: {
   if (p.justValue > 0 && p.justValue < r.lowValueCaution) {
     flags.push({ code: "LOW_VALUE", severity: "caution", message: `Appraiser values it at ${money(p.justValue)}. Very low values usually mean unbuildable, landlocked, or wet land.` });
   }
+  // A legal description with many "EX" carve outs is usually what is left after lots were sold off:
+  // thin strips or scattered pieces (Putnam 35-10-24-0000-0060-0000 was two 33 ft strips).
+  const exceptions = (p.legal.toUpperCase().match(/\bEX(C|CEPT)?\b/g) ?? []).length;
+  if (vacant && exceptions >= 3) {
+    flags.push({ code: "REMNANT_LEGAL", severity: "caution", message: `The legal description has ${exceptions} "except" carve outs. Land like this is often a leftover strip or scattered pieces, not one usable lot.`, check: "Look at the shape on the property appraiser map before anything else." });
+  }
   if (vacant && !p.situsAddress) {
     flags.push({ code: "NO_ADDRESS", severity: "caution", message: "No street address. Could be landlocked or on an unpaved road.", check: "Confirm legal road access on the GIS map." });
   }

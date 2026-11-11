@@ -453,3 +453,10 @@ test("Putnam: public reports say n/a for budget fit instead of yes", async () =>
     assert.doesNotMatch(out, /\| yes \||<td>yes<\/td>/);
   }
 });
+
+test("Putnam map check: a legal description full of EX carve outs is flagged as a likely remnant", async () => {
+  const legal = "\"SW 1/4 OF NE 1/4 EX OR 123 PG 4 EX OR 125 PG 9 EX OR 130 PG 2 EX RD R/W\"";
+  const nal = roll([`72,35-10-24-0000-0060-0000,2026,000,6300,23500,0,0,,,,,,A,${legal},N9,,PERRY,32347,`]);
+  const x = (await run(nal, [{ text: "Parcel ID,Statement Total\n35-10-24-0000-0060-0000,2596.42\n", channel: "lands_available" }])).analyses[0];
+  assert.ok(x.flags.some((f) => f.code === "REMNANT_LEGAL"));
+});
