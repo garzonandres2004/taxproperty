@@ -7,11 +7,13 @@ Read this, then `docs/dealfinder/DECISION.md`, then `dealfinder/README.md`.
 
 | Seat | Who | Job | Does not |
 |---|---|---|---|
-| Lead | Claude (chat and Claude Code) | Product calls, research, writes the code, writes issues, decides what is next | Merge to main without Andres |
+| Lead | Claude (chat and Claude Code) | Product calls, research, writes the code, writes issues, decides what is next | Merge its own PRs |
 | Operator | Muse | Downloads real data, runs the tool on its own computer, posts results, reports errors, handles anything that needs a real browser or a login | Change engine logic without an issue assigned to Muse |
 | Reviewer | Codex | Independent review of every pull request: math, logic, edge cases, tests. Can open fix PRs for bugs it finds | Rewrite features or change product decisions |
 | Challenger | ChatGPT | Attacks big decisions (state choice, strategy model, competition model) before we commit to them | Day to day work |
 | Owner | Andres | Approves gates (see below), owns the budget, makes money decisions | Relay messages by hand; that is what GitHub is for |
+
+Personal details (email, phone, budget) never go on GitHub; the repo is public.
 
 ## Where we talk
 
@@ -50,9 +52,9 @@ Paste error messages in full. Do not summarize them.
 
 ## Rules
 
-1. Never push to `main`. Work on a branch, open a pull request. Andres merges.
+1. Never push to `main`. Work on a branch, open a pull request. Since Nov 11, 2026 (recorded on the hub issue): a Codex PASS on a Deal Finder PR is enough for Muse to merge it.
 2. Branch names: `dealfinder/<short-topic>` (for example `dealfinder/fix-lake-parser`).
-3. Every pull request: `cd dealfinder && npm test` must pass. Codex reviews before Andres merges.
+3. Every pull request: `cd dealfinder && npm test` must pass. Codex reviews before anyone merges.
 4. Budget is never hardcoded and never committed. It lives only in `dealfinder/my-settings.json` on the machine that runs the tool (git ignores that file).
 5. **This repo is public.** Do not commit or post:
    - `my-settings.json` or any budget number
@@ -68,7 +70,7 @@ Paste error messages in full. Do not summarize them.
 | Gate | When |
 |---|---|
 | G1 | First real county run looks sane (Claude posts the read of it) |
-| G2 | Merge the branch to main |
+| G2 | Merge to main: delegated to Muse on a Codex PASS (Nov 11, 2026) |
 | G3 | Any spending (data, quiet title attorney, deposits) |
 | G4 | Any bid or purchase |
 

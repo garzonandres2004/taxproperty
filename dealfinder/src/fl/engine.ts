@@ -101,7 +101,11 @@ export function mergeListings(parcel: Parcel, raws: { raw: RawListing; key: stri
     if (loose !== undefined) plain = true;
     return loose;
   }));
-  const quotes = distinct(raws.map(({ raw }) => raw.quotedTotal));
+  // A real statement beats the clerk's printed estimate; estimates only count when no statement exists.
+  const statements = raws.filter(({ raw }) => raw.quotedTotal !== undefined && !raw.quoteIsEstimate);
+  const quoteSource = statements.length ? statements : raws;
+  const quotes = distinct(quoteSource.map(({ raw }) => raw.quotedTotal));
+  const quoteIsEstimate = !statements.length && quotes.length > 0 ? true : undefined;
   if (bids.length > 1) conflicts.push(`opening bids disagree: ${bids.map(money).join(", ")} (using the highest)`);
   if (quotes.length > 1) conflicts.push(`clerk statements disagree: ${quotes.map(money).join(", ")} (using the highest)`);
   // Dates drive accrued taxes and interest. Use the earliest (more accrual, higher cost) and flag any disagreement.
@@ -115,6 +119,7 @@ export function mergeListings(parcel: Parcel, raws: { raw: RawListing; key: stri
     caseNumber: first((r) => r.caseNumber),
     openingBid: bids.length ? Math.max(...bids) : undefined,
     quotedTotal: quotes.length ? Math.max(...quotes) : undefined,
+    quoteIsEstimate,
     saleDate: dates[0],
     sourceLine: raws.map(({ raw }) => raw.sourceLine).join(" || "),
     conflicts: conflicts.length ? conflicts : undefined,
@@ -233,7 +238,7 @@ export function analyzeOne(
   const ceilingOnly = buildStrategies({ parcel, value, neighbors, settings, a, allIn: null, ceilingToPrice });
   const bestCeiling = pickBest(ceilingOnly, settings);
   const budgetCeiling = isAuction ? maxBidForAllIn(settings.maxPerDeal, a) : settings.maxPerDeal;
-  const competition = assessCompetition({ parcel, listing, value, tier, best: bestCeiling, budgetCeiling, a, calibration });
+  const competition = assessCompetition({ parcel, listing, value, tier, best: bestCeiling, budgetCeiling, a, calibration, today });
 
   // Price to evaluate at: the clerk quote or estimate for Lands Available;
   // the expected final bid for auctions (profit at the opening bid is a fantasy when others bid).
@@ -317,7 +322,9 @@ function makeOffer(
     return { low: 0, high: ceiling, walkAway: ceiling, note: `Fixed price, no bidding. Request the clerk's statement. Buy only if the statement total is ${money(ceiling)} or less${capNote}.` };
   }
   const fixed = costs.allIn;
-  const source = listing.quotedTotal ? "clerk statement" : "rough estimate, not the clerk's math; request the clerk's statement to confirm";
+  const source = listing.quotedTotal
+    ? listing.quoteIsEstimate ? "the clerk's printed estimate; request the statement to confirm" : "clerk statement"
+    : "rough estimate, not the clerk's math; request the clerk's statement to confirm";
   if (fixed > ceiling) {
     const reason = fixed <= targetCeiling ? `more than you can pay and still cover this plan with your cash (${money(ceiling)})` : `above the most it is worth to you, ${money(targetCeiling)}`;
     return { low: fixed, high: fixed, walkAway: ceiling, note: `Fixed price about ${money(fixed)} (${source}) is ${reason}.` };
@@ -352,6 +359,10 @@ function decideVerdict(args: {
     if (!meetsTargets(best, settings) || flags.some((f) => f.code === "PRICE_OVER_VALUE")) return "pass";
     v = best.fitsBudget ? "buy_candidate" : "watch";
   }
+  // Lands Available without a clerk statement: the price is our rough estimate, so confirm it first.
+  if (v === "buy_candidate" && !isAuction && (!listing.quotedTotal || listing.quoteIsEstimate)) v = "needs_quote";
+  // Possibly already escheated, or a list date that cannot be right: availability itself is in doubt.
+  if (v === "buy_candidate" && flags.some((f) => f.code === "PAST_ESCHEAT" || f.code === "FUTURE_SALE_DATE")) v = "needs_quote";
   // Disagreeing list lines: never a straight buy until the clerk confirms the number.
   if (v === "buy_candidate" && listing.conflicts?.length) v = "watch";
   // A value with no sales behind it is a guess. Check it before calling anything a buy.

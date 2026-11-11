@@ -52,3 +52,13 @@ test("public mode needs no settings and never prints a budget", () => {
   }
   assert.match(readFileSync(`${out}.md`, "utf8"), /Public report: no budget applied/);
 });
+
+test("an empty county list writes an empty report instead of failing", () => {
+  const dir = mkdtempSync(join(tmpdir(), "df-"));
+  const list = join(dir, "empty.txt");
+  writeFileSync(list, "LIST OF LANDS AVAILABLE\nNo records found\n");
+  const out = join(dir, "empty");
+  const r = cli(["analyze", "--nal", "fixtures/nal_sample.csv", "--lands", list, "--public", "--today", "2026-11-11", "--out", out]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(existsSync(`${out}.md`));
+});

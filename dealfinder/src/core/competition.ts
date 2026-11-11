@@ -37,11 +37,33 @@ export function assessCompetition(args: {
   budgetCeiling: number;
   a: Assumptions;
   calibration: Calibration;
+  today?: Date;
 }): Competition {
   const { parcel, listing, value, tier, best, budgetCeiling, a, calibration } = args;
   const bucket = typeBucket(parcel);
 
   if (listing.channel === "lands_available") {
+    // Florida: only the county may buy in the first 90 days after the auction.
+    const sale = listing.saleDate ? new Date(`${listing.saleDate}T00:00:00Z`) : null;
+    if (sale && args.today && !Number.isNaN(sale.getTime())) {
+      const opens = new Date(sale.getTime() + 90 * 86400000);
+      if (sale.getTime() > args.today.getTime()) {
+        return {
+          level: "none",
+          expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,
+          winChance: "likely",
+          explanation: "No bidding, fixed price. The list date is in the future, so its timing cannot be trusted. Confirm the date and that it is for sale with the clerk before acting.",
+        };
+      }
+      if (args.today.getTime() < opens.getTime()) {
+        return {
+          level: "none",
+          expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,
+          winChance: "likely",
+          explanation: `No bidding, fixed price. Only the county can buy it until about ${opens.toISOString().slice(0, 10)} (90 days after the auction); after that it is first come first served. Request the statement before then.`,
+        };
+      }
+    }
     const attractive = best && Number.isFinite(best.profit) ? best.profit > 0 && bucket === "improved" : bucket === "improved";
     return {
       level: attractive ? "low" : "none",

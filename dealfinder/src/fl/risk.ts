@@ -98,19 +98,38 @@ export function floridaRiskFlags(args: {
     flags.push({ code: "DEEP_DISCOUNT", severity: "caution", message: `Price is ${Math.round((costs.allIn / value.market) * 100)}% of estimated value and still nobody bid at auction. Usually there is a reason: no road access, wetlands, an unbuildable lot, a big government lien, or a value estimate that is wrong.`, check: "Find the reason before paying: GIS map, lien search, and real sold prices nearby." });
   }
   if (listing.channel === "lands_available" && listing.saleDate) {
-    const d = new Date(listing.saleDate);
-    if (!Number.isNaN(d.getTime())) {
-      const years = (today.getTime() - d.getTime()) / (365.25 * 24 * 3600 * 1000);
-      if (years > r.landsAvailableEscheatYears - 0.5) {
-        flags.push({ code: "ESCHEAT_SOON", severity: "info", message: `On the list for ${years.toFixed(1)} years. It goes to the county at ${r.landsAvailableEscheatYears} years, so this window is closing.` });
+    const sale = utcDate(listing.saleDate);
+    const now = utcDay(today);
+    if (sale && sale.getTime() > now.getTime()) {
+      flags.push({ code: "FUTURE_SALE_DATE", severity: "caution", message: `The list date ${listing.saleDate} is in the future. The auction has not happened yet, so it cannot be on Lands Available.`, check: "Check the date on the clerk's list." });
+    } else if (sale) {
+      // Calendar anniversaries, not year fractions: a 3 year span can be 1,095 days.
+      const escheat = addYears(sale, r.landsAvailableEscheatYears);
+      const soon = addMonths(escheat, -6);
+      const years = (now.getTime() - sale.getTime()) / (365.25 * 86400000);
+      if (now.getTime() >= escheat.getTime()) {
+        flags.push({
+          code: "PAST_ESCHEAT",
+          severity: "danger",
+          message: `On the list since ${listing.saleDate} (${years.toFixed(1)} years). By statute, Lands Available parcels go to the county after ${r.landsAvailableEscheatYears} years (here ${iso(escheat)}), so this one may already belong to the county or the list may be out of date. Later taxes and interest in the estimate are also very uncertain this long after the sale.`,
+          check: "Ask the clerk whether it is still for sale at the opening bid, and get the statement in writing.",
+        });
+      } else if (now.getTime() >= soon.getTime()) {
+        flags.push({ code: "ESCHEAT_SOON", severity: "caution", message: `On the list since ${listing.saleDate}. It goes to the county on about ${iso(escheat)}, so this window is closing.`, check: "Request the clerk's statement now." });
       }
-      if (years < 0.25) {
-        flags.push({ code: "COUNTY_WINDOW", severity: "info", message: "Went to the list less than 90 days ago. Only the county can buy it until 90 days pass." });
+      if (now.getTime() < sale.getTime() + 90 * 86400000) {
+        flags.push({ code: "COUNTY_WINDOW", severity: "info", message: `Went to the list less than 90 days ago. Only the county can buy it until about ${iso(new Date(sale.getTime() + 90 * 86400000))}.` });
       }
     }
   }
+
   if (listing.channel === "lands_available" && !p.landsAvailableFlag) {
-    flags.push({ code: "ROLL_NOT_FLAGGED", severity: "info", message: "The tax roll does not mark this parcel as land available for taxes. Normal if the roll is older than the list; confirm it is still available." });
+    flags.push({
+      code: "ROLL_NOT_FLAGGED",
+      severity: "caution",
+      message: "The tax roll does not mark this parcel as land available for taxes. If the roll is newer than the list, it may already be sold, redeemed, or owned by the county.",
+      check: "Confirm with the clerk that it is still available.",
+    });
   }
   if (p.ownerState && p.ownerState.toUpperCase() !== "FL") {
     flags.push({ code: "OUT_OF_STATE_OWNER", severity: "info", message: `Owner mailing address is in ${p.ownerState}.` });
@@ -121,3 +140,31 @@ export function floridaRiskFlags(args: {
 
   return flags;
 }
+
+/** Plain calendar date at UTC midnight, or null. */
+function utcDate(isoDate: string): Date | null {
+  const d = new Date(`${isoDate.slice(0, 10)}T00:00:00Z`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function utcDay(d: Date): Date {
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
+/** Same calendar day N years later. Feb 29 maps to Feb 28 (the earlier day, so the escheat warning is never late). */
+export function addYears(d: Date, years: number): Date {
+  const y = d.getUTCFullYear() + years;
+  const m = d.getUTCMonth();
+  const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(y, m, Math.min(d.getUTCDate(), lastDay)));
+}
+
+function addMonths(d: Date, months: number): Date {
+  const total = d.getUTCFullYear() * 12 + d.getUTCMonth() + months;
+  const y = Math.floor(total / 12);
+  const m = total % 12;
+  const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+  return new Date(Date.UTC(y, m, Math.min(d.getUTCDate(), lastDay)));
+}
+
+const iso = (d: Date) => d.toISOString().slice(0, 10);

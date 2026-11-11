@@ -11,6 +11,8 @@ export interface RawListing {
   candidateKeys: string[]; // normalized possible parcel ids, longest first
   openingBid?: number;
   quotedTotal?: number;
+  /** quotedTotal is the clerk's printed estimate, not a statement. */
+  quoteIsEstimate?: boolean;
   caseNumber?: string;
   saleDate?: string;
   /** Free text only: plain numbers (no $ or cents) seen on the line. Resolved after the parcel is known. */
@@ -56,6 +58,8 @@ const HEADER_HINTS = {
   parcel: /^(PARCEL|PARCEL_?ID|PARCEL_?(NO|NUM|NUMBER)|PARCEL_?#|FOLIO|STRAP|PIN|APN|RE_?#?|RE_?NUMBER|ACCOUNT|ACCOUNT_?(NO|NUMBER)|ALT_?KEY|ALTERNATE_?KEY|PROPERTY_?ID|TAX_?ID)$/,
   bid: /^(OPENING|MINIMUM|MIN|OPEN|STARTING|START)_?BID(_?AMOUNT)?$|^BID$|^OPENING$/,
   quote: /^(QUOTE|QUOTED_?TOTAL|STATEMENT|STATEMENT_?TOTAL|STATEMENT_?AMOUNT|PURCHASE_?PRICE|PAYOFF|PAYOFF_?AMOUNT)$/,
+  // The clerk's own estimate printed on a list (Putnam: "Estimated Purchase Price"). Better than ours, not a statement.
+  clerkEstimate: /^ESTIMATED_?(PURCHASE_?PRICE|TOTAL|AMOUNT|PRICE)$/,
   caseNo: /(CASE|TAX_?DEED|TD_?(NO|NUM|NUMBER|#)|CERT|APPLICATION)/,
   // Most specific first: the first pattern that matches any column wins.
   date: [/^(SALE|AUCTION)_?DATE$/, /^DATE_?(OF_)?(SALE|AUCTION)$/, /^(DATE_?OFFERED|OFFERED_?DATE|DATE_?LISTED|LIST(ED)?_?DATE)$/],
@@ -84,11 +88,12 @@ export function parseListing(text: string, channel: ListingChannel, sourceFile?:
     if (pc >= 0) {
       const bc = findCol(header, HEADER_HINTS.bid);
       const qc = findCol(header, HEADER_HINTS.quote);
+      const ec = qc < 0 ? findCol(header, HEADER_HINTS.clerkEstimate) : -1;
       const cc = findCol(header, HEADER_HINTS.caseNo);
       const dc = findDateCol(header);
       const where = sourceFile ? ` in ${sourceFile}` : "";
       const vague = header.filter((h) => AMBIGUOUS_MONEY.test(h));
-      if (vague.length && bc < 0 && qc < 0) {
+      if (vague.length && bc < 0 && qc < 0 && ec < 0) {
         throw new ListingError(`Column "${vague[0]}"${where} could be an opening bid or a total due. Rename it to "Opening Bid" (auction or list price before later taxes) or "Statement Total" (the clerk's full payoff), then run again.`);
       }
       if (dc < 0 && header.some((h) => AMBIGUOUS_DATE.test(h))) {
@@ -102,7 +107,8 @@ export function parseListing(text: string, channel: ListingChannel, sourceFile?:
           channel,
           candidateKeys: [normKey(id)],
           openingBid: bc >= 0 ? parseMoney(r[bc]) : undefined,
-          quotedTotal: qc >= 0 ? parseMoney(r[qc]) : undefined,
+          quotedTotal: qc >= 0 ? parseMoney(r[qc]) : ec >= 0 ? parseMoney(r[ec]) : undefined,
+          quoteIsEstimate: qc < 0 && ec >= 0 ? true : undefined,
           caseNumber: cc >= 0 ? (r[cc] ?? "").trim() || undefined : undefined,
           saleDate: dc >= 0 ? parseDate(r[dc]) : undefined,
           sourceLine: r.join(" | "),
