@@ -1,5 +1,10 @@
 # TaxProperty - CLAUDE.md
 
+## New direction (Nov 2026): Deal Finder
+The Utah app below never produced a deal. Active work is in `/dealfinder` (Florida first, Lands Available list first).
+Read `/docs/dealfinder/DECISION.md` and `/dealfinder/README.md` before working there.
+Deal Finder rules: budget comes only from the user's settings file (never hardcode it); no dependencies; run `npm test` inside `/dealfinder`.
+
 ## What This Is
 Tax sale property research and scoring platform.
 Utah County is the reference implementation. Goal: full Utah coverage, then multi-state.

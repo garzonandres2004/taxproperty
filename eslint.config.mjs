@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Deal Finder is a separate Node package with its own checks.
+    "dealfinder/**",
   ]),
 ]);
 

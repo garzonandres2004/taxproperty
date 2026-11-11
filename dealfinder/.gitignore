@@ -1,0 +1,4 @@
+reports/
+data/
+my-settings.json
+*.local.json

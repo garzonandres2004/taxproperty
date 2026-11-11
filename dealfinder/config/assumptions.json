@@ -1,0 +1,72 @@
+{
+  "_readme": "Market and cost assumptions. These are rules of thumb, not your budget. Your budget lives only in your settings file. Change any number here to match your market; every report prints the assumptions it used.",
+  "valuation": {
+    "jvToMarketRatio": 0.85,
+    "qualifiedSaleCodes": ["01", "02"],
+    "compMaxAgeYears": 3,
+    "minCompsForHigh": 5,
+    "minCompsForMedium": 3,
+    "maxCompsUsed": 25,
+    "ratioMin": 0.4,
+    "ratioMax": 3.0,
+    "_spread": "Spread = (75th minus 25th percentile ratio) / median. Above maxSpreadForHigh, high confidence drops to medium; above maxSpreadForMedium, it drops to low.",
+    "maxSpreadForHigh": 0.5,
+    "maxSpreadForMedium": 0.8
+  },
+  "florida": {
+    "docStampRatePer100": 0.7,
+    "recordingFirstPage": 10,
+    "recordingAdditionalPage": 8.5,
+    "deedPages": 2,
+    "annualTaxRateOfJustValue": 0.018,
+    "landsAvailableMonthlyInterest": 0.015
+  },
+  "exit": {
+    "quietTitleCost": 2000,
+    "quietTitleMonths": 5,
+    "directSaleClosingCost": 600,
+    "listedSaleCostPctImproved": 0.08,
+    "listedSaleCostPctLand": 0.1,
+    "landMarketingMonths": 4,
+    "homeMarketingMonths": 3,
+    "neighborPriceFactor": 0.75,
+    "wholesaleLandFactor": 0.4,
+    "investorArvFactor": 0.7,
+    "holdingCostMonthlyPctOfValue": 0.0025,
+    "evictionBudget": 3000
+  },
+  "rehab": {
+    "lightPerSqft": 15,
+    "mediumPerSqft": 35,
+    "heavyPerSqft": 60,
+    "mobileHomeFlat": 9000,
+    "lightIfBuiltAfter": 2005,
+    "heavyIfBuiltBefore": 1975,
+    "rehabMonths": 3
+  },
+  "rent": {
+    "monthlyRentToValue": 0.0075,
+    "expenseRatio": 0.45,
+    "refiLtv": 0.75
+  },
+  "competition": {
+    "_readme": "Likely final auction price as a share of market value, by county size and property type. Starting guesses; replace with your own results using the calibrate command.",
+    "clearingRatio": {
+      "large": { "improved": 0.8, "vacant": 0.55, "other": 0.5 },
+      "mid": { "improved": 0.7, "vacant": 0.45, "other": 0.4 },
+      "small": { "improved": 0.6, "vacant": 0.35, "other": 0.3 }
+    }
+  },
+  "risk": {
+    "sliverSqftAvoid": 2000,
+    "sliverSqftCaution": 4500,
+    "lowValueCaution": 3000,
+    "oldBuildYear": 1960,
+    "landsAvailableEscheatYears": 3
+  },
+  "neighbors": {
+    "houseNumberRange": 120,
+    "lotRange": 2,
+    "maxShown": 6
+  }
+}

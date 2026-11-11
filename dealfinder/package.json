@@ -1,0 +1,14 @@
+{
+  "name": "dealfinder",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Finds and ranks distressed property deals (Florida tax deeds first). No dependencies; needs Node 22.18+.",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "test": "node --test \"test/**/*.test.ts\"",
+    "fixtures": "node fixtures/make-fixtures.ts",
+    "demo": "node src/cli.ts analyze --nal fixtures/nal_sample.csv --lands fixtures/lands_available_sample.txt,fixtures/lands_quotes_sample.csv --auction fixtures/auction_sample.csv --settings fixtures/settings.demo.json --today 2026-11-11 --out reports/demo",
+    "analyze": "node src/cli.ts analyze"
+  }
+}

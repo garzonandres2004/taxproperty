@@ -1,0 +1,11 @@
+{
+  "_readme": "Copy this file to my-settings.json and put in YOUR numbers. totalCapital and maxPerDeal have no defaults on purpose.",
+  "totalCapital": null,
+  "maxPerDeal": null,
+  "reservePct": 0.2,
+  "minProfit": 1000,
+  "minReturnPct": 0.3,
+  "strategies": ["sell_to_neighbor", "quiet_title_and_list", "wholesale", "flip", "rent"],
+  "counties": [],
+  "showAvoid": true
+}
