@@ -221,7 +221,8 @@ export function analyzeOne(
   const value: Analysis["value"] = own
     ? {
         market: own, low: Math.round(own * 0.9), high: Math.round(own * 1.1), method: "user", confidence: "high", compCount: 0,
-        notes: [`Value you entered in your values file (${money(own)}). The tax roll estimate was ${money(estimate.market)} (${estimate.confidence} confidence).`],
+        // Keep the roll estimate's reasoning so an override never hides why it was doubted.
+        notes: [`Value you entered in your values file (${money(own)}). The tax roll estimate was ${money(estimate.market)} (${estimate.confidence} confidence).`, ...estimate.notes.map((n) => `Tax roll estimate: ${n}`)],
       }
     : estimate;
   const tier = flCounty(parcel.countyCode)?.tier ?? "small";
@@ -249,6 +250,18 @@ export function analyzeOne(
   const flags = floridaRiskFlags({ parcel, listing, value, costs, a, today });
   for (const c of listing.conflicts ?? []) {
     flags.push({ code: "LISTING_CONFLICT", severity: "danger", message: `This parcel is listed more than once and the lines disagree: ${c}.`, check: "Confirm the current amount with the clerk before acting." });
+  }
+  // An override never hides why the roll estimate was doubted: carry the reason as a flag every report shows.
+  if (own && estimate.confidence === "low") {
+    const disagree = estimate.method === "comps_ratio" && estimate.compCount > 0;
+    flags.push({
+      code: "OVERRIDE_OF_DOUBTED_ESTIMATE",
+      severity: "caution",
+      message: disagree
+        ? `You replaced a low confidence estimate (${money(estimate.market)}) whose ${estimate.compCount} nearby sales disagree a lot.`
+        : `You replaced a low confidence estimate (${money(estimate.market)}) that had no usable nearby sales.`,
+      check: disagree ? "Be sure you know why those sales differ and that your comps match this parcel." : "Be sure your 3 sold comps really match this parcel.",
+    });
   }
   if (own && estimate.market > 0 && (own > estimate.market * 2 || own < estimate.market * 0.5)) {
     flags.push({ code: "USER_VALUE_FAR", severity: "danger", message: `Your value ${money(own)} is ${own > estimate.market ? "more than double" : "less than half"} the tax roll estimate ${money(estimate.market)}.`, check: "Make sure it is not a typo (an extra zero) and that your sold comps really match this parcel." });
@@ -406,7 +419,11 @@ function explain(args: {
   const dangers = flags.filter((f) => f.severity === "danger");
   if (dangers.length) why.push(`Watch out: ${dangers.map((f) => f.message).join(" ")}`);
   if (verdict === "watch" && value.confidence === "low" && best) {
-    why.push("Held at watch because the value is a guess (no usable sales nearby). Pull 3 recent sold properties like it, put your value in a values file (--values), and run again.");
+    if (value.method === "comps_ratio" && value.compCount > 0) {
+      why.push(`Held at watch because the ${value.compCount} nearby sales disagree a lot, so the value could be far off. Find out why first (lot size, waterfront, road access, wetlands, a different use). Then pull 3 sales that truly match this parcel, put that value in a values file (--values), and run again.`);
+    } else {
+      why.push("Held at watch because the value is a guess (no usable sales nearby). Pull 3 recent sold properties like it, put your value in a values file (--values), and run again.");
+    }
   }
   if (verdict === "watch" && best && !best.fitsBudget) why.push("Does not fit your budget as set. Kept on the list in case your settings change or you bring a partner.");
   return why;
