@@ -42,7 +42,7 @@ export function validateSettings(raw: Record<string, unknown>): Settings {
     minReturnPct: optNum(raw.minReturnPct, 0.3, "minReturnPct", 0, 10),
     strategies,
     counties: Array.isArray(raw.counties) ? raw.counties.map(String) : [],
-    showAvoid: raw.showAvoid === true,
+    showAvoid: raw.showAvoid !== false, // shown by default: knowing why a parcel was knocked out is useful
   };
 }
 

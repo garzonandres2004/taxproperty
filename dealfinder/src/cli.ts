@@ -11,7 +11,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, appendFileSync } fr
 import { dirname, basename, join } from "node:path";
 import { loadAssumptions } from "./core/assumptions.ts";
 import { loadSettings, publicSettings, SettingsError } from "./core/settings.ts";
-import { ListingError, parseListing, type RawListing } from "./core/listings.ts";
+import { ListingError, normKey, parseListing, type RawListing } from "./core/listings.ts";
 import { calibrate, loadCalibration, type Outcome, type TypeBucket } from "./core/competition.ts";
 import { renderHtml, renderMarkdown } from "./core/report.ts";
 import { parseCsvText } from "./core/csv.ts";
@@ -58,6 +58,7 @@ analyze options
   --calibration FILE  Calibration from the calibrate command (default data/calibration.json)
   --out PATH          Output path without extension (default reports/deals-DATE)
   --today YYYY-MM-DD  Treat this as today (for reproducible runs)
+  --values FILE       CSV of values you checked by hand (Parcel ID, Value); they replace the estimate
   --public            Report safe to post publicly: no budget applied or printed
                       (no settings file needed; verdicts reflect the deal only)
 `;
@@ -85,7 +86,9 @@ async function analyze(args: Args): Promise<number> {
   for (const f of auction) listings.push(...parseListing(readFileSync(f, "utf8"), "auction", basename(f)));
   if (!listings.length) throw new SettingsError("No parcel numbers found in the list file(s).");
 
-  const result = await runFlorida({ nalPaths: nal, listings, settings, a, calibration, today });
+  const valuesFile = one(args, "values");
+  const valueOverrides = valuesFile ? loadValueOverrides(valuesFile) : undefined;
+  const result = await runFlorida({ nalPaths: nal, listings, settings, a, calibration, today, valueOverrides });
   const stamp = today.toISOString().slice(0, 10);
   const out = one(args, "out") ?? join("reports", `deals-${stamp}`);
   mkdirSync(dirname(out) || ".", { recursive: true });
@@ -113,6 +116,22 @@ async function analyze(args: Args): Promise<number> {
   }
   console.log(`Wrote ${out}.html, ${out}.md, ${out}.json`);
   return 0;
+}
+
+/** CSV with a parcel column and a value column: values you checked by hand replace the estimate. */
+export function loadValueOverrides(path: string): Map<string, number> {
+  if (!existsSync(path)) throw new SettingsError(`File not found: ${path}`);
+  const rows = parseCsvText(readFileSync(path, "utf8"));
+  const header = (rows[0] ?? []).map((h) => h.trim().toUpperCase());
+  const pc = header.findIndex((h) => /PARCEL|FOLIO|ALT/.test(h));
+  const vc = header.findIndex((h) => /VALUE|ARV|PRICE/.test(h));
+  if (pc < 0 || vc < 0) throw new SettingsError(`${path} needs a "Parcel ID" column and a "Value" column.`);
+  const m = new Map<string, number>();
+  for (const r of rows.slice(1)) {
+    const v = Number((r[vc] ?? "").replace(/[$,\s]/g, ""));
+    if (r[pc] && Number.isFinite(v) && v > 0) m.set(normKey(r[pc]), v);
+  }
+  return m;
 }
 
 const OUTCOME_HEADER = "date,county,parcel,type,est_market,winning_bid";

@@ -48,6 +48,8 @@ Florida Department of Revenue, Data Portal: https://floridarevenue.com/property/
 
 Pick the NAL file for the county and the latest year. It is a CSV. Run `node src/cli.ts counties` to see county codes.
 
+Use the **DOR** file only. A county property appraiser's own export (for example Lake's `NALExtractPublic_*.txt`) has different column names and is rejected on purpose: the DOR file has the same columns in all 67 counties.
+
 ### 3. Get the county list
 
 **Lands Available (start here).** Go to the county clerk's tax deed page and find "List of Lands Available" (many counties use RealTDM; pick case status "List of Lands"). If it is a PDF, select all the text, copy it, and paste it into a `.txt` file. The tool finds the parcel numbers in the text on its own. If the clerk gives you a statement (exact payoff), put it in a small CSV with columns `Parcel ID,Statement Total` and pass it too; statements beat estimates.
@@ -70,7 +72,22 @@ Open `reports/lake.html` in your browser. The same results are in `.md` and `.js
 
 To share a report publicly (GitHub issues, this repo is public), add `--public`. That applies no budget and prints none; no settings file is needed. Team rules are in [docs/dealfinder/TEAM.md](../docs/dealfinder/TEAM.md).
 
-### 5. Before you pay for anything
+### 5. Check the values the tool could only guess
+
+A parcel is never a buy when its value has low confidence (no usable sales nearby); it is held at **Watch**. Pull 3 recent sold properties like it, write your value in a CSV, and run again with `--values`:
+
+```
+Parcel ID,Value
+07567-012,24000
+```
+
+```
+node src/cli.ts analyze ... --values my-values.csv
+```
+
+Your value replaces the estimate and is labeled as yours in the report.
+
+### 6. Before you pay for anything
 
 The report lists the checks for each parcel. Always:
 
@@ -79,7 +96,7 @@ The report lists the checks for each parcel. Always:
 - For Lands Available, get the clerk's statement for the real price.
 - For houses, drive by.
 
-### 6. Teach it real auction prices
+### 7. Teach it real auction prices
 
 After each auction you watch, record what parcels actually sold for:
 

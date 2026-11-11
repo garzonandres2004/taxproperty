@@ -85,6 +85,10 @@ export function floridaRiskFlags(args: {
     flags.push({ code: "PRICE_OVER_VALUE", severity: "danger", message: `All in cost ${money(costs.allIn)} is at or above the estimated value ${money(value.market)}.` });
   }
 
+  // Fixed price far under value, yet nobody bought it at auction: there is usually a reason.
+  if (listing.channel === "lands_available" && costs && value.market > 0 && costs.allIn < value.market * 0.15) {
+    flags.push({ code: "DEEP_DISCOUNT", severity: "caution", message: `Price is ${Math.round((costs.allIn / value.market) * 100)}% of estimated value and still nobody bid at auction. Usually there is a reason: no road access, wetlands, an unbuildable lot, a big government lien, or a value estimate that is wrong.`, check: "Find the reason before paying: GIS map, lien search, and real sold prices nearby." });
+  }
   if (listing.channel === "lands_available" && listing.saleDate) {
     const d = new Date(listing.saleDate);
     if (!Number.isNaN(d.getTime())) {

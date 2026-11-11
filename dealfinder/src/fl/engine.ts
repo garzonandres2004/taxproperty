@@ -6,7 +6,7 @@
 import type { Assumptions } from "../core/assumptions.ts";
 import { readCsvRecords, normalizeHeader, recordToObject } from "../core/csv.ts";
 import type { Analysis, Listing, Parcel, RiskFlag, Settings, StrategyResult } from "../core/types.ts";
-import { resolveLooseAmount, type RawListing } from "../core/listings.ts";
+import { ListingError, normKey, resolveLooseAmount, type RawListing } from "../core/listings.ts";
 import { addComp, compsFromParcel, emptyCompIndex, estimateValue, type CompIndex } from "../core/valuation.ts";
 import { createNeighborFinder, parcelUid } from "../core/neighbors.ts";
 import { buildStrategies, meetsTargets, MIN_PLAUSIBLE_ALL_IN, pickBest } from "../core/strategies.ts";
@@ -24,6 +24,8 @@ export interface RunInput {
   a: Assumptions;
   calibration: Calibration;
   today: Date;
+  /** Values the user checked by hand (parcel key -> market value). They replace the estimate. */
+  valueOverrides?: Map<string, number>;
 }
 
 export interface RunResult {
@@ -40,7 +42,13 @@ async function* scanNal(paths: string[]): AsyncGenerator<Record<string, string>>
     for await (const rec of readCsvRecords(path)) {
       if (!header) {
         header = normalizeHeader(rec);
-        if (!isNalHeader(header)) throw new Error(`${path} does not look like a Florida NAL file (missing CO_NO, PARCEL_ID, DOR_UC or JV columns).`);
+        if (!isNalHeader(header)) {
+          throw new ListingError(
+            `${path} is not a Florida DOR NAL file (missing CO_NO, PARCEL_ID, DOR_UC or JV columns). ` +
+              `Use the NAL file from the Florida Department of Revenue Data Portal, not the county property appraiser's own export; ` +
+              `the DOR file has the same columns in all 67 counties.`,
+          );
+        }
         continue;
       }
       yield recordToObject(header, rec);
@@ -205,10 +213,13 @@ export function analyzeOne(
   listing: Listing,
   comps: CompIndex,
   neighbors: Analysis["neighbors"],
-  input: Pick<RunInput, "settings" | "a" | "calibration" | "today">,
+  input: Pick<RunInput, "settings" | "a" | "calibration" | "today" | "valueOverrides">,
 ): Analysis {
   const { settings, a, calibration, today } = input;
-  const value = estimateValue(parcel, comps, a, today);
+  const own = input.valueOverrides?.get(normKey(parcel.parcelId));
+  const value: Analysis["value"] = own
+    ? { market: own, low: Math.round(own * 0.9), high: Math.round(own * 1.1), method: "user", confidence: "high", compCount: 0, notes: [`Value you entered in your values file (${money(own)}).`] }
+    : estimateValue(parcel, comps, a, today);
   const tier = flCounty(parcel.countyCode)?.tier ?? "small";
   const isAuction = listing.channel === "auction";
   const ceilingToPrice = isAuction ? (maxAllIn: number) => maxBidForAllIn(maxAllIn, a) : (maxAllIn: number) => maxAllIn;
@@ -243,7 +254,7 @@ export function analyzeOne(
   }
 
   const offer = makeOffer(listing, best, costs, settings, a, ceilingToPrice);
-  const verdict = decideVerdict({ flags, best, settings, priceKnown, competition, isAuction, offer, listing });
+  const verdict = decideVerdict({ flags, best, settings, priceKnown, competition, isAuction, offer, listing, value });
   const score = scoreIt({ flags, best, competition, value, verdict });
   const why = explain({ parcel, listing, value, costs, best, competition, neighbors, flags, verdict, settings, offer });
 
@@ -303,8 +314,9 @@ function decideVerdict(args: {
   isAuction: boolean;
   offer: Analysis["offer"];
   listing: Listing;
+  value: Analysis["value"];
 }): Analysis["verdict"] {
-  const { flags, best, settings, priceKnown, competition, isAuction, offer, listing } = args;
+  const { flags, best, settings, priceKnown, competition, isAuction, offer, listing, value } = args;
   if (flags.some((f) => f.severity === "avoid")) return "avoid";
   if (!best || offer.walkAway <= 0) return "pass";
   let v: Analysis["verdict"];
@@ -322,6 +334,8 @@ function decideVerdict(args: {
   }
   // Disagreeing list lines: never a straight buy until the clerk confirms the number.
   if (v === "buy_candidate" && listing.conflicts?.length) v = "watch";
+  // A value with no sales behind it is a guess. Check it before calling anything a buy.
+  if (v === "buy_candidate" && value.confidence === "low") v = "watch";
   // Amount guessed from a plain number: confirm the price before calling it a buy.
   if (v === "buy_candidate" && listing.amountFromPlainNumber) v = "needs_quote";
   return v;
@@ -384,6 +398,9 @@ function explain(args: {
   why.push(competition.explanation);
   const dangers = flags.filter((f) => f.severity === "danger");
   if (dangers.length) why.push(`Watch out: ${dangers.map((f) => f.message).join(" ")}`);
+  if (verdict === "watch" && value.confidence === "low" && best && best.fitsBudget) {
+    why.push("Held at watch because the value is a guess (no usable sales nearby). Pull 3 recent sold properties like it, put your value in a values file (--values), and run again.");
+  }
   if (verdict === "watch" && best && !best.fitsBudget) why.push("Does not fit your budget as set. Kept on the list in case your settings change or you bring a partner.");
   return why;
 }

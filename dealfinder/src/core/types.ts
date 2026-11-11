@@ -118,7 +118,7 @@ export interface ValueEstimate {
   market: number; // best estimate of market value as is
   low: number;
   high: number;
-  method: "comps_ratio" | "own_sale" | "assessed";
+  method: "comps_ratio" | "own_sale" | "assessed" | "user";
   confidence: "high" | "medium" | "low";
   compCount: number;
   notes: string[];

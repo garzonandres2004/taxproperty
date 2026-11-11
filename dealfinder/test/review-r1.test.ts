@@ -268,3 +268,37 @@ test("R2 note: plain numbers skip year-like values and tiny numbers", () => {
   const [a3] = parseListingText("07567-012 5000", "auction");
   assert.equal(resolveLooseAmount(a3, "07567012"), 5000);
 });
+
+// Lake County data run 1 follow ups (issue #18)
+
+test("Run1: a buy resting on a guessed value is held at watch, and a checked value releases it", async () => {
+  const nal = roll(["72,07567-012,2026,000,20000,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
+  const list = [{ text: "Parcel ID,Statement Total\n07567-012,3000\n", channel: "lands_available" as const }];
+  const guessed = (await run(nal, list)).analyses[0];
+  assert.equal(guessed.value.confidence, "low");
+  assert.equal(guessed.verdict, "watch");
+  assert.ok(guessed.why.some((w) => /value is a guess/.test(w)));
+  const listings = list.flatMap((l) => parseListing(l.text, l.channel));
+  const checked = await runFlorida({ nalPaths: [nal], listings, settings: settings(), a, calibration: {}, today, valueOverrides: new Map([["07567012", 24000]]) });
+  assert.equal(checked.analyses[0].value.method, "user");
+  assert.equal(checked.analyses[0].verdict, "buy_candidate");
+});
+
+test("Run1: a county appraiser export is rejected with a pointer to the DOR file", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "pa-"));
+  const f = join(dir, "NALExtractPublic.txt");
+  writeFileSync(f, "PARCEL_NUMBER,OWNER_NAME,JUST_VALUE\n1,A,100\n");
+  await assert.rejects(run(f, [{ text: "Parcel ID,Opening Bid\n111111,500\n", channel: "auction" }]), /Department of Revenue/);
+});
+
+test("Run1: avoided parcels are shown by default", async () => {
+  const { validateSettings } = await import("../src/core/settings.ts");
+  assert.equal(validateSettings({ totalCapital: 1, maxPerDeal: 1 }).showAvoid, true);
+  assert.equal(validateSettings({ totalCapital: 1, maxPerDeal: 1, showAvoid: false }).showAvoid, false);
+});
+
+test("Run1: a Lands Available price far under value carries a find-the-reason flag", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,2000\n", channel: "lands_available" }]);
+  assert.ok(r.analyses[0].flags.some((f) => f.code === "DEEP_DISCOUNT"));
+});

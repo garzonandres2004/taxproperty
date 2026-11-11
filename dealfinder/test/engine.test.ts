@@ -52,7 +52,7 @@ test("end to end on the sample county files", async () => {
 
   const taylor = byId(r, "07567-012");
   assert.equal(taylor.value.confidence, "low");
-  assert.equal(taylor.verdict, "buy_candidate");
+  assert.equal(taylor.verdict, "watch"); // low confidence value holds it at watch
 });
 
 test("never suggests paying more than the user's max per deal", async () => {

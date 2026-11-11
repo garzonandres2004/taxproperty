@@ -33,8 +33,9 @@ export function kindGroup(kind: PropertyKind): string {
     case "vacant_commercial":
       return "vacant_com";
     case "vacant_other":
-    case "agricultural":
       return "acreage";
+    case "agricultural":
+      return "ag"; // ag land trades differently from plain acreage; never mix their ratios
     case "single_family":
       return "sfr";
     case "condo":
@@ -51,7 +52,7 @@ export function kindGroup(kind: PropertyKind): string {
 }
 
 function isVacantGroup(group: string): boolean {
-  return group === "vacant_res" || group === "vacant_com" || group === "acreage";
+  return group === "vacant_res" || group === "vacant_com" || group === "acreage" || group === "ag";
 }
 
 /** Months between a sale and today; negative means a sale dated in the future. Unknown month counts as June. */
