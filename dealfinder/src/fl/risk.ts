@@ -79,7 +79,15 @@ export function floridaRiskFlags(args: {
   }
 
   if (value.confidence === "low") {
-    flags.push({ code: "VALUE_LOW_CONFIDENCE", severity: "caution", message: "Value estimate is low confidence (no nearby comparable sales).", check: "Pull 3 recent sold listings nearby before buying." });
+    const disagree = value.method === "comps_ratio" && value.compCount > 0;
+    flags.push({
+      code: "VALUE_LOW_CONFIDENCE",
+      severity: "caution",
+      message: disagree
+        ? `Value estimate is low confidence: the ${value.compCount} nearby sales disagree a lot.`
+        : "Value estimate is low confidence (no usable nearby comparable sales).",
+      check: disagree ? "Find out why the sales differ, then pull 3 that truly match this parcel before buying." : "Pull 3 recent sold listings nearby before buying.",
+    });
   }
   if (costs && value.market > 0 && costs.allIn >= value.market) {
     flags.push({ code: "PRICE_OVER_VALUE", severity: "danger", message: `All in cost ${money(costs.allIn)} is at or above the estimated value ${money(value.market)}.` });

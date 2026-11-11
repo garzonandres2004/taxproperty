@@ -221,7 +221,8 @@ export function analyzeOne(
   const value: Analysis["value"] = own
     ? {
         market: own, low: Math.round(own * 0.9), high: Math.round(own * 1.1), method: "user", confidence: "high", compCount: 0,
-        notes: [`Value you entered in your values file (${money(own)}). The tax roll estimate was ${money(estimate.market)} (${estimate.confidence} confidence).`],
+        // Keep the roll estimate's reasoning so an override never hides why it was doubted.
+        notes: [`Value you entered in your values file (${money(own)}). The tax roll estimate was ${money(estimate.market)} (${estimate.confidence} confidence).`, ...estimate.notes.map((n) => `Tax roll estimate: ${n}`)],
       }
     : estimate;
   const tier = flCounty(parcel.countyCode)?.tier ?? "small";
@@ -406,7 +407,11 @@ function explain(args: {
   const dangers = flags.filter((f) => f.severity === "danger");
   if (dangers.length) why.push(`Watch out: ${dangers.map((f) => f.message).join(" ")}`);
   if (verdict === "watch" && value.confidence === "low" && best) {
-    why.push("Held at watch because the value is a guess (no usable sales nearby). Pull 3 recent sold properties like it, put your value in a values file (--values), and run again.");
+    if (value.method === "comps_ratio" && value.compCount > 0) {
+      why.push(`Held at watch because the ${value.compCount} nearby sales disagree a lot, so the value could be far off. Find out why first (lot size, waterfront, road access, wetlands, a different use). Then pull 3 sales that truly match this parcel, put that value in a values file (--values), and run again.`);
+    } else {
+      why.push("Held at watch because the value is a guess (no usable sales nearby). Pull 3 recent sold properties like it, put your value in a values file (--values), and run again.");
+    }
   }
   if (verdict === "watch" && best && !best.fitsBudget) why.push("Does not fit your budget as set. Kept on the list in case your settings change or you bring a partner.");
   return why;

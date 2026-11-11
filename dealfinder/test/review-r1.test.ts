@@ -337,3 +337,23 @@ test("R4: the how-to-fix line shows for a guessed value even when over budget", 
   assert.equal(x.verdict, "watch");
   assert.ok(x.why.some((w) => /value is a guess/.test(w)));
 });
+
+// Codex round 5 (issue #19)
+
+test("R5: low confidence from disagreeing sales is explained as disagreement, and an override keeps the trace", async () => {
+  const ratios = [0.5, 0.8, 1.2, 1.7, 2.2, 2.8, 1.0, 2.5];
+  const rows = ratios.map((r, i) => `45,AG-${100000 + i},2026,000,100000,20000,0,0,01,V,${100000 * r},2026,3,O${i},X,N7,,EUSTIS,32726,`);
+  const nal = roll([...rows, "45,SUBJ-123456,2026,000,100000,20000,0,0,,,,,,S,X,N7,,EUSTIS,32726,"]);
+  const list = [{ text: "Parcel ID,Statement Total\nSUBJ-123456,3000\n", channel: "lands_available" as const }];
+  const x = (await run(nal, list, settings({ totalCapital: 100000, maxPerDeal: 50000 }))).analyses[0];
+  assert.equal(x.value.confidence, "low");
+  assert.ok(x.value.compCount > 0);
+  assert.equal(x.verdict, "watch");
+  assert.ok(x.why.some((w) => /sales disagree a lot/.test(w)));
+  assert.ok(!x.why.some((w) => /no usable sales nearby/.test(w)));
+  assert.match(x.flags.find((f) => f.code === "VALUE_LOW_CONFIDENCE")!.message, /disagree/);
+  const listings = list.flatMap((l) => parseListing(l.text, l.channel));
+  const o = (await runFlorida({ nalPaths: [nal], listings, settings: settings({ totalCapital: 100000, maxPerDeal: 50000 }), a, calibration: {}, today, valueOverrides: new Map([["SUBJ123456", 29000]]) })).analyses[0];
+  assert.equal(o.value.method, "user");
+  assert.ok(o.value.notes.some((n) => /Tax roll estimate: .*disagree a lot/.test(n)), "override keeps why the estimate was doubted");
+});
