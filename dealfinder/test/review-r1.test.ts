@@ -411,3 +411,21 @@ test("LA3: every flag, info included, is in the HTML and Markdown reports", asyn
     assert.ok(md.includes(f.message.slice(0, 30)), `md missing ${f.code}`);
   }
 });
+
+test("LA3: Putnam style list with the clerk's Estimated Purchase Price and Auction Date", async () => {
+  const text = "Tax Deed No.,Parcel Number,Estimated Purchase Price,Auction Date,Available for Purchase\nT.D. 2019-0001888,12-19-26-0100-002-00500,\"$1,550.41\",05/13/2026,08/11/2026\n";
+  const [l] = parseListing(text, "lands_available");
+  assert.equal(l.quotedTotal, 1550.41);
+  assert.equal(l.quoteIsEstimate, true);
+  assert.equal(l.saleDate, "2026-05-13", "auction date, not the available date");
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text, channel: "lands_available" }])).analyses[0];
+  assert.equal(x.costs!.allIn, 1550.41);
+  assert.equal(x.verdict, "needs_quote", "a printed estimate is not a statement");
+  assert.match(x.offer.note, /printed estimate/);
+  // A real statement for the same parcel wins over the printed estimate.
+  const both = await run(nal, [{ text, channel: "lands_available" }, { text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,1700\n", channel: "lands_available" }]);
+  assert.equal(both.analyses[0].listing.quotedTotal, 1700);
+  assert.equal(both.analyses[0].listing.quoteIsEstimate, undefined);
+  assert.ok(!both.analyses[0].flags.some((f) => f.code === "LISTING_CONFLICT"));
+});

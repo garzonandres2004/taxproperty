@@ -71,6 +71,8 @@ export interface Listing {
   openingBid?: number;
   /** A quoted total from the clerk (Lands Available statement). Overrides opening bid math. */
   quotedTotal?: number;
+  /** The quoted total is the clerk's printed estimate on the list, not a statement. */
+  quoteIsEstimate?: boolean;
   saleDate?: string; // ISO date of auction, or date it went to Lands Available
   sourceLine?: string;
   /** Lines that disagreed when the same parcel was listed more than once. */
