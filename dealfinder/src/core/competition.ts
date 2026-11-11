@@ -47,8 +47,15 @@ export function assessCompetition(args: {
     const sale = listing.saleDate ? new Date(`${listing.saleDate}T00:00:00Z`) : null;
     if (sale && args.today && !Number.isNaN(sale.getTime())) {
       const opens = new Date(sale.getTime() + 90 * 86400000);
-      // Only when the auction already happened: a future date is a list error, flagged elsewhere.
-      if (sale.getTime() <= args.today.getTime() && args.today.getTime() < opens.getTime()) {
+      if (sale.getTime() > args.today.getTime()) {
+        return {
+          level: "none",
+          expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,
+          winChance: "likely",
+          explanation: "No bidding, fixed price. The list date is in the future, so its timing cannot be trusted. Confirm the date and that it is for sale with the clerk before acting.",
+        };
+      }
+      if (args.today.getTime() < opens.getTime()) {
         return {
           level: "none",
           expectedClearing: listing.quotedTotal ?? listing.openingBid ?? 0,

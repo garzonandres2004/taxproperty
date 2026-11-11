@@ -481,4 +481,15 @@ test("PR23: a future list date is flagged and never treated as the county window
   assert.ok(x.flags.some((f) => f.code === "FUTURE_SALE_DATE"));
   assert.ok(!x.flags.some((f) => f.code === "COUNTY_WINDOW"));
   assert.doesNotMatch(x.competition.explanation, /Only the county can buy/);
+  assert.doesNotMatch(x.competition.explanation, /pay quickly/);
+  assert.notEqual(x.verdict, "buy_candidate");
+});
+
+test("PR23 r2: a future dated improved parcel with a statement is never a buy and never told to pay quickly", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,001,150000,10000,1400,1990,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,20000,2027-03-01\n", channel: "lands_available" }], settings({ totalCapital: 500000, maxPerDeal: 100000 }))).analyses[0];
+  assert.ok(x.flags.some((f) => f.code === "FUTURE_SALE_DATE"));
+  assert.equal(x.verdict, "needs_quote");
+  assert.doesNotMatch(x.competition.explanation, /pay quickly/);
+  assert.match(x.competition.explanation, /in the future/);
 });

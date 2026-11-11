@@ -361,8 +361,8 @@ function decideVerdict(args: {
   }
   // Lands Available without a clerk statement: the price is our rough estimate, so confirm it first.
   if (v === "buy_candidate" && !isAuction && (!listing.quotedTotal || listing.quoteIsEstimate)) v = "needs_quote";
-  // Possibly already escheated: availability itself is in doubt.
-  if (v === "buy_candidate" && flags.some((f) => f.code === "PAST_ESCHEAT")) v = "needs_quote";
+  // Possibly already escheated, or a list date that cannot be right: availability itself is in doubt.
+  if (v === "buy_candidate" && flags.some((f) => f.code === "PAST_ESCHEAT" || f.code === "FUTURE_SALE_DATE")) v = "needs_quote";
   // Disagreeing list lines: never a straight buy until the clerk confirms the number.
   if (v === "buy_candidate" && listing.conflicts?.length) v = "watch";
   // A value with no sales behind it is a guess. Check it before calling anything a buy.
