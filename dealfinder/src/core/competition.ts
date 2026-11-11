@@ -49,10 +49,10 @@ export function assessCompetition(args: {
     const now = args.today ? utcDay(args.today) : null;
     // Urgency advice needs a trustworthy timeline. Without one, say so and give no "pay quickly".
     if (!sale || !now) {
-      return { level: "none", expectedClearing: fixed, winChance: "likely", explanation: "No bidding, fixed price. The list date is missing, so whether it is open to the public yet is unknown. Confirm with the clerk that it is for sale." };
+      return { level: "none", expectedClearing: fixed, winChance: "maybe", explanation: "No bidding, fixed price. The list date is missing, so whether it is open to the public yet is unknown. Confirm with the clerk that it is for sale." };
     }
     if (sale.getTime() > now.getTime()) {
-      return { level: "none", expectedClearing: fixed, winChance: "likely", explanation: "No bidding, fixed price. The list date is in the future, so its timing cannot be trusted. Confirm the date and that it is for sale with the clerk before acting." };
+      return { level: "none", expectedClearing: fixed, winChance: "maybe", explanation: "No bidding, fixed price. The list date is in the future, so its timing cannot be trusted. Confirm the date and that it is for sale with the clerk before acting." };
     }
     // Florida: only the county may buy in the first 90 days after the auction.
     const opens = new Date(sale.getTime() + 90 * 86400000);
@@ -76,7 +76,6 @@ export function assessCompetition(args: {
           : "No bidding: fixed price, first come first served. Homes on this list get noticed, so request the clerk's statement soon.",
     };
   }
-
 
   const learned = calibration[parcel.countyCode]?.[bucket];
   const ratio = learned && learned.n >= 3 ? learned.ratio : a.competition.clearingRatio[tier][bucket];
