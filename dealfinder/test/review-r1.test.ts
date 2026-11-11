@@ -316,3 +316,24 @@ test("Run3: sales that disagree a lot lower the confidence", () => {
   assert.equal(v.confidence, "low");
   assert.ok(v.notes.some((n) => /disagree a lot/.test(n)));
 });
+
+// Codex round 4 nits
+
+test("R4: a hand value far from the roll estimate is flagged and the estimate is shown", async () => {
+  const nal = roll(["72,07567-012,2026,000,20000,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
+  const listings = parseListing("Parcel ID,Statement Total\n07567-012,3000\n", "lands_available");
+  const r = await runFlorida({ nalPaths: [nal], listings, settings: settings(), a, calibration: {}, today, valueOverrides: new Map([["07567012", 240000]]) });
+  const x = r.analyses[0];
+  assert.ok(x.flags.some((f) => f.code === "USER_VALUE_FAR"));
+  assert.match(x.value.notes[0], /tax roll estimate was \$23,500/);
+});
+
+test("R4: the how-to-fix line shows for a guessed value even when over budget", async () => {
+  const nal = roll(["72,07567-012,2026,000,200000,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n07567-012,30000\n", channel: "lands_available" }], settings({ totalCapital: 20000, maxPerDeal: 8000 }));
+  const x = r.analyses[0];
+  assert.equal(x.value.confidence, "low");
+  assert.equal(x.best!.fitsBudget, false, "statement 30000 is over the 8000 max per deal");
+  assert.equal(x.verdict, "watch");
+  assert.ok(x.why.some((w) => /value is a guess/.test(w)));
+});

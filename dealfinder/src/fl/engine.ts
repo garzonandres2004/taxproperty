@@ -217,9 +217,13 @@ export function analyzeOne(
 ): Analysis {
   const { settings, a, calibration, today } = input;
   const own = input.valueOverrides?.get(normKey(parcel.parcelId));
+  const estimate = estimateValue(parcel, comps, a, today);
   const value: Analysis["value"] = own
-    ? { market: own, low: Math.round(own * 0.9), high: Math.round(own * 1.1), method: "user", confidence: "high", compCount: 0, notes: [`Value you entered in your values file (${money(own)}).`] }
-    : estimateValue(parcel, comps, a, today);
+    ? {
+        market: own, low: Math.round(own * 0.9), high: Math.round(own * 1.1), method: "user", confidence: "high", compCount: 0,
+        notes: [`Value you entered in your values file (${money(own)}). The tax roll estimate was ${money(estimate.market)} (${estimate.confidence} confidence).`],
+      }
+    : estimate;
   const tier = flCounty(parcel.countyCode)?.tier ?? "small";
   const isAuction = listing.channel === "auction";
   const ceilingToPrice = isAuction ? (maxAllIn: number) => maxBidForAllIn(maxAllIn, a) : (maxAllIn: number) => maxAllIn;
@@ -245,6 +249,9 @@ export function analyzeOne(
   const flags = floridaRiskFlags({ parcel, listing, value, costs, a, today });
   for (const c of listing.conflicts ?? []) {
     flags.push({ code: "LISTING_CONFLICT", severity: "danger", message: `This parcel is listed more than once and the lines disagree: ${c}.`, check: "Confirm the current amount with the clerk before acting." });
+  }
+  if (own && estimate.market > 0 && (own > estimate.market * 2 || own < estimate.market * 0.5)) {
+    flags.push({ code: "USER_VALUE_FAR", severity: "danger", message: `Your value ${money(own)} is ${own > estimate.market ? "more than double" : "less than half"} the tax roll estimate ${money(estimate.market)}.`, check: "Make sure it is not a typo (an extra zero) and that your sold comps really match this parcel." });
   }
   if (listing.amountFromPlainNumber) {
     flags.push({ code: "AMOUNT_FROM_PLAIN_NUMBER", severity: "caution", message: `The amount ${money(listing.openingBid ?? 0)} was read from a plain number on the list line (no $ sign or cents).`, check: "Make sure that number is the opening bid." });
@@ -398,7 +405,7 @@ function explain(args: {
   why.push(competition.explanation);
   const dangers = flags.filter((f) => f.severity === "danger");
   if (dangers.length) why.push(`Watch out: ${dangers.map((f) => f.message).join(" ")}`);
-  if (verdict === "watch" && value.confidence === "low" && best && best.fitsBudget) {
+  if (verdict === "watch" && value.confidence === "low" && best) {
     why.push("Held at watch because the value is a guess (no usable sales nearby). Pull 3 recent sold properties like it, put your value in a values file (--values), and run again.");
   }
   if (verdict === "watch" && best && !best.fitsBudget) why.push("Does not fit your budget as set. Kept on the list in case your settings change or you bring a partner.");
