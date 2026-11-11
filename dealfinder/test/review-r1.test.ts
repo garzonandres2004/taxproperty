@@ -302,3 +302,17 @@ test("Run1: a Lands Available price far under value carries a find-the-reason fl
   const r = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,2000\n", channel: "lands_available" }]);
   assert.ok(r.analyses[0].flags.some((f) => f.code === "DEEP_DISCOUNT"));
 });
+
+test("Run3: sales that disagree a lot lower the confidence", () => {
+  const idx = emptyCompIndex();
+  const ratios = [0.5, 0.8, 1.2, 1.7, 2.2, 2.8, 1.0, 2.5];
+  ratios.forEach((r, i) => {
+    const c = { countyCode: "45", parcelKey: `D${i}`, kind: "agricultural", justValue: 100000, neighborhood: "AG1", censusBlock: "", situsZip: "", situsCity: "", sales: [{ price: 100000 * r, year: 2026, month: 1, qualified: true, qualCode: "01", vi: "V" }] } as Parcel;
+    for (const comp of compsFromParcel(c, a, today)) addComp(idx, "45", comp);
+  });
+  const subject = { countyCode: "45", parcelKey: "S", kind: "agricultural", justValue: 100000, neighborhood: "AG1", censusBlock: "", situsZip: "", situsCity: "", sales: [] } as unknown as Parcel;
+  const v = estimateValue(subject, idx, a, today);
+  assert.equal(v.method, "comps_ratio");
+  assert.equal(v.confidence, "low");
+  assert.ok(v.notes.some((n) => /disagree a lot/.test(n)));
+});

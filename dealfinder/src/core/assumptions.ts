@@ -12,6 +12,8 @@ export interface Assumptions {
     maxCompsUsed: number;
     ratioMin: number;
     ratioMax: number;
+    maxSpreadForHigh: number;
+    maxSpreadForMedium: number;
   };
   florida: {
     docStampRatePer100: number;

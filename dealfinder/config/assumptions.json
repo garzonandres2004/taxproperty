@@ -8,7 +8,10 @@
     "minCompsForMedium": 3,
     "maxCompsUsed": 25,
     "ratioMin": 0.4,
-    "ratioMax": 3.0
+    "ratioMax": 3.0,
+    "_spread": "Spread = (75th minus 25th percentile ratio) / median. Above maxSpreadForHigh, high confidence drops to medium; above maxSpreadForMedium, it drops to low.",
+    "maxSpreadForHigh": 0.5,
+    "maxSpreadForMedium": 0.8
   },
   "florida": {
     "docStampRatePer100": 0.7,

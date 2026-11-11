@@ -148,8 +148,17 @@ export function estimateValue(p: Parcel, idx: CompIndex, a: Assumptions, today: 
     const recent = [...comps].sort((x, y) => y.year - x.year).slice(0, v.maxCompsUsed);
     const ratios = recent.map((c) => c.price / c.justValue);
     const mid = median(ratios);
-    const confidence = recent.length >= v.minCompsForHigh && label !== "same city" ? "high" : "medium";
+    let confidence: ValueEstimate["confidence"] = recent.length >= v.minCompsForHigh && label !== "same city" ? "high" : "medium";
+    // Many sales that disagree with each other are not high confidence. Spread = middle half range / median.
+    const spread = (quantile(ratios, 0.75) - quantile(ratios, 0.25)) / mid;
     notes.push(`${recent.length} arm's length sales of similar property in the ${label} sold at a median of ${mid.toFixed(2)}x their assessed just value.`);
+    if (spread > v.maxSpreadForMedium) {
+      confidence = "low";
+      notes.push(`Those sales disagree a lot (middle half from ${quantile(ratios, 0.25).toFixed(2)}x to ${quantile(ratios, 0.75).toFixed(2)}x), so the value is a guess.`);
+    } else if (spread > v.maxSpreadForHigh && confidence === "high") {
+      confidence = "medium";
+      notes.push(`Those sales are spread out (middle half from ${quantile(ratios, 0.25).toFixed(2)}x to ${quantile(ratios, 0.75).toFixed(2)}x), so confidence is medium.`);
+    }
     return {
       market: round(jv * mid, 100),
       low: round(jv * quantile(ratios, 0.25), 100),
