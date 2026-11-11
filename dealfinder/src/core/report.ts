@@ -83,7 +83,7 @@ export function renderMarkdown(analyses: Analysis[], settings: Settings, a: Assu
   });
   L.push("");
 
-  for (const [i, x] of main.entries()) L.push(...detailMd(x, i + 1));
+  for (const [i, x] of main.entries()) L.push(...detailMd(x, i + 1, !!meta.publicMode));
 
   if (avoided.length) {
     L.push("## Avoided", "");
@@ -100,7 +100,9 @@ export function renderMarkdown(analyses: Analysis[], settings: Settings, a: Assu
   return L.join("\n");
 }
 
-function detailMd(x: Analysis, n: number): string[] {
+const fitsText = (fits: boolean, publicMode: boolean) => (publicMode ? "n/a (no budget)" : fits ? "yes" : "no");
+
+function detailMd(x: Analysis, n: number, publicMode: boolean): string[] {
   const p = x.parcel;
   const L: string[] = [];
   L.push(`## ${n}. ${p.parcelId}, ${addr(x)}`, "");
@@ -121,7 +123,7 @@ function detailMd(x: Analysis, n: number): string[] {
     L.push("| Plan | Sell or value | Costs after buying | Months | Profit | Return | Cash needed | Max all in | Fits budget |");
     L.push("|---|---|---|---|---|---|---|---|---|");
     for (const s of x.strategies) {
-      L.push(`| ${s.label}${s === x.best ? " (best)" : ""} | ${money(s.exitPrice)} | ${money(s.extraCosts)} | ${s.months} | ${Number.isFinite(s.profit) ? money(s.profit) : "n/a"} | ${Number.isFinite(s.returnPct) ? pct(s.returnPct) : "n/a"} | ${Number.isFinite(s.cashNeeded) ? money(s.cashNeeded) : "n/a"} | ${money(s.maxAllIn)} | ${s.fitsBudget ? "yes" : "no"} |`);
+      L.push(`| ${s.label}${s === x.best ? " (best)" : ""} | ${money(s.exitPrice)} | ${money(s.extraCosts)} | ${s.months} | ${Number.isFinite(s.profit) ? money(s.profit) : "n/a"} | ${Number.isFinite(s.returnPct) ? pct(s.returnPct) : "n/a"} | ${Number.isFinite(s.cashNeeded) ? money(s.cashNeeded) : "n/a"} | ${money(s.maxAllIn)} | ${fitsText(s.fitsBudget, publicMode)} |`);
     }
     L.push("");
     if (x.best) {
@@ -172,7 +174,7 @@ export function renderHtml(analyses: Analysis[], settings: Settings, a: Assumpti
       const p = x.parcel;
       const strat = x.strategies
         .map(
-          (s) => `<tr class="${s === x.best ? "best" : ""}"><td>${esc(s.label)}${s === x.best ? " <b>(best)</b>" : ""}</td><td class="num">${money(s.exitPrice)}</td><td class="num">${money(s.extraCosts)}</td><td class="num">${s.months}</td><td class="num">${Number.isFinite(s.profit) ? money(s.profit) : "n/a"}</td><td class="num">${Number.isFinite(s.returnPct) ? pct(s.returnPct) : "n/a"}</td><td class="num">${Number.isFinite(s.cashNeeded) ? money(s.cashNeeded) : "n/a"}</td><td class="num">${money(s.maxAllIn)}</td><td>${s.fitsBudget ? "yes" : "no"}</td></tr>`,
+          (s) => `<tr class="${s === x.best ? "best" : ""}"><td>${esc(s.label)}${s === x.best ? " <b>(best)</b>" : ""}</td><td class="num">${money(s.exitPrice)}</td><td class="num">${money(s.extraCosts)}</td><td class="num">${s.months}</td><td class="num">${Number.isFinite(s.profit) ? money(s.profit) : "n/a"}</td><td class="num">${Number.isFinite(s.returnPct) ? pct(s.returnPct) : "n/a"}</td><td class="num">${Number.isFinite(s.cashNeeded) ? money(s.cashNeeded) : "n/a"}</td><td class="num">${money(s.maxAllIn)}</td><td>${fitsText(s.fitsBudget, !!meta.publicMode)}</td></tr>`,
         )
         .join("");
       const flags = x.flags

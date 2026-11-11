@@ -429,3 +429,27 @@ test("LA3: Putnam style list with the clerk's Estimated Purchase Price and Aucti
   assert.equal(both.analyses[0].listing.quoteIsEstimate, undefined);
   assert.ok(!both.analyses[0].flags.some((f) => f.code === "LISTING_CONFLICT"));
 });
+
+// Putnam official list run (issue #18)
+
+test("Putnam: inside the county-only 90 days, no 'pay quickly', the opening date is given", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,001,150000,10000,1400,1990,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const text = "Parcel Number,Estimated Purchase Price,Auction Date\n12-19-26-0100-002-00500,20619.76,09/16/2026\n";
+  const x = (await run(nal, [{ text, channel: "lands_available" }])).analyses[0];
+  assert.doesNotMatch(x.competition.explanation, /pay quickly/);
+  assert.match(x.competition.explanation, /Only the county can buy it until about 2026-12-15/);
+  assert.ok(x.flags.some((f) => f.code === "COUNTY_WINDOW"));
+});
+
+test("Putnam: public reports say n/a for budget fit instead of yes", async () => {
+  const { renderHtml, renderMarkdown } = await import("../src/core/report.ts");
+  const { publicSettings } = await import("../src/core/settings.ts");
+  const s = publicSettings("");
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const r = await run(nal, [{ text: "Parcel ID,Statement Total\n12-19-26-0100-002-00500,4200\n", channel: "lands_available" }], s);
+  const meta = { title: "t", generatedAt: today, nalFiles: [], listFiles: [], parcelsScanned: r.parcelsScanned, compsFound: r.compsFound, referenceYear: r.referenceYear, unmatched: r.unmatched, publicMode: true };
+  for (const out of [renderHtml(r.analyses, s, a, meta), renderMarkdown(r.analyses, s, a, meta)]) {
+    assert.match(out, /n\/a \(no budget\)/);
+    assert.doesNotMatch(out, /\| yes \||<td>yes<\/td>/);
+  }
+});

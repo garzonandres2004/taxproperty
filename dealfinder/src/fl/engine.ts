@@ -238,7 +238,7 @@ export function analyzeOne(
   const ceilingOnly = buildStrategies({ parcel, value, neighbors, settings, a, allIn: null, ceilingToPrice });
   const bestCeiling = pickBest(ceilingOnly, settings);
   const budgetCeiling = isAuction ? maxBidForAllIn(settings.maxPerDeal, a) : settings.maxPerDeal;
-  const competition = assessCompetition({ parcel, listing, value, tier, best: bestCeiling, budgetCeiling, a, calibration });
+  const competition = assessCompetition({ parcel, listing, value, tier, best: bestCeiling, budgetCeiling, a, calibration, today });
 
   // Price to evaluate at: the clerk quote or estimate for Lands Available;
   // the expected final bid for auctions (profit at the opening bid is a fantasy when others bid).
