@@ -136,7 +136,7 @@ export function parseListingText(text: string, channel: ListingChannel, sourceFi
     // Plain whole numbers (like "5000") might be the bid or might be a piece of
     // the parcel number. Keep them aside; the engine decides once it knows the parcel.
     const looseNumbers = amount === undefined
-      ? rest.split(/\s+/).filter((t) => /^[1-9]\d{2,6}$/.test(t)).map((t) => ({ token: t, value: Number(t) }))
+      ? rest.split(/\s+/).filter((t) => /^[1-9]\d{0,6}$/.test(t)).map((t) => ({ token: t, value: Number(t) }))
       : [];
     out.push({
       channel,
@@ -169,9 +169,13 @@ export function parcelCandidates(s: string): string[] {
 
 /**
  * After the parcel is known: a plain number counts as the amount only if it is
- * not part of the matched parcel number and it is the only such number left.
+ * at least 100, not part of the matched parcel number, and the only such number
+ * left once year-like numbers are set aside. Anything else stays unknown.
  */
 export function resolveLooseAmount(raw: RawListing, matchedKey: string): number | undefined {
-  const left = (raw.looseNumbers ?? []).filter((n) => !matchedKey.includes(n.token) && n.value >= 100);
+  const all = (raw.looseNumbers ?? []).filter((n) => !matchedKey.includes(n.token));
+  let left = all.filter((n) => n.value >= 100);
+  // With other numbers on the line, a 4 digit number from 1950 to 2100 is most likely a year.
+  if (all.length > 1) left = left.filter((n) => !(n.token.length === 4 && n.value >= 1950 && n.value <= 2100));
   return left.length === 1 ? left[0].value : undefined;
 }

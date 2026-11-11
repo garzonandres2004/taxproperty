@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { a, settings } from "./helpers.ts";
 import { runFlorida, resolveMatches } from "../src/fl/engine.ts";
+import * as listingsModule from "../src/core/listings.ts";
 import { parseListing, parseListingText, ListingError } from "../src/core/listings.ts";
 import { buildStrategies, meetsTargets } from "../src/core/strategies.ts";
 import { estimateValue, emptyCompIndex, addComp, compsFromParcel } from "../src/core/valuation.ts";
@@ -128,10 +129,13 @@ test("P2: an alt key on the same line as a different parcel number is ambiguous"
   assert.match(r.unmatched[0].reason, /more than one parcel/);
 });
 
-test("P2: a spaced parcel number still resolves to the full key", () => {
-  const p = (key: string, id: string) => ({ key, parcel: { countyCode: "45", parcelKey: key, parcelId: id, countyName: "Lake" } as Parcel });
-  const r = resolveMatches([p("042026000000000100", "full"), p("0000000100", "fragment")]);
-  assert.ok(r && "parcel" in r && r.parcel.parcelId === "full");
+test("P2: several keys for one parcel resolve; two parcels never do", () => {
+  const parcel = { countyCode: "45", parcelKey: "042026000000000100", parcelId: "04-20-26-0000-000-00100", countyName: "Lake" } as Parcel;
+  const same = resolveMatches([{ key: "042026000000000100", parcel }, { key: "3800100", parcel }]);
+  assert.ok(same && "parcel" in same && same.parcel === parcel);
+  const other = { countyCode: "45", parcelKey: "0000000100", parcelId: "other", countyName: "Lake" } as Parcel;
+  const two = resolveMatches([{ key: "042026000000000100", parcel }, { key: "0000000100", parcel: other }]);
+  assert.ok(two && "ambiguous" in two);
 });
 
 test("P2: bare whole number on a text line becomes the opening bid", async () => {
@@ -217,3 +221,50 @@ test("nit: sale age counts months and rejects future sales", () => {
   assert.equal(compsFromParcel(sale(2027, 1), a, today).length, 0, "future sale");
 });
 
+
+// Round 2 (issue #19, Codex on 2287d16)
+
+test("R2 P1: overlapping keys of two distinct parcels are ambiguous", async () => {
+  const nal = roll(["45,A-1,2026,000,9000,20000,0,0,,,,,,A,X,N1,,EUSTIS,32726,07567012", "45,B-1,2026,000,9000,20000,0,0,,,,,,B,X,N1,,EUSTIS,32726,107567012"]);
+  const r = await run(nal, [{ text: "Certificate 107567012 Parcel 07567-012 $1500.00", channel: "lands_available" }]);
+  assert.equal(r.analyses.length, 0);
+  assert.match(r.unmatched[0].reason, /more than one parcel/);
+});
+
+test("R2 P2: disagreeing list dates are flagged, earliest used, order does not matter", async () => {
+  const nal = roll(["72,07567-012,2026,000,20000,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
+  const f1 = { text: "Parcel ID,Opening Bid,Date Offered\n07567-012,3200,2026-11-11\n", channel: "lands_available" as const };
+  const f2 = { text: "Parcel ID,Opening Bid,Date Offered\n07567-012,3200,2025-11-11\n", channel: "lands_available" as const };
+  const ab = (await run(nal, [f1, f2])).analyses[0];
+  const ba = (await run(nal, [f2, f1])).analyses[0];
+  assert.equal(ab.listing.saleDate, "2025-11-11");
+  assert.equal(ab.costs!.allIn, ba.costs!.allIn);
+  assert.ok(ab.flags.some((f) => f.code === "LISTING_CONFLICT" && /dates disagree/.test(f.message)));
+  assert.notEqual(ab.verdict, "buy_candidate");
+});
+
+test("R2 P2: auction with no opening bid and nonviable economics is a pass", async () => {
+  const nal = roll(["72,07567-012,2026,000,3825,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
+  const r = await run(nal, [{ text: "Parcel ID,Sale Date\n07567-012,12/08/2026\n", channel: "auction" }], settings({ strategies: ["wholesale"], totalCapital: 100000, maxPerDeal: 50000 }));
+  assert.equal(r.analyses[0].verdict, "pass");
+  assert.equal(r.analyses[0].offer.walkAway, 0);
+});
+
+test("R2 P2: a rejected plan never produces a purchase instruction", async () => {
+  const nal = roll(["72,07567-012,2026,000,3825,20000,0,0,,,,,,A,X,N9,,PERRY,32347,"]);
+  const r = await run(nal, [{ text: "Parcel ID,Case\n07567-012,2025-TD-1\n", channel: "lands_available" }], settings({ strategies: ["wholesale"], totalCapital: 100000, maxPerDeal: 50000 }));
+  const x = r.analyses[0];
+  assert.equal(x.verdict, "pass");
+  assert.equal(x.offer.walkAway, 0);
+  assert.doesNotMatch(x.offer.note, /Buy only if/);
+});
+
+test("R2 note: plain numbers skip year-like values and tiny numbers", () => {
+  const { resolveLooseAmount } = listingsModule;
+  const [a1] = parseListingText("07567-012 500 2026", "auction");
+  assert.equal(resolveLooseAmount(a1, "07567012"), 500);
+  const [a2] = parseListingText("07567-012 50 2026", "auction");
+  assert.equal(resolveLooseAmount(a2, "07567012"), undefined);
+  const [a3] = parseListingText("07567-012 5000", "auction");
+  assert.equal(resolveLooseAmount(a3, "07567012"), 5000);
+});

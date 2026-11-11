@@ -9,7 +9,7 @@ import type { Analysis, Listing, Parcel, RiskFlag, Settings, StrategyResult } fr
 import { resolveLooseAmount, type RawListing } from "../core/listings.ts";
 import { addComp, compsFromParcel, emptyCompIndex, estimateValue, type CompIndex } from "../core/valuation.ts";
 import { createNeighborFinder, parcelUid } from "../core/neighbors.ts";
-import { buildStrategies, meetsTargets, pickBest } from "../core/strategies.ts";
+import { buildStrategies, meetsTargets, MIN_PLAUSIBLE_ALL_IN, pickBest } from "../core/strategies.ts";
 import { assessCompetition, type Calibration } from "../core/competition.ts";
 import { money, pct } from "../core/stats.ts";
 import { isNalHeader, nalRowToParcel, parcelKey } from "./nal.ts";
@@ -63,9 +63,10 @@ export interface UnmatchedListing extends RawListing {
 }
 
 /**
- * Decide which roll parcel a list line means. One parcel: done. Several: the
- * longest matching key wins only when every other match is a piece of it (the
- * spaced-out parcel number case). Anything else is ambiguous and reported, never guessed.
+ * Decide which roll parcel a list line means. Several keys pointing at the same
+ * parcel (its id and its alt key, or pieces of a spaced out number) are fine.
+ * Two or more distinct parcels is ambiguous and reported, never guessed, even
+ * when one key contains the other.
  */
 export function resolveMatches(matches: Match[]): { parcel: Parcel; key: string } | { ambiguous: string } | null {
   if (!matches.length) return null;
@@ -77,8 +78,6 @@ export function resolveMatches(matches: Match[]): { parcel: Parcel; key: string 
   }
   const distinct = [...byUid.values()].sort((x, y) => y.key.length - x.key.length);
   if (distinct.length === 1) return { parcel: distinct[0].parcel, key: distinct[0].key };
-  const [top, ...others] = distinct;
-  if (others.every((o) => o.key.length < top.key.length && top.key.includes(o.key))) return { parcel: top.parcel, key: top.key };
   const names = distinct.slice(0, 4).map((m) => `${m.parcel.countyName} ${m.parcel.parcelId}`).join("; ");
   return { ambiguous: `matches more than one parcel (${names}). Limit counties in settings or fix the list line.` };
 }
@@ -97,6 +96,9 @@ export function mergeListings(parcel: Parcel, raws: { raw: RawListing; key: stri
   const quotes = distinct(raws.map(({ raw }) => raw.quotedTotal));
   if (bids.length > 1) conflicts.push(`opening bids disagree: ${bids.map(money).join(", ")} (using the highest)`);
   if (quotes.length > 1) conflicts.push(`clerk statements disagree: ${quotes.map(money).join(", ")} (using the highest)`);
+  // Dates drive accrued taxes and interest. Use the earliest (more accrual, higher cost) and flag any disagreement.
+  const dates = [...new Set(raws.map(({ raw }) => raw.saleDate).filter((d): d is string => !!d))].sort();
+  if (dates.length > 1) conflicts.push(`list dates disagree: ${dates.join(", ")} (using the earliest)`);
   const first = <T,>(f: (r: RawListing) => T | undefined) => raws.map(({ raw }) => f(raw)).find((v) => v !== undefined && v !== "");
   return {
     channel: raws[0].raw.channel,
@@ -105,7 +107,7 @@ export function mergeListings(parcel: Parcel, raws: { raw: RawListing; key: stri
     caseNumber: first((r) => r.caseNumber),
     openingBid: bids.length ? Math.max(...bids) : undefined,
     quotedTotal: quotes.length ? Math.max(...quotes) : undefined,
-    saleDate: first((r) => r.saleDate),
+    saleDate: dates[0],
     sourceLine: raws.map(({ raw }) => raw.sourceLine).join(" || "),
     conflicts: conflicts.length ? conflicts : undefined,
     amountFromPlainNumber: plain && bids.length > 0 && raws.every(({ raw }) => raw.openingBid === undefined) ? true : undefined,
@@ -257,6 +259,10 @@ function makeOffer(
   ceilingToPrice: (allIn: number) => number,
 ): Analysis["offer"] {
   const isAuction = listing.channel === "auction";
+  if (best && best.maxAllIn < MIN_PLAUSIBLE_ALL_IN) {
+    const nothing = `The most this is worth to you is ${money(best.maxAllIn)} all in, less than any tax deed costs with fees.`;
+    return { low: isAuction ? (listing.openingBid ?? 0) : (costs?.allIn ?? 0), high: 0, walkAway: 0, note: isAuction ? `Do not bid. ${nothing}` : `Pass. ${nothing}` };
+  }
   const targetCeiling = best ? best.maxPrice : 0;
   // Highest price that meets the targets AND leaves cash for the plan's costs after buying.
   const ceiling = best ? Math.min(targetCeiling, ceilingToPrice(best.affordableAllIn)) : 0;
@@ -304,7 +310,7 @@ function decideVerdict(args: {
   let v: Analysis["verdict"];
   if (isAuction) {
     // Some bid meets the targets. Whether it is worth showing up depends on the competition.
-    if (listing.openingBid === undefined) v = "needs_quote";
+    if (listing.openingBid === undefined) v = best.fitsBudget ? "needs_quote" : "watch";
     else if (competition.winChance === "unlikely" || !meetsTargets(best, settings) || !best.fitsBudget) v = "watch";
     else v = "buy_candidate";
   } else if (!priceKnown) {
