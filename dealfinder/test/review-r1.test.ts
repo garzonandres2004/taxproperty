@@ -372,8 +372,9 @@ test("R6: after an override, HTML and Markdown both show why the estimate was do
   assert.ok(x.flags.some((f) => f.code === "OVERRIDE_OF_DOUBTED_ESTIMATE" && /disagree a lot/.test(f.message)));
   const meta = { title: "t", generatedAt: today, nalFiles: [], listFiles: [], parcelsScanned: r.parcelsScanned, compsFound: r.compsFound, referenceYear: r.referenceYear, unmatched: r.unmatched };
   for (const out of [renderHtml(r.analyses, s, a, meta), renderMarkdown(r.analyses, s, a, meta)]) {
-    assert.match(out, /disagree a lot/);
-    assert.match(out, /Tax roll estimate:/);
+    // The reason must be in the rendered value notes themselves, not only in the flag.
+    assert.match(out, /Tax roll estimate: [^<\n]*disagree a lot/);
+    assert.match(out, /You replaced a low confidence estimate/);
   }
 });
 
