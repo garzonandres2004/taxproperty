@@ -73,7 +73,52 @@ export function parsePastSales(text: string): PastSale[] {
       });
     }
   }
+  if (text.split(/\r?\n/).some((l) => NUMBERED_ITEM.test(l))) return parseNumberedResults(text);
   return parseResultBlocks(text);
+}
+
+const NUMBERED_ITEM = /^\s*\d+\.\s.*\bParcel\s+\S/i;
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+/**
+ * One line per item, grouped under day headings, the way Muse records a results page:
+ *   ## Tuesday, November 3, 2026 (10 parcels; 3 sold, 7 redeemed)
+ *   3. Case ..., Parcel 04-19-24-000200008500, ADDRESS, Opening Bid $1,889.31 — SOLD 11/03/2026 11:18 AM ET, $3,900.00, to 3rd Party Bidder
+ *   1. Case ..., Parcel 06-18-24-039000018740, ADDRESS, Opening Bid $12,147.07 — Redeemed
+ * Lines starting with # are notes. A sale date on the SOLD part wins over the heading date.
+ */
+export function parseNumberedResults(text: string): PastSale[] {
+  const out: PastSale[] = [];
+  let dayDate: string | undefined;
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    const heading = line.match(/^#{1,6}\s+(?:[A-Za-z]+,\s+)?([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})/);
+    if (heading) {
+      const m = MONTHS.indexOf(heading[1].toLowerCase());
+      if (m >= 0) dayDate = `${heading[3]}-${String(m + 1).padStart(2, "0")}-${heading[2].padStart(2, "0")}`;
+      continue;
+    }
+    if (!NUMBERED_ITEM.test(line)) continue;
+    const parcel = line.match(/\bParcel\s+([A-Za-z0-9][A-Za-z0-9.\-]*)/i)?.[1];
+    if (!parcel) continue;
+    const opening = parseAmount(line.match(/\bOpening Bid\s+(\$?[0-9][0-9,]*(?:\.[0-9]+)?)/i)?.[1]);
+    // The result is whatever follows the last dash separator ("—", "–" or " - ").
+    const parts = line.split(/\s[\u2014\u2013-]\s/);
+    const resultPart = parts.length > 1 ? parts[parts.length - 1].trim() : "";
+    const sold = resultPart.match(/^SOLD\b\s*(\d{1,2}\/\d{1,2}\/\d{2,4})?[^$]*?(\$[0-9][0-9,]*(?:\.[0-9]+)?)\s*(?:,\s*to\s+(.+))?$/i);
+    const winning = sold ? parseAmount(sold[2]) : undefined;
+    const status: PastSale["status"] = sold && winning !== undefined && !notSoldStatus(resultPart) ? "sold" : "not_sold";
+    out.push({
+      parcelId: parcel,
+      winningBid: status === "sold" ? winning : undefined,
+      openingBid: opening,
+      saleDate: (sold?.[1] ? parseDate(sold[1]) : undefined) ?? dayDate,
+      soldTo: sold?.[3]?.trim(),
+      status,
+      sourceLine: line,
+    });
+  }
+  return out;
 }
 
 /**

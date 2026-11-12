@@ -130,3 +130,28 @@ test("PR27: money fields are parsed whole or rejected", () => {
   const [b] = parseResultBlocks("Auction Sold\nAmount -$500.00\nParcel ID 07567-012\n");
   assert.equal(b.status, "not_sold", "a negative amount is not a sale price");
 });
+
+test("Muse's numbered results format (day headings, one line per item)", () => {
+  const text = [
+    "# Lake County past tax deed sale results (from lake.realtaxdeed.com)",
+    "# Copied verbatim by Muse's browser, Nov 11 2026 ~23:30 MST. View only — no bidding, no login.",
+    "",
+    "## Tuesday, November 3, 2026 (10 parcels; 3 sold, 7 redeemed)",
+    "1. Case 00054-2024, Cert 00054-2024, Parcel 06-18-24-039000018740, 1838 W SCHWARTZ BLVD, LADY LAKE, FL 32159, Opening Bid $12,147.07 — Redeemed",
+    "2. Case 00074-2024, Cert 00074-2024, Parcel 06-18-24-039400031170, 606 RAINBOW BLVD, LADY LAKE, FL 32159, Opening Bid $14,007.39 — Redeemed",
+    "3. Case 00461-2023, Cert 00461-2023, Parcel 04-19-24-000200008500, POINSETTIA AVE, FRUITLAND PARK, FL 34731, Opening Bid $1,889.31 — SOLD 11/03/2026 11:18 AM ET, $3,900.00, to 3rd Party Bidder",
+    "4. Case 02087-2024, Cert 02087-2024, Parcel 08-22-25-100500002400, ROYAL PALM DR, GROVELAND, FL 34714, Opening Bid $6,544.33 — SOLD 11/03/2026 11:26 AM ET, $125,300.00, to 3rd Party Bidder",
+    "## Tuesday, October 6, 2026",
+    "1. Case 00100-2024, Parcel 01-17-28-0100-000-03700, SOME RD, PAISLEY, FL 32767, Opening Bid $1,786.00 - Canceled",
+    "2. Case 00101-2024, Parcel 01-17-28-0100-000-03702, HWY 19 - LOT B, PAISLEY, FL 32767, Opening Bid $1,698.00 — SOLD 10/06/2026 11:02 AM ET, $4,900.00, to 3rd Party Bidder",
+  ].join("\n");
+  const s = parsePastSales(text);
+  assert.equal(s.length, 6);
+  assert.deepEqual(s.map((x) => x.status), ["not_sold", "not_sold", "sold", "sold", "not_sold", "sold"]);
+  assert.equal(s[5].winningBid, 4900, "a dash inside the address does not hide the result");
+  assert.deepEqual([s[2].parcelId, s[2].openingBid, s[2].winningBid, s[2].saleDate, s[2].soldTo], ["04-19-24-000200008500", 1889.31, 3900, "2026-11-03", "3rd Party Bidder"]);
+  assert.equal(s[3].winningBid, 125300);
+  assert.equal(s[0].saleDate, "2026-11-03", "date comes from the day heading");
+  assert.equal(s[4].saleDate, "2026-10-06");
+  assert.equal(s[0].winningBid, undefined);
+});
