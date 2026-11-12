@@ -180,6 +180,16 @@ test("PR30 r1: a heading with an unknown month gives no date, not the previous d
   assert.equal(s[1].saleDate, undefined);
 });
 
+test("PR30 r2: an address word that starts like a status (SOLDIER RD) is not the result", () => {
+  const [a] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, HWY 19 - SOLDIER RD — SOLD $3,900.00, to Smith LLC\n");
+  assert.deepEqual([a.status, a.winningBid, a.soldTo], ["sold", 3900, "Smith LLC"], "no Opening Bid");
+  const [b] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, HWY 19 - SOLDIER RD, Opening Bid $100.00 (est.) — SOLD $3,900.00, to Smith LLC\n");
+  assert.deepEqual([b.status, b.winningBid, b.openingBid], ["sold", 3900, 100], "text between the Opening Bid and the dash");
+  const [c] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, 1 BANKRUPTCYVILLE LN - REDEEMEDX CT — Redeemed\n");
+  assert.deepEqual([c.status, c.winningBid], ["not_sold", undefined]);
+  assert.match(c.sourceLine, /REDEEMEDX/);
+});
+
 test("PR30 r1: without an Opening Bid the result starts at the first dash before a result word", () => {
   const [x] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, HWY 19 - LOT B — SOLD $3,900.00, to Smith - Jones LLC\n");
   assert.deepEqual([x.status, x.winningBid, x.soldTo, x.openingBid], ["sold", 3900, "Smith - Jones LLC", undefined]);

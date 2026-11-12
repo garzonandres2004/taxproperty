@@ -124,7 +124,8 @@ export function parseNumberedResults(text: string): PastSale[] {
 }
 
 const SEPARATOR = /^\s*[\u2014\u2013-]\s/;
-const RESULT_START = /\s[\u2014\u2013-]\s(?=(?:SOLD|REDEEM|CANCEL|WITHDRAWN|NO ?BID|NOT ?SOLD|POSTPON|BANKRUPT)\w*\b)/i;
+// Whole status words only, so an address like "SOLDIER RD" is not read as a result.
+const RESULT_START = /\s[\u2014\u2013-]\s(?=(?:SOLD|REDEEMED|CANCELED|CANCELLED|WITHDRAWN|NO ?BID|NOT ?SOLD|POSTPONED|BANKRUPTCY)\b)/i;
 
 /**
  * The result text of one numbered line. It starts at the dash right after the Opening Bid amount,
