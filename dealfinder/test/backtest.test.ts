@@ -130,3 +130,40 @@ test("PR27: money fields are parsed whole or rejected", () => {
   const [b] = parseResultBlocks("Auction Sold\nAmount -$500.00\nParcel ID 07567-012\n");
   assert.equal(b.status, "not_sold", "a negative amount is not a sale price");
 });
+
+// Codex PR #27 round 2 follow ups
+
+test("PR27 r2: each sale is valued as of its own date (comps sold later are not used)", () => {
+  const dir = mkdtempSync(join(tmpdir(), "bt-"));
+  const header = "CO_NO,PARCEL_ID,ASMNT_YR,DOR_UC,JV,LND_SQFOOT,QUAL_CD1,VI_CD1,SALE_PRC1,SALE_YR1,SALE_MO1,OWN_NAME,NBRHD_CD,PHY_CITY,PHY_ZIPCD";
+  const comps = Array.from({ length: 8 }, (_, i) => `45,C-${100000 + i},2026,000,10000,10000,01,V,20000,2026,6,O${i},N1,EUSTIS,32726`);
+  const nal = join(dir, "nal.csv");
+  writeFileSync(nal, [header, ...comps, "45,SUBJ-123456,2026,000,10000,10000,,,,,,S,N1,EUSTIS,32726"].join("\n") + "\n");
+  const results = join(dir, "r.csv");
+  writeFileSync(results, "Parcel ID,Opening Bid,Winning Bid,Sale Date\nSUBJ-123456,1000,9000,03/01/2026\nSUBJ-123456,1000,9500,11/01/2026\n");
+  const out = join(dir, "bt");
+  const r = cli(["backtest", "--nal", nal, "--results", results, "--out", out]);
+  assert.equal(r.status, 0, r.stderr);
+  const rows = JSON.parse(readFileSync(`${out}.json`, "utf8")).rows as { saleDate: string; value: number; confidence: string }[];
+  const march = rows.find((x) => x.saleDate === "2026-03-01")!;
+  const nov = rows.find((x) => x.saleDate === "2026-11-01")!;
+  assert.equal(march.confidence, "low", "June comps did not exist on March 1");
+  assert.equal(nov.value, 20000, "by November the June comps (2x just value) are usable");
+  assert.notEqual(march.value, nov.value);
+});
+
+test("PR27 r2: money with misplaced thousands separators is rejected", () => {
+  assert.equal(parseAmount("1,234"), 1234);
+  assert.equal(parseAmount("$12,345,678.90"), 12345678.9);
+  assert.equal(parseAmount("1,23"), undefined);
+  assert.equal(parseAmount("12,34,5"), undefined);
+  assert.equal(parseAmount(",123"), undefined);
+});
+
+test("PR27 r2: the outcomes file is read with the CSV reader (quoted fields, extra spaces)", () => {
+  const row = { parcelId: "A-1", saleDate: "2026-11-04", county: "45", bucket: "vacant" as const, value: 10000, confidence: "high", expected: 4500, modelMax: 5000, actual: 6000, actualRatio: 0.6, call: "model_low" as const, ceilingMet: false, verdict: "pass" };
+  const existing = 'date,county,parcel,type,est_market,winning_bid\n"2026-11-04", 45 ,"A-1",vacant,10000,6000\n';
+  const plan = planRecord([row], existing, false);
+  assert.equal(plan.add.length, 0);
+  assert.equal(plan.duplicates, 1);
+});
