@@ -36,7 +36,8 @@ function money2(s: string | undefined): number | undefined {
 /** Parse a whole money field ("$45,100.00", "1234.5"). Negative, empty or malformed gives undefined. */
 export function parseAmount(field: string | undefined): number | undefined {
   if (!field) return undefined;
-  const m = field.trim().match(/^\$?\s*([0-9][0-9,]*(?:\.[0-9]+)?)$/);
+  // Thousands separators must be in the right places: "1,234" yes, "1,23" or "12,34,5" no.
+  const m = field.trim().match(/^\$?\s*((?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\.[0-9]+)?)$/);
   if (!m) return undefined;
   const n = Number(m[1].replace(/,/g, ""));
   return Number.isFinite(n) && n > 0 ? n : undefined;
@@ -221,10 +222,9 @@ export interface RecordPlan {
  */
 export function planRecord(rows: BacktestRow[], existingCsv: string, includeLowConfidence: boolean): RecordPlan {
   const existing = new Map<string, number>();
-  for (const line of existingCsv.split(/\r?\n/).slice(1)) {
-    const c = line.split(",");
+  for (const c of parseCsvText(existingCsv, ",").slice(1)) {
     if (c.length < 6) continue;
-    existing.set(eventKey(c[1], c[2], c[0]), Number(c[5]));
+    existing.set(eventKey(c[1].trim(), c[2].trim(), c[0].trim()), Number(c[5]));
   }
   const plan: RecordPlan = { add: [], duplicates: 0, conflicts: [], skippedLowConfidence: 0 };
   for (const r of rows) {
