@@ -4,7 +4,7 @@ Last updated: Nov 12, 2026 (night of Nov 11, Mountain time). Written by Claude. 
 
 ## One line
 
-The tool works on real Florida data. The first real backtest says Lake County auctions sell vacant land at full value, so the plan stays on fixed price parcels (Lands Available, bought with a clerk statement) and we are now testing small counties to see if any auction market is cheaper.
+The tool works on real Florida data. In the first real backtest, Lake County auctions sold vacant land at a median 108% of estimated value, so auctions are an unproven strategy for a small budget. The plan stays on fixed price parcels (Lands Available, bought with a clerk statement) while we test small counties to see if any auction market is cheaper.
 
 ## What is built (on `main`)
 
@@ -34,21 +34,21 @@ Tests: 94 on the backtest branch, 86 on `main`. Every change is reviewed by Code
 
 ## What that means
 
-1. Lake auctions are full price for vacant land. A small budget will rarely win there, and when it does it is luck, not a plan.
+1. The sampled Lake auctions were expensive relative to value for vacant land (median 108%). Discounts did happen: 2 of 18 sales closed at 28% and 32% of value. With so few, an auction strategy for a small budget is unproven, not ruled out.
 2. The fixed price route (Lands Available) is still the one channel where nobody can outbid you. Most parcels on it are junk, so the tool's job there is filtering, then a clerk statement before any money.
-3. Most small counties do not post a live Lands Available list online, so that route depends on asking clerks, not downloading.
+3. Most of the small counties checked so far (25 or more RealTDM sites) do not publish a live Lands Available list there. For those, the next approach is asking the clerk for the list.
 
 ## What happens next
 
 | # | Step | Who | Status |
 |---|---|---|---|
-| 1 | Backtest 6 small counties' past auctions to find any market that sells under value | Muse collects, Claude reads | In progress |
+| 1 | Backtest 6 small counties' past auctions to find any market that sells under value | Muse collects, Claude reads | Collection in progress; no results yet |
 | 2 | Review and merge the backtest command (PR #27) | Codex, then Muse | Fixes pushed, re-review pending |
 | 3 | ChatGPT challenge of the whole plan (issue #20) | ChatGPT via Muse | Not started |
 | 4 | Rebuild the Lake calibration with the fixed code and re-run the Nov 17 list | Muse | Pending |
 | 5 | Clerk reply for 186 Harvey Dr | Muse checks email | Waiting |
 | 6 | Nov 17 Lake sale: record results, no bidding | Muse | Nov 17 |
-| 7 | Statements for 108 Tree Farm Rd and 107 Dickens St | Muse, with your OK | After about Dec 15 |
+| 7 | Statements for 108 Tree Farm Rd and 107 Dickens St | Muse, with your OK | Request in early December so they are ready when the parcels open to the public about Dec 15; any purchase needs your approval |
 
 ## What needs you
 
