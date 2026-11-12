@@ -1,6 +1,6 @@
 # Deal Finder: Status
 
-Last updated: Nov 12, 2026 (night of Nov 11, Mountain time). Written by Claude. Read this first; details live in the linked issues.
+Last updated: Nov 12, 2026, morning (Mountain time). Written by Claude. Read this first; details live in the linked issues.
 
 ## One line
 
@@ -20,7 +20,7 @@ The tool works on real Florida data. In the first real backtest, Lake County auc
 | Budget | Only from your settings file, never in the repo; public reports show none |
 | Competition | Estimates the final auction price; learns from real results (record and calibrate) |
 
-Tests: 94 on the backtest branch, 86 on `main`. Every change is reviewed by Codex before it merges.
+Tests: 94 on `main` as of Nov 12 morning; open PRs #29 and #30 add more. Every change is reviewed by Codex before it merges.
 
 ## What real data showed
 
@@ -30,7 +30,7 @@ Tests: 94 on the backtest branch, 86 on `main`. Every change is reviewed by Code
 | Lake auction list (Nov 17 sale) | 6 parcels looked like bid candidates with no budget applied; none fit a small budget |
 | Lake Lands Available | 4 parcels, all pass or avoid |
 | Putnam official Lands Available list | 55 parcels: 4 get a quote, 51 pass, 0 buy. The 4: 186 Harvey Dr (statement requested Nov 11), 108 Tree Farm Rd and 107 Dickens St (open to the public about Dec 15), and a parcel with no address that turned out to be two thin strips (pass) |
-| **Lake past auctions backtest** (30 results, 5 sale days, Apr to Nov 2026) | **Vacant land sold at a median 108% of estimated value** (15 sales; the model had assumed 45%). Bidding went higher than the model expected in 14 of 18 sales. The model's ceiling met the winning bid only 2 times in 18, both cheap outliers |
+| **Lake past auctions backtest** (30 results, 5 sale days, Apr to Nov 2026; same numbers after the fixed code was merged) | **Vacant land sold at a median 108% of estimated value** (15 sales; the model had assumed 45%). Bidding went higher than the model expected in 14 of 18 sales. The model's ceiling met the winning bid only 2 times in 18, both cheap outliers |
 
 ## What that means
 
@@ -43,9 +43,9 @@ Tests: 94 on the backtest branch, 86 on `main`. Every change is reviewed by Code
 | # | Step | Who | Status |
 |---|---|---|---|
 | 1 | Backtest 6 small counties' past auctions to find any market that sells under value | Muse collects, Claude reads | Collection in progress; no results yet |
-| 2 | Review and merge the backtest command (PR #27) | Codex, then Muse | Fixes pushed, re-review pending |
+| 2 | Review and merge the backtest command (PR #27) | Codex, then Muse | Merged as 9bdeae1. Follow ups: PR #29 (review notes) and PR #30 (reads Muse's one line per item results) in review |
 | 3 | ChatGPT challenge of the whole plan (issue #20) | ChatGPT via Muse | Not started |
-| 4 | Rebuild the Lake calibration with the fixed code and re-run the Nov 17 list | Muse | Pending |
+| 4 | Rebuild the Lake calibration with the fixed code and re-run the Nov 17 list | Muse | Done Nov 12: Lake vacant calibrated at 108% of value (15 sales). With it the Nov 17 list is 0 buy, 16 watch, 3 pass, 1 avoid (was 6 buy before calibration). The calibration stays local, not in the repo, until the Nov 17 results are added |
 | 5 | Clerk reply for 186 Harvey Dr | Muse checks email | Waiting |
 | 6 | Nov 17 Lake sale: record results, no bidding | Muse | Nov 17 |
 | 7 | Statements for 108 Tree Farm Rd and 107 Dickens St | Muse, with your OK | Request in early December so they are ready when the parcels open to the public about Dec 15; any purchase needs your approval |
