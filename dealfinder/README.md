@@ -119,7 +119,9 @@ Collect past results from the county auction site (each sold item's parcel, open
 ## Tuesday, November 3, 2026
 3. Case 00461-2023, Parcel 04-19-24-000200008500, POINSETTIA AVE, Opening Bid $1,889.31 — SOLD 11/03/2026 11:18 AM ET, $3,900.00, to 3rd Party Bidder
 1. Case 00054-2024, Parcel 06-18-24-039000018740, 1838 W SCHWARTZ BLVD, Opening Bid $12,147.07 — Redeemed
-``` Then:
+```
+
+Then:
 
 ```
 node src/cli.ts backtest --nal NAL_lake.csv --results lake_past.txt --record --out reports/lake-backtest

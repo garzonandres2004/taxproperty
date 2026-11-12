@@ -95,20 +95,21 @@ export function parseNumberedResults(text: string): PastSale[] {
     const line = raw.trim();
     const heading = line.match(/^#{1,6}\s+(?:[A-Za-z]+,\s+)?([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})/);
     if (heading) {
+      // Every dated heading resets the day: an unknown month gives no date rather than the previous day's.
       const m = MONTHS.indexOf(heading[1].toLowerCase());
-      if (m >= 0) dayDate = `${heading[3]}-${String(m + 1).padStart(2, "0")}-${heading[2].padStart(2, "0")}`;
+      dayDate = m >= 0 ? parseDate(`${m + 1}/${heading[2]}/${heading[3]}`) : undefined;
       continue;
     }
     if (!NUMBERED_ITEM.test(line)) continue;
     const parcel = line.match(/\bParcel\s+([A-Za-z0-9][A-Za-z0-9.\-]*)/i)?.[1];
     if (!parcel) continue;
-    const opening = parseAmount(line.match(/\bOpening Bid\s+(\$?[0-9][0-9,]*(?:\.[0-9]+)?)/i)?.[1]);
-    // The result is whatever follows the last dash separator ("—", "–" or " - ").
-    const parts = line.split(/\s[\u2014\u2013-]\s/);
-    const resultPart = parts.length > 1 ? parts[parts.length - 1].trim() : "";
+    const openingMatch = line.match(/\bOpening Bid\s+(\$?[0-9][0-9,]*(?:\.[0-9]+)?)/i);
+    const opening = parseAmount(openingMatch?.[1]);
+    const resultPart = resultOf(line, openingMatch);
     const sold = resultPart.match(/^SOLD\b\s*(\d{1,2}\/\d{1,2}\/\d{2,4})?[^$]*?(\$[0-9][0-9,]*(?:\.[0-9]+)?)\s*(?:,\s*to\s+(.+))?$/i);
     const winning = sold ? parseAmount(sold[2]) : undefined;
-    const status: PastSale["status"] = sold && winning !== undefined && !notSoldStatus(resultPart) ? "sold" : "not_sold";
+    // A SOLD result with a real amount is a sale. The buyer's name is not scanned for status words.
+    const status: PastSale["status"] = sold && winning !== undefined ? "sold" : "not_sold";
     out.push({
       parcelId: parcel,
       winningBid: status === "sold" ? winning : undefined,
@@ -120,6 +121,24 @@ export function parseNumberedResults(text: string): PastSale[] {
     });
   }
   return out;
+}
+
+const SEPARATOR = /^\s*[\u2014\u2013-]\s/;
+const RESULT_START = /\s[\u2014\u2013-]\s(?=(?:SOLD|REDEEM|CANCEL|WITHDRAWN|NO ?BID|NOT ?SOLD|POSTPON|BANKRUPT)\w*\b)/i;
+
+/**
+ * The result text of one numbered line. It starts at the dash right after the Opening Bid amount,
+ * so dashes in the address before it or in the buyer's name after it do not move it.
+ * Without an Opening Bid, it starts at the first dash followed by a result word (SOLD, Redeemed, ...).
+ */
+function resultOf(line: string, openingMatch: RegExpMatchArray | null): string {
+  if (openingMatch && openingMatch.index !== undefined) {
+    const after = line.slice(openingMatch.index + openingMatch[0].length);
+    const sep = after.match(SEPARATOR);
+    if (sep) return after.slice(sep[0].length).trim();
+  }
+  const m = RESULT_START.exec(line);
+  return m ? line.slice(m.index + m[0].length).trim() : "";
 }
 
 /**
