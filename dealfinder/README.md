@@ -120,7 +120,9 @@ node src/cli.ts backtest --nal NAL_lake.csv --results lake_past.txt --record --o
 node src/cli.ts calibrate
 ```
 
-The report shows, for each past sale, the model's value, expected price and max bid next to the real winning bid, and the real price as a share of value by county and type. `--record` adds every compared sale to `data/outcomes.csv` so `calibrate` learns from it. Canceled and redeemed items are counted but never used as prices.
+The report shows, for each past sale, the model's value, expected price and ceiling next to the real winning bid, and the real price as a share of value by county and type. Each sale is valued as of its own sale date (comparable sales after that day are left out; just values still come from the current roll). Canceled and redeemed items are counted but never used as prices.
+
+`--record` adds compared sales to `data/outcomes.csv` so `calibrate` learns from them. It is safe to run again: a sale already recorded (same county, parcel and date) is skipped, and one recorded at a different price is reported as a conflict and not written. Parcels whose value has low confidence are left out of the outcomes unless you add `--include-low-confidence`, so guessed values cannot move the calibration.
 
 ## Try it on the sample data
 

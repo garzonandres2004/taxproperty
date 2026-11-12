@@ -16,7 +16,7 @@ import { calibrate, loadCalibration, type Outcome, type TypeBucket } from "./cor
 import { renderHtml, renderMarkdown } from "./core/report.ts";
 import { parseCsvText } from "./core/csv.ts";
 import { runFlorida } from "./fl/engine.ts";
-import { parsePastSales, pastSalesToListings, renderBacktest, summarize } from "./backtest.ts";
+import { groupRows, parsePastSales, pastSalesToListings, planRecord, renderBacktest, summarize } from "./backtest.ts";
 import { allFlCounties, flCounty } from "./fl/counties.ts";
 import { money } from "./core/stats.ts";
 
@@ -47,7 +47,8 @@ Commands
   record      Save a real auction result (who won, at what price)
   calibrate   Learn auction price levels from your recorded results
   backtest    Compare the model with past auction results you collected
-              (--nal FILE --results FILE [--record] [--outcomes FILE] [--out PATH])
+              (--nal FILE --results FILE [--record] [--outcomes FILE] [--out PATH]
+               [--include-low-confidence])
   counties    List Florida county codes and size tiers
 
 analyze options
@@ -140,8 +141,9 @@ export function loadValueOverrides(path: string): Map<string, number> {
 
 /**
  * Backtest against past auction results the user collected (CSV or copied results page text).
- * Writes a report and, with --record, appends every compared sale to the outcomes file
- * in the same format as the record command, ready for calibrate.
+ * Each sale date is valued as of that day. With --record, compared sales are added to the
+ * outcomes file once per sale event (county, parcel, date); repeats are skipped and
+ * conflicting prices are reported, never written.
  */
 async function backtest(args: Args): Promise<number> {
   const nal = many(args, "nal");
@@ -152,29 +154,45 @@ async function backtest(args: Args): Promise<number> {
   if (!sales.length) throw new SettingsError("No past sales found in the results file(s). Expected columns like Parcel ID and Winning Bid, or text copied from an auction results page.");
   const a = loadAssumptions(one(args, "assumptions"));
   const settings = publicSettings(one(args, "settings") ?? "");
-  // Value each parcel as of the latest sale date in the file (comps within the normal age window).
-  const dates = sales.map((x) => x.saleDate).filter((d): d is string => !!d).sort();
-  const today = one(args, "today") ? new Date(`${one(args, "today")}T12:00:00Z`) : dates.length ? new Date(`${dates[dates.length - 1]}T12:00:00Z`) : new Date();
-  const result = await runFlorida({ nalPaths: nal, listings: pastSalesToListings(sales), settings, a, calibration: {}, today });
   const assumed = (county: string, bucket: "improved" | "vacant" | "other") => a.competition.clearingRatio[flCounty(county)?.tier ?? "small"][bucket];
-  const sum = summarize(result.analyses, sales, assumed);
-  sum.unmatched = result.unmatched.length;
+
+  // Value each sale as of its own date: one engine run per sale date.
+  const fallback = one(args, "today") ?? new Date().toISOString().slice(0, 10);
+  const byDate = new Map<string, typeof sales>();
+  for (const sale of sales) byDate.set(sale.saleDate ?? fallback, [...(byDate.get(sale.saleDate ?? fallback) ?? []), sale]);
+  const rows: ReturnType<typeof summarize> = [];
+  let unmatched = 0;
+  for (const [date, group] of [...byDate.entries()].sort()) {
+    const result = await runFlorida({ nalPaths: nal, listings: pastSalesToListings(group), settings, a, calibration: {}, today: new Date(`${date}T12:00:00Z`) });
+    unmatched += result.unmatched.length;
+    rows.push(...summarize(result.analyses, group, assumed));
+  }
+  const sum = {
+    rows,
+    sold: sales.filter((x) => x.status === "sold").length,
+    notSold: sales.filter((x) => x.status !== "sold").length,
+    unmatched,
+    valuationDates: [...byDate.keys()].sort(),
+    byGroup: groupRows(rows, assumed),
+  };
   const out = one(args, "out") ?? join("reports", "backtest");
   mkdirSync(dirname(out) || ".", { recursive: true });
-  writeFileSync(`${out}.md`, renderBacktest(sum, `Backtest: ${resultsFiles.map((f) => basename(f)).join(", ")}`) + `\n\n${result.unmatched.length} result line(s) not matched to the tax roll.\n`);
+  writeFileSync(`${out}.md`, renderBacktest(sum, `Backtest: ${resultsFiles.map((f) => basename(f)).join(", ")}`, (c) => flCounty(c)?.name ?? c) + "\n");
   writeFileSync(`${out}.json`, JSON.stringify(sum, null, 2));
-  const n = sum.rows.length;
-  const c = (k: string) => sum.rows.filter((r) => r.call === k).length;
-  console.log(`Read ${sales.length} past results (${sum.sold} sold, ${sum.notSold} not sold); compared ${n}; ${sum.unmatched} not in the tax roll.`);
-  if (n) console.log(`Expected price vs actual: right ${c("right")}, model low ${c("model_low")}, model high ${c("model_high")}. Model max would have won ${sum.rows.filter((r) => r.wouldHaveWon).length} of ${n}.`);
+  const n = rows.length;
+  const c = (k: string) => rows.filter((r) => r.call === k).length;
+  console.log(`Read ${sales.length} past results (${sum.sold} sold, ${sum.notSold} not sold); compared ${n}; ${unmatched} not in the tax roll.`);
+  if (n) console.log(`Expected price vs actual: right ${c("right")}, model low ${c("model_low")}, model high ${c("model_high")}. Model ceiling met or exceeded the winning bid in ${rows.filter((r) => r.ceilingMet).length} of ${n}.`);
   for (const g of sum.byGroup) console.log(`  ${flCounty(g.county)?.name ?? g.county} ${g.bucket}: ${g.n} sales, actual median ${Math.round(g.actualMedianRatio * 100)}% of value vs assumed ${Math.round(g.assumedRatio * 100)}%`);
   if (one(args, "record") === "true") {
     const file = one(args, "outcomes") ?? "data/outcomes.csv";
     mkdirSync(dirname(file) || ".", { recursive: true });
     if (!existsSync(file)) writeFileSync(file, OUTCOME_HEADER + "\n");
-    const bySale = new Map(sales.map((x) => [normKey(x.parcelId), x.saleDate ?? ""]));
-    for (const r of sum.rows) appendFileSync(file, `${bySale.get(normKey(r.parcelId)) ?? ""},${r.county},${r.parcelId.replace(/,/g, " ")},${r.bucket},${Math.round(r.value)},${r.actual}\n`);
-    console.log(`Recorded ${n} outcome(s) to ${file}. Run: node src/cli.ts calibrate`);
+    const plan = planRecord(rows, readFileSync(file, "utf8"), one(args, "include-low-confidence") === "true");
+    for (const r of plan.add) appendFileSync(file, `${r.saleDate},${r.county},${r.parcelId.replace(/,/g, " ")},${r.bucket},${Math.round(r.value)},${r.actual}\n`);
+    console.log(`Recorded ${plan.add.length} new outcome(s) to ${file}; ${plan.duplicates} already there; ${plan.skippedLowConfidence} low confidence skipped.`);
+    for (const x of plan.conflicts) console.log(`  CONFLICT, not recorded: ${x}`);
+    if (plan.add.length) console.log("Run: node src/cli.ts calibrate");
   }
   console.log(`Wrote ${out}.md and ${out}.json`);
   return 0;

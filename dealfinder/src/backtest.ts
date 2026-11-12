@@ -33,6 +33,15 @@ function money2(s: string | undefined): number | undefined {
   return Number.isFinite(n) && n > 0 ? n : undefined;
 }
 
+/** Parse a whole money field ("$45,100.00", "1234.5"). Negative, empty or malformed gives undefined. */
+export function parseAmount(field: string | undefined): number | undefined {
+  if (!field) return undefined;
+  const m = field.trim().match(/^\$?\s*([0-9][0-9,]*(?:\.[0-9]+)?)$/);
+  if (!m) return undefined;
+  const n = Number(m[1].replace(/,/g, ""));
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+}
+
 function notSoldStatus(s: string): boolean {
   return /cancel|redeem|withdraw|no ?bid|not ?sold|postpon|bankrupt/i.test(s);
 }
@@ -93,12 +102,12 @@ export function parseResultBlocks(text: string): PastSale[] {
     const parcel = field(/parcel(?: id| number| #)?/);
     if (!parcel) return;
     const header = block[0];
-    const amount = money2(field(/(?:amount|sold amount|winning bid)/)?.match(/[\d,]+(?:\.\d{2})?/)?.[0]);
+    const amount = parseAmount(field(/(?:amount|sold amount|winning bid)/));
     const notSold = notSoldStatus(header) || /status\s*:?\s*(canceled|cancelled|redeemed)/i.test(joined);
     out.push({
       parcelId: parcel.split(/\s{2,}/)[0],
       winningBid: notSold ? undefined : amount,
-      openingBid: money2(field(/(?:opening bid|final judgment amount)/)?.match(/[\d,]+(?:\.\d{2})?/)?.[0]),
+      openingBid: parseAmount(field(/(?:opening bid|final judgment amount)/)),
       saleDate: parseDate(joined),
       soldTo: field(/sold to/),
       status: !notSold && amount !== undefined ? "sold" : "not_sold",
@@ -120,18 +129,19 @@ export function pastSalesToListings(sales: PastSale[]): RawListing[] {
 
 export interface BacktestRow {
   parcelId: string;
+  saleDate: string;
   county: string;
   bucket: TypeBucket;
   value: number;
   confidence: string;
   opening?: number;
   expected: number;
-  modelMax: number; // most the model would have bid (deal ceiling, no budget)
+  modelMax: number; // highest bid the model's deal math allows (no budget applied)
   actual: number;
   soldTo?: string;
   actualRatio: number; // actual / value
   call: "right" | "model_high" | "model_low"; // expected price vs actual within +-20%
-  wouldHaveWon: boolean; // model max >= actual
+  ceilingMet: boolean; // model ceiling met or exceeded the recorded winning bid
   verdict: string;
 }
 
@@ -140,62 +150,110 @@ export interface BacktestSummary {
   sold: number;
   notSold: number;
   unmatched: number;
+  valuationDates: string[];
   byGroup: { county: string; bucket: TypeBucket; n: number; actualMedianRatio: number; assumedRatio: number }[];
 }
 
-export function summarize(analyses: Analysis[], sales: PastSale[], assumed: (county: string, bucket: TypeBucket) => number): BacktestSummary {
-  const byKey = new Map(sales.map((s) => [normKey(s.parcelId), s]));
+/** Event identity: one parcel can be auctioned more than once, so the sale date is part of it. */
+export const eventKey = (county: string, parcelId: string, date: string) => `${county}|${normKey(parcelId)}|${date}`;
+
+/**
+ * One row per sold sale event. Each event is matched to the analysis of its
+ * parcel (by the exact list line it came from), and the expected price is
+ * worked out from that event's own opening bid.
+ */
+export function summarize(
+  analyses: Analysis[],
+  sales: PastSale[],
+  assumed: (county: string, bucket: TypeBucket) => number,
+): BacktestRow[] {
   const rows: BacktestRow[] = [];
-  for (const a of analyses) {
-    const s = byKey.get(a.parcel.parcelKey) ?? [...byKey.values()].find((x) => a.listing.sourceLine?.includes(x.sourceLine));
-    if (!s || s.status !== "sold" || !s.winningBid || a.value.market <= 0) continue;
-    const expected = a.competition.expectedClearing;
+  for (const s of sales) {
+    if (s.status !== "sold" || !s.winningBid) continue;
+    const a = analyses.find((x) => (x.listing.sourceLine ?? "").split(" || ").includes(s.sourceLine));
+    if (!a || a.value.market <= 0) continue;
+    const bucket = typeBucket(a.parcel);
+    const expected = Math.max(s.openingBid ?? 0, Math.round(a.value.market * assumed(a.parcel.countyCode, bucket)));
     const actual = s.winningBid;
-    const call = actual > expected * 1.2 ? "model_low" : actual < expected * 0.8 ? "model_high" : "right";
+    const modelMax = a.best ? a.best.maxPrice : 0;
     rows.push({
       parcelId: a.parcel.parcelId,
+      saleDate: s.saleDate ?? "",
       county: a.parcel.countyCode,
-      bucket: typeBucket(a.parcel),
+      bucket,
       value: a.value.market,
       confidence: a.value.confidence,
       opening: s.openingBid,
       expected,
-      modelMax: a.best ? a.best.maxPrice : 0,
+      modelMax,
       actual,
       soldTo: s.soldTo,
       actualRatio: actual / a.value.market,
-      call,
-      wouldHaveWon: !!a.best && a.best.maxPrice >= actual,
+      call: actual > expected * 1.2 ? "model_low" : actual < expected * 0.8 ? "model_high" : "right",
+      ceilingMet: modelMax > 0 && modelMax >= actual,
       verdict: a.verdict,
     });
   }
+  return rows;
+}
+
+export function groupRows(rows: BacktestRow[], assumed: (county: string, bucket: TypeBucket) => number): BacktestSummary["byGroup"] {
   const groups = new Map<string, BacktestRow[]>();
   for (const r of rows) groups.set(`${r.county}|${r.bucket}`, [...(groups.get(`${r.county}|${r.bucket}`) ?? []), r]);
-  const byGroup = [...groups.entries()].map(([k, rs]) => {
+  return [...groups.entries()].map(([k, rs]) => {
     const [county, bucket] = k.split("|") as [string, TypeBucket];
     return { county, bucket, n: rs.length, actualMedianRatio: median(rs.map((r) => r.actualRatio)), assumedRatio: assumed(county, bucket) };
   });
-  return {
-    rows,
-    sold: sales.filter((s) => s.status === "sold").length,
-    notSold: sales.filter((s) => s.status !== "sold").length,
-    unmatched: 0,
-    byGroup,
-  };
 }
 
-export function toOutcomes(rows: BacktestRow[]): (Outcome & { parcelId: string; date: string })[] {
-  return rows.map((r) => ({ countyCode: r.county, bucket: r.bucket, estMarket: r.value, winningBid: r.actual, parcelId: r.parcelId, date: "" }));
+export interface RecordPlan {
+  add: BacktestRow[];
+  duplicates: number;
+  conflicts: string[];
+  skippedLowConfidence: number;
 }
 
-export function renderBacktest(sum: BacktestSummary, title: string): string {
+/**
+ * Decide which rows to append to the outcomes file. Same event (county, parcel,
+ * date) with the same price already recorded: skipped. Same event with a
+ * different price: a conflict, reported and not written. Low confidence values
+ * are skipped unless asked, so guessed values do not move the calibration.
+ */
+export function planRecord(rows: BacktestRow[], existingCsv: string, includeLowConfidence: boolean): RecordPlan {
+  const existing = new Map<string, number>();
+  for (const line of existingCsv.split(/\r?\n/).slice(1)) {
+    const c = line.split(",");
+    if (c.length < 6) continue;
+    existing.set(eventKey(c[1], c[2], c[0]), Number(c[5]));
+  }
+  const plan: RecordPlan = { add: [], duplicates: 0, conflicts: [], skippedLowConfidence: 0 };
+  for (const r of rows) {
+    if (r.confidence === "low" && !includeLowConfidence) {
+      plan.skippedLowConfidence++;
+      continue;
+    }
+    const k = eventKey(r.county, r.parcelId, r.saleDate);
+    const prev = existing.get(k);
+    if (prev === undefined) {
+      existing.set(k, r.actual);
+      plan.add.push(r);
+    } else if (prev === r.actual) {
+      plan.duplicates++;
+    } else {
+      plan.conflicts.push(`${r.parcelId} on ${r.saleDate || "unknown date"}: already recorded at ${money(prev)}, new result says ${money(r.actual)}`);
+    }
+  }
+  return plan;
+}
+
+export function renderBacktest(sum: BacktestSummary, title: string, countyName: (code: string) => string): string {
   const L: string[] = [`# ${title}`, ""];
   const n = sum.rows.length;
   const right = sum.rows.filter((r) => r.call === "right").length;
   const low = sum.rows.filter((r) => r.call === "model_low").length;
   const high = sum.rows.filter((r) => r.call === "model_high").length;
-  const won = sum.rows.filter((r) => r.wouldHaveWon).length;
-  L.push(`Past results read: ${sum.sold} sold, ${sum.notSold} not sold (canceled, redeemed or no bid). Compared: ${n} sold parcels found in the tax roll with a value.`, "");
+  const met = sum.rows.filter((r) => r.ceilingMet).length;
+  L.push(`Past results read: ${sum.sold} sold, ${sum.notSold} not sold (canceled, redeemed or no bid). Compared: ${n} sale events found in the tax roll with a value. ${sum.unmatched} result line(s) not matched to the tax roll.`, "");
   if (!n) {
     L.push("Nothing to compare.");
     return L.join("\n");
@@ -205,16 +263,23 @@ export function renderBacktest(sum: BacktestSummary, title: string): string {
   L.push(`| Right (actual within 20% of expected) | ${right} | ${pct(right / n)} |`);
   L.push(`| Model low (bidding went more than 20% higher) | ${low} | ${pct(low / n)} |`);
   L.push(`| Model high (sold more than 20% lower) | ${high} | ${pct(high / n)} |`, "");
-  L.push(`The model's max bid would have won ${won} of ${n} (${pct(won / n)}). Max bid here is the deal ceiling with no budget applied.`, "");
+  L.push(`Model ceiling met or exceeded the recorded winning bid in ${met} of ${n} (${pct(met / n)}). The ceiling is the deal math with no budget applied; meeting it does not prove a bid would have won (bid increments and other bidders are not modeled).`, "");
   L.push("## Actual price as a share of estimated value, by county and type", "");
   L.push("| County | Type | Sales | Actual median | Model assumed |", "|---|---|---|---|---|");
-  for (const g of sum.byGroup.sort((a, b) => b.n - a.n)) {
-    L.push(`| ${g.county} | ${g.bucket} | ${g.n} | ${pct(g.actualMedianRatio)} | ${pct(g.assumedRatio)} |`);
+  for (const g of [...sum.byGroup].sort((a, b) => b.n - a.n)) {
+    L.push(`| ${countyName(g.county)} | ${g.bucket} | ${g.n} | ${pct(g.actualMedianRatio)} | ${pct(g.assumedRatio)} |`);
   }
-  L.push("", "## Every sale", "", "| Parcel | Type | Value | Conf. | Opening | Expected | Model max | Actual | Actual / value | Call | Sold to |", "|---|---|---|---|---|---|---|---|---|---|---|");
+  L.push("", "## Every sale", "", "| Parcel | Sale date | Type | Value | Conf. | Opening | Expected | Model ceiling | Actual | Actual / value | Call | Sold to |", "|---|---|---|---|---|---|---|---|---|---|---|---|");
   for (const r of [...sum.rows].sort((a, b) => b.actualRatio - a.actualRatio)) {
-    L.push(`| ${r.parcelId} | ${r.bucket} | ${money(r.value)} | ${r.confidence} | ${r.opening ? money(r.opening) : "n/a"} | ${money(r.expected)} | ${money(r.modelMax)} | ${money(r.actual)} | ${pct(r.actualRatio)} | ${r.call.replace("_", " ")} | ${r.soldTo ?? ""} |`);
+    L.push(`| ${r.parcelId} | ${r.saleDate || "n/a"} | ${r.bucket} | ${money(r.value)} | ${r.confidence} | ${r.opening ? money(r.opening) : "n/a"} | ${money(r.expected)} | ${money(r.modelMax)} | ${money(r.actual)} | ${pct(r.actualRatio)} | ${r.call.replace("_", " ")} | ${r.soldTo ?? ""} |`);
   }
-  L.push("", "Values are today's tax roll estimates, so older sales compare against newer values. Treat ratios from sales more than a year old as rough.");
+  L.push(
+    "",
+    "## Limits",
+    "",
+    `- Each sale was valued as of its own sale date (${sum.valuationDates.length} date(s): ${sum.valuationDates.join(", ") || "none"}). Comparable sales dated after that day are excluded, but the just values come from the current tax roll, which can include changes made after the auction.`,
+    "- Expected price uses the model's starting ratios, not calibration, so this report measures the uncalibrated model.",
+    "- Low confidence values are shown here but are not recorded for calibration unless --include-low-confidence is given.",
+  );
   return L.join("\n");
 }
