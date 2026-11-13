@@ -26,6 +26,8 @@ export interface RunInput {
   today: Date;
   /** Values the user checked by hand (parcel key -> market value). They replace the estimate. */
   valueOverrides?: Map<string, number>;
+  /** Narrowest side in feet, measured by hand on the GIS map (parcel key -> feet). */
+  widths?: Map<string, number>;
 }
 
 export interface RunResult {
@@ -218,7 +220,7 @@ export function analyzeOne(
   listing: Listing,
   comps: CompIndex,
   neighbors: Analysis["neighbors"],
-  input: Pick<RunInput, "settings" | "a" | "calibration" | "today" | "valueOverrides">,
+  input: Pick<RunInput, "settings" | "a" | "calibration" | "today" | "valueOverrides" | "widths">,
 ): Analysis {
   const { settings, a, calibration, today } = input;
   const own = input.valueOverrides?.get(normKey(parcel.parcelId));
@@ -252,7 +254,7 @@ export function analyzeOne(
   const priceKnown = costs !== null;
   const strategies = priceKnown ? buildStrategies({ parcel, value, neighbors, settings, a, allIn: costs!.allIn, ceilingToPrice }) : ceilingOnly;
   const best = pickBest(strategies, settings);
-  const flags = floridaRiskFlags({ parcel, listing, value, costs, a, today });
+  const flags = floridaRiskFlags({ parcel, listing, value, costs, a, today, widthFt: input.widths?.get(normKey(parcel.parcelId)) });
   for (const c of listing.conflicts ?? []) {
     flags.push({ code: "LISTING_CONFLICT", severity: "danger", message: `This parcel is listed more than once and the lines disagree: ${c}.`, check: "Confirm the current amount with the clerk before acting." });
   }
@@ -367,6 +369,8 @@ function decideVerdict(args: {
   if (v === "buy_candidate" && listing.conflicts?.length) v = "watch";
   // A value with no sales behind it is a guess. Check it before calling anything a buy.
   if (v === "buy_candidate" && value.confidence === "low") v = "watch";
+  // Vacant land whose width nobody has measured may be a strip (186 Harvey Dr was 25 ft wide). Measure it first.
+  if (v === "buy_candidate" && flags.some((f) => f.code === "WIDTH_NOT_CHECKED")) v = "watch";
   // Amount guessed from a plain number: confirm the price before calling it a buy.
   if (v === "buy_candidate" && listing.amountFromPlainNumber) v = "needs_quote";
   return v;

@@ -63,6 +63,7 @@ analyze options
   --out PATH          Output path without extension (default reports/deals-DATE)
   --today YYYY-MM-DD  Treat this as today (for reproducible runs)
   --values FILE       CSV of values you checked by hand (Parcel ID, Value); they replace the estimate
+  --widths FILE       CSV of the narrowest side you measured on the GIS map (Parcel ID, Width Ft); strips are a pass
   --public            Report safe to post publicly: no budget applied or printed
                       (no settings file needed; verdicts reflect the deal only)
 `;
@@ -93,7 +94,9 @@ async function analyze(args: Args): Promise<number> {
 
   const valuesFile = one(args, "values");
   const valueOverrides = valuesFile ? loadValueOverrides(valuesFile) : undefined;
-  const result = await runFlorida({ nalPaths: nal, listings, settings, a, calibration, today, valueOverrides });
+  const widthsFile = one(args, "widths");
+  const widths = widthsFile ? loadWidths(widthsFile) : undefined;
+  const result = await runFlorida({ nalPaths: nal, listings, settings, a, calibration, today, valueOverrides, widths });
   const stamp = today.toISOString().slice(0, 10);
   const out = one(args, "out") ?? join("reports", `deals-${stamp}`);
   mkdirSync(dirname(out) || ".", { recursive: true });
@@ -115,12 +118,35 @@ async function analyze(args: Args): Promise<number> {
   const counts: Record<string, number> = {};
   for (const x of result.analyses) counts[x.verdict] = (counts[x.verdict] ?? 0) + 1;
   console.log(`Scanned ${result.parcelsScanned.toLocaleString()} parcels, matched ${result.analyses.length} of ${listings.length} list lines.`);
+  if (widths) {
+    // A typo in a widths file would silently leave a strip unchecked; say which lines matched nothing.
+    const listed = new Set(result.analyses.map((x) => normKey(x.parcel.parcelId)));
+    const stray = [...widths.keys()].filter((k) => !listed.has(k));
+    if (stray.length) console.log(`Widths file: ${stray.length} parcel(s) not on the list, ignored: ${stray.slice(0, 5).join(", ")}${stray.length > 5 ? ", ..." : ""}`);
+  }
   console.log(`Verdicts: ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(", ") || "none"}`);
   for (const x of result.analyses.filter((y) => y.verdict === "buy_candidate" || y.verdict === "needs_quote").slice(0, 10)) {
     console.log(`  ${x.verdict.padEnd(13)} ${String(x.score).padStart(3)}  ${x.parcel.parcelId}  ${x.parcel.useDescription}  value ${money(x.value.market)}  max ${money(x.offer.walkAway)}  ${x.best?.label ?? ""}`);
   }
   console.log(`Wrote ${out}.html, ${out}.md, ${out}.json`);
   return 0;
+}
+
+/** CSV with a parcel column and a width column: the narrowest side in feet, measured on the GIS map. */
+export function loadWidths(path: string): Map<string, number> {
+  if (!existsSync(path)) throw new SettingsError(`File not found: ${path}`);
+  const rows = parseCsvText(readFileSync(path, "utf8"));
+  const header = (rows[0] ?? []).map((h) => h.trim().toUpperCase());
+  const pc = header.findIndex((h) => /PARCEL|FOLIO|ALT/.test(h));
+  const wc = header.findIndex((h) => /WIDTH|FRONTAGE/.test(h));
+  if (pc < 0 || wc < 0) throw new SettingsError(`${path} needs a "Parcel ID" column and a "Width Ft" column.`);
+  const m = new Map<string, number>();
+  for (const r of rows.slice(1)) {
+    // The first number in the cell: "25", "25 ft", "25'" and "25.5 feet" all read as feet.
+    const v = Number((r[wc] ?? "").replace(/,/g, "").match(/[0-9]+(?:\.[0-9]+)?/)?.[0]);
+    if (r[pc] && Number.isFinite(v) && v > 0) m.set(normKey(r[pc]), v);
+  }
+  return m;
 }
 
 /** CSV with a parcel column and a value column: values you checked by hand replace the estimate. */

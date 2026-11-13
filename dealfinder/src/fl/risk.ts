@@ -18,8 +18,10 @@ export function floridaRiskFlags(args: {
   costs: CostBreakdown | null;
   a: Assumptions;
   today: Date;
+  /** Narrowest side in feet, from the user's widths file. Undefined when nobody measured it. */
+  widthFt?: number;
 }): RiskFlag[] {
-  const { parcel: p, listing, value, costs, a, today } = args;
+  const { parcel: p, listing, value, costs, a, today, widthFt } = args;
   const r = a.risk;
   const flags: RiskFlag[] = [];
   const vacant = isVacant(p.kind);
@@ -46,6 +48,12 @@ export function floridaRiskFlags(args: {
     } else if (p.landSqft < r.sliverSqftCaution) {
       flags.push({ code: "SMALL_LOT", severity: "caution", message: `${Math.round(p.landSqft).toLocaleString()} sq ft. May be below minimum lot size for building.`, check: "Check zoning minimum lot size with the city or county planning office." });
     }
+  }
+  // Strips do not work: only an adjoining owner wants one, and not at lot prices. Pass on them.
+  if (vacant && widthFt !== undefined && widthFt < r.minLotWidthFt) {
+    flags.push({ code: "STRIP", severity: "avoid", message: `Only about ${Math.round(widthFt)} ft wide (narrowest side). A strip this narrow cannot be built on; pass on strips.` });
+  } else if (vacant && widthFt === undefined) {
+    flags.push({ code: "WIDTH_NOT_CHECKED", severity: "caution", message: `Width not measured. The tax roll has the area but not the shape, and a long thin strip can look like a normal lot.`, check: `Measure the narrowest side on the property appraiser GIS map and add it to a widths file (Parcel ID, Width Ft). Under ${r.minLotWidthFt} ft is a pass.` });
   }
   if (p.landSqft <= 0) {
     flags.push({ code: "NO_SIZE", severity: "info", message: "Tax roll does not show land size." });

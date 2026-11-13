@@ -62,3 +62,32 @@ test("an empty county list writes an empty report instead of failing", () => {
   assert.equal(r.status, 0, r.stderr);
   assert.ok(existsSync(`${out}.md`));
 });
+
+test("loadWidths reads the narrowest side in feet, with or without units", async () => {
+  const { loadWidths } = await import("../src/cli.ts");
+  const dir = mkdtempSync(join(tmpdir(), "w-"));
+  const f = join(dir, "widths.csv");
+  writeFileSync(f, "Parcel ID,Width Ft\n19-08-26-0000-0062-0260,25 ft\n07567-012,120\n07567-013,\n07567-014,30'\n07567-015,45.5 feet\n");
+  const m = loadWidths(f);
+  assert.equal(m.get("190826000000620260"), 25);
+  assert.equal(m.get("07567012"), 120);
+  assert.equal(m.get("07567014"), 30, "feet mark");
+  assert.equal(m.get("07567015"), 45.5, "decimal with the word feet");
+  assert.equal(m.size, 4, "a blank width is skipped");
+  writeFileSync(f, "Parcel ID,Value\n1,2\n");
+  assert.throws(() => loadWidths(f), /Width Ft/);
+});
+
+test("analyze --widths knocks out a listed strip and names widths lines that match nothing", () => {
+  const dir = mkdtempSync(join(tmpdir(), "wcli-"));
+  const widths = join(dir, "widths.csv");
+  writeFileSync(widths, "Parcel ID,Width Ft\n12-19-26-0100-002-00500,25\nNOT-A-REAL-PARCEL,80\n");
+  const out = join(dir, "r");
+  const r = cli(["analyze", "--nal", "fixtures/nal_sample.csv", "--lands", "fixtures/lands_available_sample.txt", "--public", "--today", "2026-11-11", "--widths", widths, "--out", out]);
+  assert.equal(r.status, 0, r.stderr);
+  assert.match(r.stdout, /Widths file: 1 parcel\(s\) not on the list, ignored: NOTAREALPARCEL/);
+  const rows = JSON.parse(readFileSync(`${out}.json`, "utf8")).analyses as { parcel: { parcelId: string }; verdict: string; flags: { code: string }[] }[];
+  const strip = rows.find((x) => x.parcel.parcelId === "12-19-26-0100-002-00500")!;
+  assert.equal(strip.verdict, "avoid");
+  assert.ok(strip.flags.some((f) => f.code === "STRIP"));
+});

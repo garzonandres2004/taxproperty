@@ -53,6 +53,8 @@ export interface Assumptions {
   risk: {
     sliverSqftAvoid: number;
     sliverSqftCaution: number;
+    /** Narrowest side, in feet, below which vacant land is a strip and a pass (owner rule, Nov 13 2026). */
+    minLotWidthFt: number;
     lowValueCaution: number;
     oldBuildYear: number;
     landsAvailableEscheatYears: number;

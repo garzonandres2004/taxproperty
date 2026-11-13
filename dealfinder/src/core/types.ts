@@ -90,7 +90,7 @@ export interface Settings {
   reservePct: number;
   /** Minimum profit in dollars for a deal to count. */
   minProfit: number;
-  /** Minimum profit as a share of total cash in. */
+  /** Minimum profit as a share of total cost (all in plus extra costs). */
   minReturnPct: number;
   /** Strategies the user is willing to do. */
   strategies: StrategyName[];

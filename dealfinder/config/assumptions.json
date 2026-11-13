@@ -60,6 +60,7 @@
   "risk": {
     "sliverSqftAvoid": 2000,
     "sliverSqftCaution": 4500,
+    "minLotWidthFt": 50,
     "lowValueCaution": 3000,
     "oldBuildYear": 1960,
     "landsAvailableEscheatYears": 3
