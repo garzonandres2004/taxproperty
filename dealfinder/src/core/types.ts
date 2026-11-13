@@ -142,7 +142,7 @@ export interface StrategyResult {
   costLines: { label: string; amount: number }[];
   months: number;
   profit: number; // NaN when the purchase price is not known yet
-  returnPct: number; // profit / total cash in; NaN when price unknown
+  returnPct: number; // profit / total cost (all in plus extra costs); NaN when price unknown
   cashNeeded: number; // all in plus extra costs paid before exit
   upfrontCosts: number; // costs paid in cash after buying and before the exit pays (rehab, quiet title, holding)
   maxAllIn: number; // highest all in cost (price plus fees) that still meets the user's targets

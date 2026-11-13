@@ -531,3 +531,19 @@ test("PR25 r1: an estimate only house in the open window is get a quote and is t
   assert.ok(!x.why.some((w) => /pay quickly/.test(w)));
   assert.ok(x.why.some((w) => /request the clerk's statement soon/.test(w)));
 });
+
+// Real run, 186 Harvey Dr: "91% on $1,907 cash in" mixed two bases (91% was on the $2,507 total cost)
+
+test("why line states the return on total cost and the cash out before the sale separately", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,001,150000,10000,1400,1990,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,20000,2025-01-01\n", channel: "lands_available" }], settings({ totalCapital: 500000, maxPerDeal: 100000 }))).analyses[0];
+  const b = x.best!;
+  assert.ok(Number.isFinite(b.profit));
+  const line = x.why.find((w) => w.startsWith("Best plan:"))!;
+  const m = line.match(/\(([0-9]+)% return on \$([0-9,]+) total cost; \$([0-9,]+) cash out before the sale\)/);
+  assert.ok(m, line);
+  const n = (s: string) => Number(s.replace(/,/g, ""));
+  assert.equal(n(m![2]), Math.round(b.exitPrice - b.profit), "total cost is all in plus later costs");
+  assert.equal(n(m![3]), Math.round(b.cashNeeded));
+  assert.ok(Math.abs(Number(m![1]) / 100 - b.profit / (b.exitPrice - b.profit)) < 0.01, "the percent is on the total cost");
+});

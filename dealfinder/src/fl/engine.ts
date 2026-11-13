@@ -420,7 +420,9 @@ function explain(args: {
   why.push(`Value: ${value.notes[0] ?? value.method} Confidence ${value.confidence}.`);
   if (best) {
     if (Number.isFinite(best.profit)) {
-      why.push(`Best plan: ${best.label.toLowerCase()}, about ${money(best.profit)} profit (${pct(best.returnPct)} on ${money(best.cashNeeded)} cash in) over about ${best.months} months.`);
+      // Return is on the total cost (deed plus every later cost); cash needed is only what is paid out before the exit pays.
+      const totalCost = best.exitPrice - best.profit;
+      why.push(`Best plan: ${best.label.toLowerCase()}, about ${money(best.profit)} profit (${pct(best.returnPct)} return on ${money(totalCost)} total cost; ${money(best.cashNeeded)} cash out before the sale) over about ${best.months} months.`);
     } else {
       why.push(`Best plan: ${best.label.toLowerCase()}. Pays off if the all in price is ${money(best.maxAllIn)} or less.`);
     }
