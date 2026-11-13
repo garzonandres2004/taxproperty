@@ -118,6 +118,12 @@ async function analyze(args: Args): Promise<number> {
   const counts: Record<string, number> = {};
   for (const x of result.analyses) counts[x.verdict] = (counts[x.verdict] ?? 0) + 1;
   console.log(`Scanned ${result.parcelsScanned.toLocaleString()} parcels, matched ${result.analyses.length} of ${listings.length} list lines.`);
+  if (widths) {
+    // A typo in a widths file would silently leave a strip unchecked; say which lines matched nothing.
+    const listed = new Set(result.analyses.map((x) => normKey(x.parcel.parcelId)));
+    const stray = [...widths.keys()].filter((k) => !listed.has(k));
+    if (stray.length) console.log(`Widths file: ${stray.length} parcel(s) not on the list, ignored: ${stray.slice(0, 5).join(", ")}${stray.length > 5 ? ", ..." : ""}`);
+  }
   console.log(`Verdicts: ${Object.entries(counts).map(([k, v]) => `${k} ${v}`).join(", ") || "none"}`);
   for (const x of result.analyses.filter((y) => y.verdict === "buy_candidate" || y.verdict === "needs_quote").slice(0, 10)) {
     console.log(`  ${x.verdict.padEnd(13)} ${String(x.score).padStart(3)}  ${x.parcel.parcelId}  ${x.parcel.useDescription}  value ${money(x.value.market)}  max ${money(x.offer.walkAway)}  ${x.best?.label ?? ""}`);
@@ -136,7 +142,8 @@ export function loadWidths(path: string): Map<string, number> {
   if (pc < 0 || wc < 0) throw new SettingsError(`${path} needs a "Parcel ID" column and a "Width Ft" column.`);
   const m = new Map<string, number>();
   for (const r of rows.slice(1)) {
-    const v = Number((r[wc] ?? "").replace(/[,\sft]/gi, ""));
+    // The first number in the cell: "25", "25 ft", "25'" and "25.5 feet" all read as feet.
+    const v = Number((r[wc] ?? "").replace(/,/g, "").match(/[0-9]+(?:\.[0-9]+)?/)?.[0]);
     if (r[pc] && Number.isFinite(v) && v > 0) m.set(normKey(r[pc]), v);
   }
   return m;
