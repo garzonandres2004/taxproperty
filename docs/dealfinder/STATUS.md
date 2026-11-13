@@ -20,7 +20,7 @@ The tool works on real Florida data. In the first real backtest, Lake County auc
 | Budget | Only from your settings file, never in the repo; public reports show none |
 | Competition | Estimates the final auction price; learns from real results (record and calibrate) |
 
-Tests: 104 on `main` as of Nov 12 evening, including merged PRs #29 and #30. No Deal Finder PRs are open. Every change is reviewed by Codex before it merges.
+Tests: 104 on `main` as of Nov 12 evening, including merged PRs #29 and #30. No other Deal Finder PRs are open. Every change is reviewed by Codex before it merges.
 
 ## What real data showed
 
