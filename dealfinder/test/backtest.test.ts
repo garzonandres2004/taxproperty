@@ -131,6 +131,79 @@ test("PR27: money fields are parsed whole or rejected", () => {
   assert.equal(b.status, "not_sold", "a negative amount is not a sale price");
 });
 
+test("Muse's numbered results format (day headings, one line per item)", () => {
+  const text = [
+    "# Lake County past tax deed sale results (from lake.realtaxdeed.com)",
+    "# Copied verbatim by Muse's browser, Nov 11 2026 ~23:30 MST. View only — no bidding, no login.",
+    "",
+    "## Tuesday, November 3, 2026 (10 parcels; 3 sold, 7 redeemed)",
+    "1. Case 00054-2024, Cert 00054-2024, Parcel 06-18-24-039000018740, 1838 W SCHWARTZ BLVD, LADY LAKE, FL 32159, Opening Bid $12,147.07 — Redeemed",
+    "2. Case 00074-2024, Cert 00074-2024, Parcel 06-18-24-039400031170, 606 RAINBOW BLVD, LADY LAKE, FL 32159, Opening Bid $14,007.39 — Redeemed",
+    "3. Case 00461-2023, Cert 00461-2023, Parcel 04-19-24-000200008500, POINSETTIA AVE, FRUITLAND PARK, FL 34731, Opening Bid $1,889.31 — SOLD 11/03/2026 11:18 AM ET, $3,900.00, to 3rd Party Bidder",
+    "4. Case 02087-2024, Cert 02087-2024, Parcel 08-22-25-100500002400, ROYAL PALM DR, GROVELAND, FL 34714, Opening Bid $6,544.33 — SOLD 11/03/2026 11:26 AM ET, $125,300.00, to 3rd Party Bidder",
+    "## Tuesday, October 6, 2026",
+    "1. Case 00100-2024, Parcel 01-17-28-0100-000-03700, SOME RD, PAISLEY, FL 32767, Opening Bid $1,786.00 - Canceled",
+    "2. Case 00101-2024, Parcel 01-17-28-0100-000-03702, HWY 19 - LOT B, PAISLEY, FL 32767, Opening Bid $1,698.00 — SOLD 10/07/2026 11:02 AM ET, $4,900.00, to 3rd Party Bidder",
+  ].join("\n");
+  const s = parsePastSales(text);
+  assert.equal(s.length, 6);
+  assert.deepEqual(s.map((x) => x.status), ["not_sold", "not_sold", "sold", "sold", "not_sold", "sold"]);
+  assert.equal(s[5].winningBid, 4900, "a dash inside the address does not hide the result");
+  assert.deepEqual([s[2].parcelId, s[2].openingBid, s[2].winningBid, s[2].saleDate, s[2].soldTo], ["04-19-24-000200008500", 1889.31, 3900, "2026-11-03", "3rd Party Bidder"]);
+  assert.equal(s[3].winningBid, 125300);
+  assert.equal(s[0].saleDate, "2026-11-03", "date comes from the day heading");
+  assert.equal(s[4].saleDate, "2026-10-06");
+  assert.equal(s[5].saleDate, "2026-10-07", "the date on the SOLD part wins over the heading date");
+  assert.equal(s[0].winningBid, undefined);
+});
+
+// Codex PR #30 round 1
+
+test("PR30 r1: a dash in the buyer's name does not hide the sale", () => {
+  const [x] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, POINSETTIA AVE, Opening Bid $1,889.31 — SOLD 11/03/2026 11:18 AM ET, $3,900.00, to Smith - Jones LLC\n");
+  assert.deepEqual([x.status, x.winningBid, x.soldTo], ["sold", 3900, "Smith - Jones LLC"]);
+});
+
+test("PR30 r1: status words in the buyer's name do not undo a sale", () => {
+  const [x] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, POINSETTIA AVE, Opening Bid $1,889.31 — SOLD 11/03/2026 11:18 AM ET, $3,900.00, to Bankruptcy Estate LLC\n");
+  assert.deepEqual([x.status, x.winningBid, x.soldTo], ["sold", 3900, "Bankruptcy Estate LLC"]);
+});
+
+test("PR30 r1: a heading with an unknown month gives no date, not the previous day's", () => {
+  const s = parsePastSales([
+    "## Tuesday, November 3, 2026",
+    "1. Case 1-2024, Parcel 06-18-24-039000018740, A ST, Opening Bid $100.00 — Redeemed",
+    "## Tuesday, Novembr 10, 2026",
+    "1. Case 2-2024, Parcel 06-18-24-039400031170, B ST, Opening Bid $100.00 — Redeemed",
+  ].join("\n"));
+  assert.equal(s[0].saleDate, "2026-11-03");
+  assert.equal(s[1].saleDate, undefined);
+});
+
+test("PR30 r2: an address word that starts like a status (SOLDIER RD) is not the result", () => {
+  const [a] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, HWY 19 - SOLDIER RD — SOLD $3,900.00, to Smith LLC\n");
+  assert.deepEqual([a.status, a.winningBid, a.soldTo], ["sold", 3900, "Smith LLC"], "no Opening Bid");
+  const [b] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, HWY 19 - SOLDIER RD, Opening Bid $100.00 (est.) — SOLD $3,900.00, to Smith LLC\n");
+  assert.deepEqual([b.status, b.winningBid, b.openingBid], ["sold", 3900, 100], "text between the Opening Bid and the dash");
+  // Dashed address parts that only start like a status word must not become the result.
+  for (const addr of ["1 BANKRUPTCYVILLE LN - REDEEMEDX CT", "CANCELLO WAY - POSTPONEMENTS AVE", "SOLDIERS LN - WITHDRAWNE ST - NOTSOLDX RD"]) {
+    const [x] = parsePastSales(`## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, ${addr} — SOLD $3,900.00, to Smith LLC\n`);
+    assert.deepEqual([x.status, x.winningBid, x.soldTo], ["sold", 3900, "Smith LLC"], addr);
+  }
+});
+
+test("PR30 r3: an earlier non-SOLD status stays the result even if SOLD follows", () => {
+  for (const word of ["CANCEL", "Canceled", "Cancellation", "Redeemed", "Redemption", "Withdrawn", "Postponed", "Postponement", "Bankrupt", "Bankruptcy", "Bankruptcies", "No Bid", "Not Sold"]) {
+    const [x] = parsePastSales(`## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, SOME RD — ${word} — SOLD $3,900.00, to Smith LLC\n`);
+    assert.deepEqual([x.status, x.winningBid], ["not_sold", undefined], word);
+  }
+});
+
+test("PR30 r1: without an Opening Bid the result starts at the first dash before a result word", () => {
+  const [x] = parsePastSales("## Tuesday, November 3, 2026\n3. Case 1-2024, Parcel 04-19-24-000200008500, HWY 19 - LOT B — SOLD $3,900.00, to Smith - Jones LLC\n");
+  assert.deepEqual([x.status, x.winningBid, x.soldTo, x.openingBid], ["sold", 3900, "Smith - Jones LLC", undefined]);
+});
+
 // Codex PR #27 round 2 follow ups
 
 test("PR27 r2: each sale is valued as of its own date (comps sold later are not used)", () => {

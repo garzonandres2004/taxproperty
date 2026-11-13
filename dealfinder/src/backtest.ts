@@ -74,7 +74,72 @@ export function parsePastSales(text: string): PastSale[] {
       });
     }
   }
+  if (text.split(/\r?\n/).some((l) => NUMBERED_ITEM.test(l))) return parseNumberedResults(text);
   return parseResultBlocks(text);
+}
+
+const NUMBERED_ITEM = /^\s*\d+\.\s.*\bParcel\s+\S/i;
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+
+/**
+ * One line per item, grouped under day headings, the way Muse records a results page:
+ *   ## Tuesday, November 3, 2026 (10 parcels; 3 sold, 7 redeemed)
+ *   3. Case ..., Parcel 04-19-24-000200008500, ADDRESS, Opening Bid $1,889.31 — SOLD 11/03/2026 11:18 AM ET, $3,900.00, to 3rd Party Bidder
+ *   1. Case ..., Parcel 06-18-24-039000018740, ADDRESS, Opening Bid $12,147.07 — Redeemed
+ * Lines starting with # are notes. A sale date on the SOLD part wins over the heading date.
+ */
+export function parseNumberedResults(text: string): PastSale[] {
+  const out: PastSale[] = [];
+  let dayDate: string | undefined;
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    const heading = line.match(/^#{1,6}\s+(?:[A-Za-z]+,\s+)?([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})/);
+    if (heading) {
+      // Every dated heading resets the day: an unknown month gives no date rather than the previous day's.
+      const m = MONTHS.indexOf(heading[1].toLowerCase());
+      dayDate = m >= 0 ? parseDate(`${m + 1}/${heading[2]}/${heading[3]}`) : undefined;
+      continue;
+    }
+    if (!NUMBERED_ITEM.test(line)) continue;
+    const parcel = line.match(/\bParcel\s+([A-Za-z0-9][A-Za-z0-9.\-]*)/i)?.[1];
+    if (!parcel) continue;
+    const openingMatch = line.match(/\bOpening Bid\s+(\$?[0-9][0-9,]*(?:\.[0-9]+)?)/i);
+    const opening = parseAmount(openingMatch?.[1]);
+    const resultPart = resultOf(line, openingMatch);
+    const sold = resultPart.match(/^SOLD\b\s*(\d{1,2}\/\d{1,2}\/\d{2,4})?[^$]*?(\$[0-9][0-9,]*(?:\.[0-9]+)?)\s*(?:,\s*to\s+(.+))?$/i);
+    const winning = sold ? parseAmount(sold[2]) : undefined;
+    // A SOLD result with a real amount is a sale. The buyer's name is not scanned for status words.
+    const status: PastSale["status"] = sold && winning !== undefined ? "sold" : "not_sold";
+    out.push({
+      parcelId: parcel,
+      winningBid: status === "sold" ? winning : undefined,
+      openingBid: opening,
+      saleDate: (sold?.[1] ? parseDate(sold[1]) : undefined) ?? dayDate,
+      soldTo: sold?.[3]?.trim(),
+      status,
+      sourceLine: line,
+    });
+  }
+  return out;
+}
+
+const SEPARATOR = /^\s*[\u2014\u2013-]\s/;
+// Whole status words only, so an address like "SOLDIER RD" is not read as a result.
+const RESULT_START = /\s[\u2014\u2013-]\s(?=(?:SOLD|REDEEMED|REDEMPTION|CANCEL|CANCELED|CANCELLED|CANCELLATION|WITHDRAW|WITHDRAWN|WITHDRAWAL|NO ?BID|NOT ?SOLD|POSTPONED|POSTPONEMENT|BANKRUPT|BANKRUPTCY|BANKRUPTCIES)\b)/i;
+
+/**
+ * The result text of one numbered line. It starts at the dash right after the Opening Bid amount,
+ * so dashes in the address before it or in the buyer's name after it do not move it.
+ * Without an Opening Bid, it starts at the first dash followed by a result word (SOLD, Redeemed, ...).
+ */
+function resultOf(line: string, openingMatch: RegExpMatchArray | null): string {
+  if (openingMatch && openingMatch.index !== undefined) {
+    const after = line.slice(openingMatch.index + openingMatch[0].length);
+    const sep = after.match(SEPARATOR);
+    if (sep) return after.slice(sep[0].length).trim();
+  }
+  const m = RESULT_START.exec(line);
+  return m ? line.slice(m.index + m[0].length).trim() : "";
 }
 
 /**
