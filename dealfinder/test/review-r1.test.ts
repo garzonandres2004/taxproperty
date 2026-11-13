@@ -23,9 +23,9 @@ function roll(rows: string[]): string {
   return f;
 }
 
-async function run(nal: string, lists: { text: string; channel: "lands_available" | "auction" }[], s: Settings = settings()) {
+async function run(nal: string, lists: { text: string; channel: "lands_available" | "auction" }[], s: Settings = settings(), widths?: Map<string, number>) {
   const listings = lists.flatMap((l) => parseListing(l.text, l.channel));
-  return runFlorida({ nalPaths: [nal], listings, settings: s, a, calibration: {}, today });
+  return runFlorida({ nalPaths: [nal], listings, settings: s, a, calibration: {}, today, widths });
 }
 
 // 10 vacant comps at 1.5x just value so values are high confidence
@@ -279,7 +279,7 @@ test("Run1: a buy resting on a guessed value is held at watch, and a checked val
   assert.equal(guessed.verdict, "watch");
   assert.ok(guessed.why.some((w) => /value is a guess/.test(w)));
   const listings = list.flatMap((l) => parseListing(l.text, l.channel));
-  const checked = await runFlorida({ nalPaths: [nal], listings, settings: settings(), a, calibration: {}, today, valueOverrides: new Map([["07567012", 24000]]) });
+  const checked = await runFlorida({ nalPaths: [nal], listings, settings: settings(), a, calibration: {}, today, valueOverrides: new Map([["07567012", 24000]]), widths: new Map([["07567012", 100]]) });
   assert.equal(checked.analyses[0].value.method, "user");
   assert.equal(checked.analyses[0].verdict, "buy_candidate");
 });
@@ -384,7 +384,7 @@ test("LA3: an estimated Lands Available price is never a straight buy; a clerk s
   const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
   const est = await run(nal, [{ text: "Parcel ID,Opening Bid,Date Offered\n12-19-26-0100-002-00500,3200,2025-11-11\n", channel: "lands_available" }]);
   assert.equal(est.analyses[0].verdict, "needs_quote");
-  const stmt = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" }]);
+  const stmt = await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" }], settings(), new Map([["121926010000200500", 100]]));
   assert.equal(stmt.analyses[0].verdict, "buy_candidate");
 });
 
@@ -546,4 +546,32 @@ test("why line states the return on total cost and the cash out before the sale 
   assert.equal(n(m![2]), Math.round(b.exitPrice - b.profit), "total cost is all in plus later costs");
   assert.equal(n(m![3]), Math.round(b.cashNeeded));
   assert.ok(Math.abs(Number(m![1]) / 100 - b.profit / (b.exitPrice - b.profit)) < 0.01, "the percent is on the total cost");
+});
+
+// Owner rule, Nov 13 2026 (186 Harvey Dr was a 25 ft x 629 ft strip): strips do not work, pass on them.
+
+test("Strip rule: vacant land narrower than the minimum width is knocked out", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const list = [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" as const }];
+  const strip = (await run(nal, list, settings(), new Map([["121926010000200500", 25]]))).analyses[0];
+  assert.ok(strip.flags.some((f) => f.code === "STRIP" && f.severity === "avoid"));
+  assert.equal(strip.verdict, "avoid");
+  const edge = (await run(nal, list, settings(), new Map([["121926010000200500", a.risk.minLotWidthFt]]))).analyses[0];
+  assert.ok(!edge.flags.some((f) => f.code === "STRIP"), "exactly the minimum width is not a strip");
+  assert.equal(edge.verdict, "buy_candidate");
+});
+
+test("Strip rule: vacant land with no measured width is held at watch and told to measure it", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,000,20000,10000,0,0,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,4200,2026-01-01\n", channel: "lands_available" }])).analyses[0];
+  const f = x.flags.find((y) => y.code === "WIDTH_NOT_CHECKED");
+  assert.ok(f && f.severity === "caution");
+  assert.match(f!.check ?? "", /GIS map/);
+  assert.equal(x.verdict, "watch");
+});
+
+test("Strip rule: buildings are not width checked", async () => {
+  const nal = roll([...comps, "45,12-19-26-0100-002-00500,2026,001,150000,10000,1400,1990,,,,,,DOE,X,N1,9 OAK ST,EUSTIS,32726,"]);
+  const x = (await run(nal, [{ text: "Parcel ID,Statement Total,Date Offered\n12-19-26-0100-002-00500,20000,2026-01-01\n", channel: "lands_available" }], settings({ totalCapital: 500000, maxPerDeal: 100000 }), new Map([["121926010000200500", 25]]))).analyses[0];
+  assert.ok(!x.flags.some((f) => f.code === "STRIP" || f.code === "WIDTH_NOT_CHECKED"));
 });

@@ -62,3 +62,16 @@ test("an empty county list writes an empty report instead of failing", () => {
   assert.equal(r.status, 0, r.stderr);
   assert.ok(existsSync(`${out}.md`));
 });
+
+test("loadWidths reads the narrowest side in feet, with or without units", async () => {
+  const { loadWidths } = await import("../src/cli.ts");
+  const dir = mkdtempSync(join(tmpdir(), "w-"));
+  const f = join(dir, "widths.csv");
+  writeFileSync(f, "Parcel ID,Width Ft\n19-08-26-0000-0062-0260,25 ft\n07567-012,120\n07567-013,\n");
+  const m = loadWidths(f);
+  assert.equal(m.get("190826000000620260"), 25);
+  assert.equal(m.get("07567012"), 120);
+  assert.equal(m.size, 2, "a blank width is skipped");
+  writeFileSync(f, "Parcel ID,Value\n1,2\n");
+  assert.throws(() => loadWidths(f), /Width Ft/);
+});

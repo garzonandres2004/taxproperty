@@ -91,6 +91,23 @@ node src/cli.ts analyze ... --values my-values.csv
 
 Your value replaces the estimate and is labeled as yours in the report.
 
+### 5b. Measure vacant land (strips are a pass)
+
+The tax roll has a lot's area but not its shape, so a long thin strip can look like a normal lot. (186 Harvey Dr in Putnam scored as a buy at 18,731 sq ft; on the map it was about 25 ft wide by 629 ft long.) Strips do not work: only an adjoining owner wants one, and not at lot prices.
+
+So vacant land is never a Buy candidate until you have measured it. Open the parcel on the property appraiser GIS map, measure the narrowest side, and write it in a CSV:
+
+```
+Parcel ID,Width Ft
+19-08-26-0000-0062-0260,25
+```
+
+```
+node src/cli.ts analyze ... --widths my-widths.csv
+```
+
+Under 50 ft (`minLotWidthFt` in the assumptions) is flagged STRIP and knocked out. Without a width, vacant land gets a WIDTH_NOT_CHECKED caution and the best it can reach is Watch.
+
 ### 6. Before you pay for anything
 
 The report lists the checks for each parcel. Always:
@@ -147,7 +164,7 @@ All market rules of thumb (quiet title cost, rehab per square foot, rent to valu
 
 ## Limits (be honest about these)
 
-- Not yet run on a real county file. The build machine could not reach Florida sites; the first real run is the true test.
+- Run on real county files (Lake, Putnam, Gilchrist and others), but the tax roll cannot see shape, access or condition. Those still need the GIS map and a drive by.
 - Value comes from the tax roll only. No photos, no condition, no MLS. Confidence is shown for every estimate.
 - Neighbors come from street and legal description matching, not maps.
 - Lands Available price without a clerk statement is an estimate (interest and later taxes are approximations).

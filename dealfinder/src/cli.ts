@@ -63,6 +63,7 @@ analyze options
   --out PATH          Output path without extension (default reports/deals-DATE)
   --today YYYY-MM-DD  Treat this as today (for reproducible runs)
   --values FILE       CSV of values you checked by hand (Parcel ID, Value); they replace the estimate
+  --widths FILE       CSV of the narrowest side you measured on the GIS map (Parcel ID, Width Ft); strips are a pass
   --public            Report safe to post publicly: no budget applied or printed
                       (no settings file needed; verdicts reflect the deal only)
 `;
@@ -93,7 +94,9 @@ async function analyze(args: Args): Promise<number> {
 
   const valuesFile = one(args, "values");
   const valueOverrides = valuesFile ? loadValueOverrides(valuesFile) : undefined;
-  const result = await runFlorida({ nalPaths: nal, listings, settings, a, calibration, today, valueOverrides });
+  const widthsFile = one(args, "widths");
+  const widths = widthsFile ? loadWidths(widthsFile) : undefined;
+  const result = await runFlorida({ nalPaths: nal, listings, settings, a, calibration, today, valueOverrides, widths });
   const stamp = today.toISOString().slice(0, 10);
   const out = one(args, "out") ?? join("reports", `deals-${stamp}`);
   mkdirSync(dirname(out) || ".", { recursive: true });
@@ -121,6 +124,22 @@ async function analyze(args: Args): Promise<number> {
   }
   console.log(`Wrote ${out}.html, ${out}.md, ${out}.json`);
   return 0;
+}
+
+/** CSV with a parcel column and a width column: the narrowest side in feet, measured on the GIS map. */
+export function loadWidths(path: string): Map<string, number> {
+  if (!existsSync(path)) throw new SettingsError(`File not found: ${path}`);
+  const rows = parseCsvText(readFileSync(path, "utf8"));
+  const header = (rows[0] ?? []).map((h) => h.trim().toUpperCase());
+  const pc = header.findIndex((h) => /PARCEL|FOLIO|ALT/.test(h));
+  const wc = header.findIndex((h) => /WIDTH|FRONTAGE/.test(h));
+  if (pc < 0 || wc < 0) throw new SettingsError(`${path} needs a "Parcel ID" column and a "Width Ft" column.`);
+  const m = new Map<string, number>();
+  for (const r of rows.slice(1)) {
+    const v = Number((r[wc] ?? "").replace(/[,\sft]/gi, ""));
+    if (r[pc] && Number.isFinite(v) && v > 0) m.set(normKey(r[pc]), v);
+  }
+  return m;
 }
 
 /** CSV with a parcel column and a value column: values you checked by hand replace the estimate. */
