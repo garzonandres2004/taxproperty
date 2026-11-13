@@ -1,6 +1,6 @@
 # Deal Finder: Status
 
-Last updated: Nov 12, 2026, morning (Mountain time). Written by Claude. Read this first; details live in the linked issues.
+Last updated: Nov 12, 2026, evening (Mountain time). Written by Claude. Read this first; details live in the linked issues.
 
 ## One line
 
@@ -20,7 +20,7 @@ The tool works on real Florida data. In the first real backtest, Lake County auc
 | Budget | Only from your settings file, never in the repo; public reports show none |
 | Competition | Estimates the final auction price; learns from real results (record and calibrate) |
 
-Tests: 97 on `main` as of Nov 12 morning, including merged PR #29; PR #30 remains open. Every change is reviewed by Codex before it merges.
+Tests: 104 on `main` as of Nov 12 evening, including merged PRs #29 and #30. No other Deal Finder PRs are open. Every change is reviewed by Codex before it merges.
 
 ## What real data showed
 
@@ -43,7 +43,7 @@ Tests: 97 on `main` as of Nov 12 morning, including merged PR #29; PR #30 remain
 | # | Step | Who | Status |
 |---|---|---|---|
 | 1 | Backtest 6 small counties' past auctions to find any market that sells under value | Muse collects, Claude reads | Collection in progress; no results yet |
-| 2 | Review and merge the backtest command (PR #27) | Codex, then Muse | Merged as 9bdeae1. Follow ups: PR #29 (review notes) merged as 3d898e1; PR #30 (reads Muse's one line per item results) in review |
+| 2 | Review and merge the backtest command (PR #27) | Codex, then Muse | Merged as 9bdeae1. Follow ups: PR #29 (review notes) merged as 3d898e1; PR #30 (reads Muse's one line per item results) merged as c3795aa |
 | 3 | ChatGPT challenge of the whole plan (issue #20) | ChatGPT via Muse | Not started |
 | 4 | Rebuild the Lake calibration with the fixed code and re-run the Nov 17 list | Muse | Done Nov 12: Lake vacant calibrated at 108% of value (15 sales). With it the Nov 17 list is 0 buy, 16 watch, 3 pass, 1 avoid (was 6 buy before calibration). The calibration stays local, not in the repo, until the Nov 17 results are added |
 | 5 | Clerk reply for 186 Harvey Dr | Muse checks email | Waiting |
